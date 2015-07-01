@@ -23,16 +23,16 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.sketches.pig.theta.ErrorBoundsUDF;
+import com.yahoo.sketches.pig.theta.ErrorBounds;
 
 /**
  * @author Lee Rhodes
  */
-public class ErrorBoundsUDFTest {
+public class ErrorBoundsTest {
 
   @Test
   public void testNullEmpty() throws IOException {
-    EvalFunc<Tuple> func = new ErrorBoundsUDF();
+    EvalFunc<Tuple> func = new ErrorBounds();
     Tuple dataTuple = null;
     Tuple result = func.exec(dataTuple);
     assertNull(result);
@@ -44,7 +44,7 @@ public class ErrorBoundsUDFTest {
   
   @Test
   public void testExactModeBounds() throws IOException {
-    EvalFunc<Tuple> func = new ErrorBoundsUDF();
+    EvalFunc<Tuple> func = new ErrorBounds();
     int nomEntries = 128;
     
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
@@ -61,7 +61,7 @@ public class ErrorBoundsUDFTest {
 
   @Test
   public void testEstModeBounds() throws IOException {
-    EvalFunc<Tuple> func = new ErrorBoundsUDF();
+    EvalFunc<Tuple> func = new ErrorBounds();
     int nomEntries = 4096;
 
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
@@ -85,7 +85,7 @@ public class ErrorBoundsUDFTest {
   
   @Test
   public void testEstModeBoundsWithSeed() throws IOException {
-    EvalFunc<Tuple> func = new ErrorBoundsUDF(Long.toString(DEFAULT_UPDATE_SEED));
+    EvalFunc<Tuple> func = new ErrorBounds(Long.toString(DEFAULT_UPDATE_SEED));
     int nomEntries = 4096;
 
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
@@ -111,7 +111,7 @@ public class ErrorBoundsUDFTest {
   @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new ErrorBoundsUDF();
+    EvalFunc<Tuple> udf = new ErrorBounds();
     
     Schema inputSchema = null;
     Schema.FieldSchema inputFieldSchema = new Schema.FieldSchema("Sketch", DataType.BYTEARRAY);

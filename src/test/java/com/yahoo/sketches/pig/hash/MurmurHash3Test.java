@@ -4,6 +4,8 @@
  */
 package com.yahoo.sketches.pig.hash;
 
+import static com.yahoo.sketches.pig.PigTestingUtil.LS;
+
 import java.io.IOException;
 
 import org.apache.pig.EvalFunc;
@@ -18,15 +20,15 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests the MurmurHash3UDF class.
+ * Tests the MurmurHash3 class.
  * 
  * @author Lee Rhodes
  */
 @SuppressWarnings({ "unused", "unchecked" })
-public class MurmurHash3UdfTest {
+public class MurmurHash3Test {
   private static final TupleFactory mTupleFactory = TupleFactory.getInstance();
   
-  private String hashUdfName = "com.yahoo.sketches.pig.hash.MurmurHash3UDF";
+  private String hashUdfName = "com.yahoo.sketches.pig.hash.MurmurHash3";
   
   @Test
   public void checkExceptions1() throws IOException {
@@ -235,7 +237,7 @@ public class MurmurHash3UdfTest {
   }
   
   /**
-   * Test the outputSchema method for MurmurHash3UDF.
+   * Test the outputSchema method for MurmurHash3.
    * @throws IOException 
    */
   @SuppressWarnings("null")
@@ -293,23 +295,34 @@ public class MurmurHash3UdfTest {
     
     //print schemas
     //@formatter:off
-//    StringBuilder sb = new StringBuilder();
-//    sb.append("input schema: ").append(inputSchema).append(LS)
-//      .append("output schema: ").append(outputSchema).append(LS)
-//      .append("outputOuterFs: ").append(outputOuterFs0)
-//        .append(", type: ").append(DataType.findTypeName(outputOuterFs0.type)).append(LS)
-//      .append("outputInnerSchema: ").append(outputInnerSchema).append(LS)
-//      .append("outputInnerFs0: ").append(outputInnerFs0)
-//        .append(", type: ").append(DataType.findTypeName(outputInnerFs0.type)).append(LS)
-//      .append("outputInnerFs1: ").append(outputInnerFs1)
-//        .append(", type: ").append(DataType.findTypeName(outputInnerFs1.type)).append(LS)
-//      .append("outputInnerFs2: ").append(outputInnerFs2)
-//        .append(", type: ").append(DataType.findTypeName(outputInnerFs2.type)).append(LS);
-//    println(sb.toString());
+    StringBuilder sb = new StringBuilder();
+    sb.append("input schema: ").append(inputSchema).append(LS)
+      .append("output schema: ").append(outputSchema).append(LS)
+      .append("outputOuterFs: ").append(outputOuterFs0)
+        .append(", type: ").append(DataType.findTypeName(outputOuterFs0.type)).append(LS)
+      .append("outputInnerSchema: ").append(outputInnerSchema).append(LS)
+      .append("outputInnerFs0: ").append(outputInnerFs0)
+        .append(", type: ").append(DataType.findTypeName(outputInnerFs0.type)).append(LS)
+      .append("outputInnerFs1: ").append(outputInnerFs1)
+        .append(", type: ").append(DataType.findTypeName(outputInnerFs1.type)).append(LS)
+      .append("outputInnerFs2: ").append(outputInnerFs2)
+        .append(", type: ").append(DataType.findTypeName(outputInnerFs2.type)).append(LS);
+    println(sb.toString());
     //@formatter:on
     //end print schemas
   }
   
-  //static void println(String s) { System.out.println(s); }
+  
+  @Test
+  public void printlnTest() {
+    println("Test");
+  }
+  
+  /**
+   * @param s value to print 
+   */
+  static void println(String s) {
+    //System.out.println(s); //disable here
+  }
   
 }

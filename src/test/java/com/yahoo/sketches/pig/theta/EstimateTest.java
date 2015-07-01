@@ -17,16 +17,16 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 
-import com.yahoo.sketches.pig.theta.EstimateUDF;
+import com.yahoo.sketches.pig.theta.Estimate;
 
 /**
  * @author Lee Rhodes
  */
-public class EstimateUDFTest {
+public class EstimateTest {
 
   @Test
   public void testNullEmpty() throws IOException {
-    EvalFunc<Double> func = new EstimateUDF();
+    EvalFunc<Double> func = new Estimate();
     Tuple inputTuple = null;
     Double returnValue = func.exec(inputTuple);
     assertNull(returnValue);
@@ -38,7 +38,7 @@ public class EstimateUDFTest {
   
   @Test
   public void testExact() throws IOException {
-    EvalFunc<Double> func = new EstimateUDF();
+    EvalFunc<Double> func = new Estimate();
 
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
     dataTuple.set(0, createDbaFromQssRange(64, 0, 64));
@@ -50,7 +50,7 @@ public class EstimateUDFTest {
   
   @Test
   public void testExactWithSeed() throws IOException {
-    EvalFunc<Double> func = new EstimateUDF(Long.toString(DEFAULT_UPDATE_SEED));
+    EvalFunc<Double> func = new Estimate(Long.toString(DEFAULT_UPDATE_SEED));
 
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
     dataTuple.set(0, createDbaFromQssRange(64, 0, 64));

@@ -4,10 +4,13 @@
  */
 package com.yahoo.sketches.pig.theta;
 
+import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
 import static com.yahoo.sketches.pig.PigTestingUtil.LS;
 import static com.yahoo.sketches.pig.PigTestingUtil.createDbaFromQssRange;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -19,72 +22,71 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.sketches.pig.theta.AnotBUDF;
-import com.yahoo.sketches.pig.theta.EstimateUDF;
+import com.yahoo.sketches.pig.theta.SketchToString;
 
 /**
  * @author Lee Rhodes
  */
-public class AnotBUDFTest {
+public class SketchToStringTest {
   
-  @SuppressWarnings("unused")
   @Test
-  public void checkConstructors() {
-    AnotBUDF aNOTb = new AnotBUDF();
-    aNOTb = new AnotBUDF("9001");
-    aNOTb = new AnotBUDF(9001);
+  public void testNullEmpty() throws IOException {
+    EvalFunc<String> func = new SketchToString("false");
+    Tuple dataTuple = null;
+    String result = func.exec(dataTuple);
+    assertNull(result);
+    
+    dataTuple = TupleFactory.getInstance().newTuple(0);
+    result = func.exec(dataTuple);
+    assertNull(result);
   }
   
   @Test
-  public void checkNullCombinations() throws IOException {
-    EvalFunc<Tuple> aNbFunc = new AnotBUDF();
-    EvalFunc<Double> estFunc = new EstimateUDF();
+  public void testExactNoDetail() throws IOException {
+    EvalFunc<String> func = new SketchToString("false");
     
-    Tuple inputTuple, resultTuple;
-    Double est;
-    //Two nulls
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
+    Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
+    dataTuple.set(0, createDbaFromQssRange(64, 0, 64));
     
-    //A is null
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
+    String result = func.exec(dataTuple);
+    assertNotNull(result);
+    assertTrue(result.contains("SUMMARY"));
+    assertFalse(result.contains("SKETCH DATA DETAIL"));
+  }
+  
+  @Test
+  public void testExactNoDetailWithSeed() throws IOException {
+    EvalFunc<String> func = new SketchToString("false", Long.toString(DEFAULT_UPDATE_SEED));
     
-    //A is valid, B is null
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 256.0, 0.0);
+    Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
+    dataTuple.set(0, createDbaFromQssRange(64, 0, 64));
     
-    //Both valid
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
-    inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 128.0, 0.0);
+    String result = func.exec(dataTuple);
+    assertNotNull(result);
+    assertTrue(result.contains("SUMMARY"));
+    assertFalse(result.contains("SKETCH DATA DETAIL"));
+  }
+  
+  @Test
+  public void testExactWithDetail() throws IOException {
+    EvalFunc<String> func = new SketchToString("true");
+    
+    Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
+    dataTuple.set(0, createDbaFromQssRange(64, 0, 64));
+    
+    String result = func.exec(dataTuple);
+    assertNotNull(result);
+    assertTrue(result.contains("SUMMARY"));
+    assertTrue(result.contains("SKETCH DATA DETAIL"));
   }
   
   @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new AnotBUDF("512");
+    EvalFunc<String> udf = new SketchToString();
     
     Schema inputSchema = null;
+    Schema.FieldSchema inputFieldSchema = new Schema.FieldSchema("Sketch", DataType.BYTEARRAY);
     
     Schema nullOutputSchema = null;
     
@@ -94,10 +96,10 @@ public class AnotBUDFTest {
     Schema outputInnerSchema = null;
     Schema.FieldSchema outputInnerFs0 = null;
     
-    inputSchema = Schema.generateNestedSchema(DataType.BAG, DataType.BYTEARRAY);
+    inputSchema = new Schema(inputFieldSchema);
     
     nullOutputSchema = udf.outputSchema(null);
-        
+    
     outputSchema = udf.outputSchema(inputSchema);
     outputOuterFs0 = outputSchema.getField(0);
     
@@ -111,7 +113,7 @@ public class AnotBUDFTest {
     String result = DataType.findTypeName(outputOuterFs0.type);
     Assert.assertEquals(result, expected);
     
-    expected = "bytearray";
+    expected = "chararray";
     Assert.assertNotNull(outputInnerFs0, "innerSchema.getField(0) schema may not be null");
     result = DataType.findTypeName(outputInnerFs0.type);
     Assert.assertEquals(result, expected);

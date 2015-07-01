@@ -20,18 +20,18 @@ import com.yahoo.sketches.theta.Sketch;
  * This is a User Defined Function (UDF) for "pretty printing" the summary of a sketch 
  * from a Sketch Tuple.
  * 
- * Refer to {@link DataToSketchUDF#exec(Tuple)} for the definition of a Sketch Tuple.
+ * Refer to {@link DataToSketch#exec(Tuple)} for the definition of a Sketch Tuple.
  * 
  * @author Lee Rhodes
  */
-public class SketchToStringUDF extends EvalFunc<String> {
+public class SketchToString extends EvalFunc<String> {
   private boolean detailOut = false;
   private final long seed_;
   
   /**
    * Pretty prints only the sketch summary.
    */
-  public SketchToStringUDF() {
+  public SketchToString() {
     this(false, Util.DEFAULT_UPDATE_SEED);
   }
 
@@ -41,7 +41,7 @@ public class SketchToStringUDF extends EvalFunc<String> {
    * @param outputDetailStr If the first character is a "T" or "t" the output will include the bucket
    * detail. Otherwise only the sketch summary will be output.
    */
-  public SketchToStringUDF(String outputDetailStr) {
+  public SketchToString(String outputDetailStr) {
     this( outputDetailStr.substring(0, 1).equalsIgnoreCase("T"), Util.DEFAULT_UPDATE_SEED);
   }
   
@@ -52,7 +52,7 @@ public class SketchToStringUDF extends EvalFunc<String> {
    * detail. Otherwise only the sketch summary will be output.
    * @param seedStr the seed string
    */
-  public SketchToStringUDF(String outputDetailStr, String seedStr) {
+  public SketchToString(String outputDetailStr, String seedStr) {
     this( outputDetailStr.substring(0, 1).equalsIgnoreCase("T"), Long.parseLong(seedStr));
   }
   
@@ -63,7 +63,7 @@ public class SketchToStringUDF extends EvalFunc<String> {
    * detail. Otherwise only the sketch summary will be output.
    * @param seed the seed string
    */
-  public SketchToStringUDF(boolean outputDetail, long seed) {
+  public SketchToString(boolean outputDetail, long seed) {
     super();
     detailOut = outputDetail;
     seed_ = seed;

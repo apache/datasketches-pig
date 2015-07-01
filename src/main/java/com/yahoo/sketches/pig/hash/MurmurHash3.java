@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
  * 
  * @author Lee Rhodes
  */
-public class MurmurHash3UDF extends EvalFunc<Tuple> {
+public class MurmurHash3 extends EvalFunc<Tuple> {
   private static final TupleFactory mTupleFactory = TupleFactory.getInstance();
   private int divisor_ = 0;
 

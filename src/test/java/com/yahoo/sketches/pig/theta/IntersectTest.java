@@ -24,35 +24,35 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.sketches.pig.theta.EstimateUDF;
-import com.yahoo.sketches.pig.theta.IntersectionUDF;
+import com.yahoo.sketches.pig.theta.Estimate;
+import com.yahoo.sketches.pig.theta.Intersect;
 
 /**
  * @author Lee Rhodes
  */
-public class IntersectionUDFTest {
+public class IntersectTest {
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkConstructorExcep1() {
-    IntersectionUDF test = new IntersectionUDF("1023");
+    Intersect test = new Intersect("1023");
   }
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkConstructorExcep2() {
-    IntersectionUDF test = new IntersectionUDF("8");
+    Intersect test = new Intersect("8");
   }
   
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkGetValueExcep() {
-    IntersectionUDF inter = new IntersectionUDF();
+    Intersect inter = new Intersect();
     inter.getValue();
   }
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkNotDBAExcep() throws IOException {
-    IntersectionUDF inter = new IntersectionUDF();
+    Intersect inter = new Intersect();
     //create inputTuple and a bag, add bag to inputTuple
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -63,7 +63,7 @@ public class IntersectionUDFTest {
     inter.accumulate(inputTuple); //add empty tuple
     
     innerTuple.set(0, new Double(1.0));  //not a DBA
-    inter = new IntersectionUDF();
+    inter = new Intersect();
     inter.accumulate(inputTuple); //add wrong type
   }
   
@@ -71,29 +71,29 @@ public class IntersectionUDFTest {
   @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
-    IntersectionUDF inter = new IntersectionUDF();
-    inter = new IntersectionUDF("1024");
-    inter = new IntersectionUDF("1024", "1.0");
-    inter = new IntersectionUDF("1024", "1.0", "9001");
-    inter = new IntersectionUDF(1024, (float) 1.0, 9001);
+    Intersect inter = new Intersect();
+    inter = new Intersect("1024");
+    inter = new Intersect("1024", "1.0");
+    inter = new Intersect("1024", "1.0", "9001");
+    inter = new Intersect(1024, (float) 1.0, 9001);
     
-    IntersectionUDF.Initial initial = new IntersectionUDF.Initial();
-    initial = new IntersectionUDF.Initial("1024");
-    initial = new IntersectionUDF.Initial("1024", "1.0");
-    initial = new IntersectionUDF.Initial("1024", "1.0", "9001");
+    Intersect.Initial initial = new Intersect.Initial();
+    initial = new Intersect.Initial("1024");
+    initial = new Intersect.Initial("1024", "1.0");
+    initial = new Intersect.Initial("1024", "1.0", "9001");
     
-    IntersectionUDF.IntermediateFinal interFin = new IntersectionUDF.IntermediateFinal();
-    interFin = new IntersectionUDF.IntermediateFinal("1024");
-    interFin = new IntersectionUDF.IntermediateFinal("1024", "1.0");
-    interFin = new IntersectionUDF.IntermediateFinal("1024", "1.0", "9001");
-    interFin = new IntersectionUDF.IntermediateFinal(1024, (float) 1.0, 9001);
+    Intersect.IntermediateFinal interFin = new Intersect.IntermediateFinal();
+    interFin = new Intersect.IntermediateFinal("1024");
+    interFin = new Intersect.IntermediateFinal("1024", "1.0");
+    interFin = new Intersect.IntermediateFinal("1024", "1.0", "9001");
+    interFin = new Intersect.IntermediateFinal(1024, (float) 1.0, 9001);
     inter.cleanup();
   }
   
   @Test
   public void checkNullInput() throws IOException {
-    EvalFunc<Tuple> interFunc = new IntersectionUDF(); //default 4096
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFunc = new Intersect(); //default 4096
+    EvalFunc<Double> estFunc = new Estimate();
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     //null bag
     
@@ -107,8 +107,8 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkExactTopExec() throws IOException {
-    EvalFunc<Tuple> interFunc = new IntersectionUDF(); //default 4096
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFunc = new Intersect(); //default 4096
+    EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -133,7 +133,7 @@ public class IntersectionUDFTest {
   
   @Test(expectedExceptions = ClassCastException.class)
   public void checkBadClassCast() throws IOException {
-    Accumulator<Tuple> interFunc = new IntersectionUDF("256");
+    Accumulator<Tuple> interFunc = new Intersect("256");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //valid size, but null
     
     inputTuple.set(0, new Double(1.0)); //wrong type. Cannot intersect datums.
@@ -142,8 +142,8 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkNullEmptyAccumulator() throws IOException {
-    Accumulator<Tuple> interFunc = new IntersectionUDF("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    Accumulator<Tuple> interFunc = new Intersect("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = null;
     interFunc.accumulate(inputTuple); //does nothing
@@ -196,8 +196,8 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkExactAccumulator() throws IOException {
-    Accumulator<Tuple> interFunc = new IntersectionUDF("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    Accumulator<Tuple> interFunc = new Intersect("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -227,7 +227,7 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkExactAlgebraicInitial() throws IOException {
-    EvalFunc<Tuple> interFuncInit = new IntersectionUDF.Initial("256");
+    EvalFunc<Tuple> interFuncInit = new Intersect.Initial("256");
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -246,8 +246,8 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkAlgFinalFromPriorIntermed() throws IOException {
-    EvalFunc<Tuple> interFuncIFinal = new IntersectionUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncIFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -278,8 +278,8 @@ public class IntersectionUDFTest {
   
   @Test
   public void checkAlgFinalFromPriorInitial() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new IntersectionUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -315,8 +315,8 @@ public class IntersectionUDFTest {
   
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new IntersectionUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -335,8 +335,8 @@ public class IntersectionUDFTest {
   
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkAlgFinalInnerBagEmpty() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new IntersectionUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -358,8 +358,8 @@ public class IntersectionUDFTest {
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkAlgFinalInnerNotDBA() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new IntersectionUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -381,7 +381,7 @@ public class IntersectionUDFTest {
   @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new IntersectionUDF("512");
+    EvalFunc<Tuple> udf = new Intersect("512");
     
     Schema inputSchema = null;
     
@@ -431,7 +431,7 @@ public class IntersectionUDFTest {
   }
   
 //  public static void main(String[] args) throws IOException{
-//    IntersectionUDFTest test = new IntersectionUDFTest();
+//    IntersectTest test = new IntersectTest();
 //    //test.checkNotDBAException();
 //    test.checkExactTopExec();
 //  }

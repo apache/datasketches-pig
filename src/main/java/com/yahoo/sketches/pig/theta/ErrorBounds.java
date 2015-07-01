@@ -21,7 +21,7 @@ import com.yahoo.sketches.theta.Sketch;
 //@formatter:off
 /**
  * This is a User Defined Function (UDF) for returning the Double value result along with a lower and
- * upper bound. Refer to {@link DataToSketchUDF#exec(Tuple)} for the definition of a Sketch Tuple.
+ * upper bound. Refer to {@link DataToSketch#exec(Tuple)} for the definition of a Sketch Tuple.
  * 
  * <p>
  * <b>Sketch Result Tuple</b>
@@ -39,14 +39,14 @@ import com.yahoo.sketches.theta.Sketch;
  * @author Lee Rhodes
  */
 //@formatter:on
-public class ErrorBoundsUDF extends EvalFunc<Tuple> {
+public class ErrorBounds extends EvalFunc<Tuple> {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
   private final long seed_;
   
   /**
    * Constructs with the DEFAULT_UPDATE_SEED used when deserializing the sketch.
    */
-  public ErrorBoundsUDF() {
+  public ErrorBounds() {
     this(Util.DEFAULT_UPDATE_SEED);
   }
   
@@ -54,7 +54,7 @@ public class ErrorBoundsUDF extends EvalFunc<Tuple> {
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
    */
-  public ErrorBoundsUDF(String seedStr) {
+  public ErrorBounds(String seedStr) {
     this(Long.parseLong(seedStr));
   }
   
@@ -62,7 +62,7 @@ public class ErrorBoundsUDF extends EvalFunc<Tuple> {
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
    */
-  public ErrorBoundsUDF(long seed) {
+  public ErrorBounds(long seed) {
     super();
     seed_ = seed;
   }

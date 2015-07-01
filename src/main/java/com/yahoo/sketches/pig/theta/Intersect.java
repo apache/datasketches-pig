@@ -13,7 +13,7 @@ import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.newUnion;
+import static com.yahoo.sketches.pig.theta.PigUtil.newIntersection;
 
 import java.io.IOException;
 
@@ -30,25 +30,24 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
+import com.yahoo.sketches.theta.Intersection;
 import com.yahoo.sketches.theta.SetOperation;
 import com.yahoo.sketches.theta.Sketch;
-import com.yahoo.sketches.theta.Union;
-
 
 /**
- * This is a Pig UDF that performs the Union Set Operation on Sketches. 
+ * This is a Pig UDF that performs the Intersection Set Operation on Sketches. 
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
  * 
  * @author Lee Rhodes
  */
-public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
+public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
   //All parameters kept at the class level must be final, except for the accumUpdateSketch.
   private final int nomEntries_;
   private final float p_;
   private final long seed_;
   private final Tuple emptyCompactOrderedSketchTuple_;
-  private Union accumUnion_;
+  private Intersection accumIntersection_;
   
   //TOP LEVEL API
   
@@ -61,7 +60,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
    * </ul>
    */
-  public UnionUDF() {
+  public Intersect() {
     this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
   }
   
@@ -75,7 +74,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * 
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
-  public UnionUDF(String nomEntriesStr) {
+  public Intersect(String nomEntriesStr) {
     this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
   }
   
@@ -87,10 +86,9 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * 
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-   * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
-   * here. The proper use of upfront sampling is when building the sketches.
+   * This functionality is not implemented for SketchIntersections.
    */
-  public UnionUDF(String nomEntriesStr, String pStr) {
+  public Intersect(String nomEntriesStr, String pStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), DEFAULT_UPDATE_SEED);
   }
   
@@ -99,11 +97,10 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * 
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>. 
-   * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
-   * here. The proper use of upfront sampling is when building the sketches.
+   * This functionality is not implemented for SketchIntersections.
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public UnionUDF(String nomEntriesStr, String pStr, String seedStr) {
+  public Intersect(String nomEntriesStr, String pStr, String seedStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
   }
   
@@ -112,11 +109,10 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * 
    * @param nomEntries <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
    * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-   * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
-   * here. The proper use of upfront sampling is when building the sketches.
+   * This functionality is not implemented for SketchIntersections.
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public UnionUDF(int nomEntries, float p, long seed) {
+  public Intersect(int nomEntries, float p, long seed) {
     super();
     this.nomEntries_ = nomEntries;
     this.p_ = p;
@@ -142,7 +138,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
    * <p>
-   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
+   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Intersection</b>. 
    * The result is returned as a <b>Sketch Tuple</b>
    * 
    * <p>
@@ -181,14 +177,12 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Union union = newUnion(nomEntries_, p_, seed_);
+    Intersection intersection = newIntersection(nomEntries_, p_, seed_);
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
-    }
+    if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
     
-    updateUnion(bag, union, seed_);
-    CompactSketch compactSketch = union.getResult(true, null);
+    updateIntersection(bag, intersection, seed_);
+    CompactSketch compactSketch = intersection.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
   
@@ -214,7 +208,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    * An <i>Accumulator</i> version of the standard <i>exec()</i> method. Like <i>exec()</i>,
    * accumulator is called with a bag of Sketch Tuples. Unlike <i>exec()</i>, it doesn't serialize the
    * sketch at the end. Instead, it can be called multiple times, each time with another bag of
-   * Sketch Tuples to be input to the Union.
+   * Sketch Tuples to be input to the Intersection.
    * 
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
    * @see #exec
@@ -223,13 +217,13 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    */
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
-    if (accumUnion_ == null) { 
-      accumUnion_ = newUnion(nomEntries_, p_, seed_);
+    if (accumIntersection_ == null) { 
+      accumIntersection_ = newIntersection(nomEntries_, p_, seed_);
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
     
-    updateUnion(bag, accumUnion_, seed_);
+    updateIntersection(bag, accumIntersection_, seed_);
   }
 
   /**
@@ -240,8 +234,12 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
-    CompactSketch compactSketch = accumUnion_.getResult(true, null);
+    if ((accumIntersection_ == null) || !accumIntersection_.hasResult()) {
+      throw new IllegalStateException(""
+          + "The accumulate(Tuple) method must be called at least once with "+
+          "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
+    }
+    CompactSketch compactSketch = accumIntersection_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
@@ -252,7 +250,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    accumIntersection_ = null;
   }
   
   //ALGEBRAIC INTERFACE
@@ -276,13 +274,13 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
   //TOP LEVEL PRIVATE STATIC METHODS  
   
   /*************************************************************************************************
-  * Updates a union from a bag of sketches
+  * Updates an intersection from a bag of sketches
   * 
   * @param bag A bag of sketchTuples.
-  * @param union The union to update
+  * @param intersection The intersection to update
   * @param seed to check against incoming sketches
   */
- private static void updateUnion(DataBag bag, Union union, long seed) {
+ private static void updateIntersection(DataBag bag, Intersection intersection, long seed) {
    //Bag is not empty. process each innerTuple in the bag
    for (Tuple innerTuple : bag) {
      //validate the inner Tuples
@@ -291,17 +289,12 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
        continue;
      }
      Byte type = extractTypeAtIndex(innerTuple, 0);
-     if (type == null) {
-       continue;
-     }
-     // add only the first field of the innerTuple to the union
+     // add only the first field of the innerTuple to the intersection
      if (type == DataType.BYTEARRAY) {
        DataByteArray dba = (DataByteArray) f0;
-       if (dba.size() > 0) {
-         Memory srcMem = new NativeMemory(dba.get());
-         Sketch sketch = Sketch.heapify(srcMem, seed);
-         union.update(sketch);
-       }
+       Memory srcMem = new NativeMemory(dba.get());
+       Sketch sketch = Sketch.heapify(srcMem, seed);
+       intersection.update(sketch);
      } 
      else {
        throw new IllegalArgumentException(
@@ -347,8 +340,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
      * 
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
-     * here. The proper use of upfront sampling is when building the sketches.
+     * This functionality is not implemented for SketchIntersections.
      */
     public Initial(String nomEntriesStr, String pStr) {
       this(nomEntriesStr, pStr, Long.toString(DEFAULT_UPDATE_SEED));
@@ -360,8 +352,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
      * 
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
-     * here. The proper use of upfront sampling is when building the sketches.
+     * This functionality is not implemented for SketchIntersections.
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public Initial(String nomEntriesStr, String pStr, String seedStr) {}
@@ -375,7 +366,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
   // STATIC IntermediateFinal Class only called by Pig
   
   /*************************************************************************************************
-   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> union 
+   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> intersection 
    * operation. This is called from the combiner, and may be called multiple times (from the mapper 
    * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i> 
    * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and 
@@ -439,6 +430,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
      * 
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
+     * This functionality is not implemented for SketchIntersections.
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(String nomEntriesStr, String pStr, String seedStr) {
@@ -451,6 +443,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
      * 
      * @param nomEntries <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
+     * This functionality is not implemented for SketchIntersections.
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(int nomEntries, float p, long seed) {
@@ -463,7 +456,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      Union union = newUnion(myNomEntries_, myP_, mySeed_);
+      Intersection intersection = newIntersection(myNomEntries_, myP_, mySeed_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
@@ -486,7 +479,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
           // will be passed into the union.
           //It is due to system bagged outputs from multiple mapper Initial functions.  
           //The Intermediate stage was bypassed.
-          updateUnion(innerBag, union, mySeed_); //process all tuples of innerBag
+          updateIntersection(innerBag, intersection, mySeed_); //process all tuples of innerBag
           
         } 
         else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
@@ -496,7 +489,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
           DataByteArray dba = (DataByteArray) f0;
           Memory srcMem = new NativeMemory(dba.get());
           Sketch sketch = Sketch.heapify(srcMem, mySeed_);
-          union.update(sketch);
+          intersection.update(sketch);
         
         } 
         else { // we should never get here.
@@ -505,7 +498,7 @@ public class UnionUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Alg
         }
       }
       
-      CompactSketch compactSketch = union.getResult(true, null);
+      CompactSketch compactSketch = intersection.getResult(true, null);
       return compactOrderedSketchToTuple(compactSketch);
     }
     

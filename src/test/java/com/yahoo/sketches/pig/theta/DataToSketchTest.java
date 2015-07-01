@@ -28,38 +28,38 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.yahoo.sketches.Util;
-import com.yahoo.sketches.pig.theta.DataToSketchUDF;
-import com.yahoo.sketches.pig.theta.EstimateUDF;
+import com.yahoo.sketches.pig.theta.DataToSketch;
+import com.yahoo.sketches.pig.theta.Estimate;
 import com.yahoo.sketches.theta.Sketch;
 
 /**
  * @author Lee Rhodes
  */
-public class DataToSketchUDFTest {
-  private String udfName = "com.yahoo.sketches.pig.theta.DataToSketchUDF";
+public class DataToSketchTest {
+  private String udfName = "com.yahoo.sketches.pig.theta.DataToSketch";
   private long seed_ = Util.DEFAULT_UPDATE_SEED;
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testConstructorExceptions1() {
-    DataToSketchUDF test = new DataToSketchUDF("1023");
+    DataToSketch test = new DataToSketch("1023");
   }
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testConstructorExceptions3() {
-    DataToSketchUDF test = new DataToSketchUDF("8");
+    DataToSketch test = new DataToSketch("8");
   }
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testConstructorExceptions4() {
-    DataToSketchUDF test = new DataToSketchUDF("1024", "2.0");
+    DataToSketch test = new DataToSketch("1024", "2.0");
   }
   
   @Test
   public void checkNotDBAExcep() throws IOException {
-    DataToSketchUDF inter = new DataToSketchUDF();
+    DataToSketch inter = new DataToSketch();
     //create inputTuple and a bag, add bag to inputTuple
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -70,7 +70,7 @@ public class DataToSketchUDFTest {
     inter.accumulate(inputTuple); //add empty tuple
     
     innerTuple.set(0, new Double(1.0));  //not a DBA
-    inter = new DataToSketchUDF();
+    inter = new DataToSketch();
     inter.accumulate(inputTuple); //add wrong type
   }
   
@@ -78,27 +78,27 @@ public class DataToSketchUDFTest {
   @Test
   public void checkConstructors() {
     
-    DataToSketchUDF inter = new DataToSketchUDF();
-    inter = new DataToSketchUDF("1024");
-    inter = new DataToSketchUDF("1024", "1.0");
-    inter = new DataToSketchUDF("1024", "1.0", "9001");
-    inter = new DataToSketchUDF(1024, (float) 1.0, 9001);
+    DataToSketch inter = new DataToSketch();
+    inter = new DataToSketch("1024");
+    inter = new DataToSketch("1024", "1.0");
+    inter = new DataToSketch("1024", "1.0", "9001");
+    inter = new DataToSketch(1024, (float) 1.0, 9001);
     
-    DataToSketchUDF.Initial initial = new DataToSketchUDF.Initial();
-    initial = new DataToSketchUDF.Initial("1024");
-    initial = new DataToSketchUDF.Initial("1024", "1.0");
-    initial = new DataToSketchUDF.Initial("1024", "1.0", "9001");
+    DataToSketch.Initial initial = new DataToSketch.Initial();
+    initial = new DataToSketch.Initial("1024");
+    initial = new DataToSketch.Initial("1024", "1.0");
+    initial = new DataToSketch.Initial("1024", "1.0", "9001");
     
-    DataToSketchUDF.IntermediateFinal interFin = new DataToSketchUDF.IntermediateFinal();
-    interFin = new DataToSketchUDF.IntermediateFinal("1024");
-    interFin = new DataToSketchUDF.IntermediateFinal("1024", "1.0");
-    interFin = new DataToSketchUDF.IntermediateFinal("1024", "1.0", "9001");
-    interFin = new DataToSketchUDF.IntermediateFinal(1024, (float) 1.0, 9001);
+    DataToSketch.IntermediateFinal interFin = new DataToSketch.IntermediateFinal();
+    interFin = new DataToSketch.IntermediateFinal("1024");
+    interFin = new DataToSketch.IntermediateFinal("1024", "1.0");
+    interFin = new DataToSketch.IntermediateFinal("1024", "1.0", "9001");
+    interFin = new DataToSketch.IntermediateFinal(1024, (float) 1.0, 9001);
   }
   
   @Test
   public void testTopExec() throws IOException {
-    EvalFunc<Tuple> func = new DataToSketchUDF();  //empty constructor, size 4096
+    EvalFunc<Tuple> func = new DataToSketch();  //empty constructor, size 4096
 
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
@@ -234,7 +234,7 @@ public class DataToSketchUDFTest {
   
   @Test
   public void testAccumulate() throws IOException {
-    Accumulator<Tuple> func = new DataToSketchUDF("128");
+    Accumulator<Tuple> func = new DataToSketch("128");
 
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -282,7 +282,7 @@ public class DataToSketchUDFTest {
   
   @Test
   public void testInitial() throws IOException {
-    EvalFunc<Tuple> func = new DataToSketchUDF.Initial("128");
+    EvalFunc<Tuple> func = new DataToSketch.Initial("128");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -305,7 +305,7 @@ public class DataToSketchUDFTest {
   
   @Test
   public void testIntermediateFinal() throws IOException {
-    EvalFunc<Tuple> func = new DataToSketchUDF.IntermediateFinal("128");
+    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal("128");
     
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
@@ -351,8 +351,8 @@ public class DataToSketchUDFTest {
   
   @Test
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new DataToSketchUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -371,8 +371,8 @@ public class DataToSketchUDFTest {
   
   @Test
   public void checkAlgFinalInnerBagEmpty() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new DataToSketchUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -394,8 +394,8 @@ public class DataToSketchUDFTest {
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkAlgFinalInnerNotDBA() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new DataToSketchUDF.IntermediateFinal("256");
-    EvalFunc<Double> estFunc = new EstimateUDF();
+    EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
+    EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
@@ -416,7 +416,7 @@ public class DataToSketchUDFTest {
   
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new DataToSketchUDF("512");
+    EvalFunc<Tuple> udf = new DataToSketch("512");
     
     Schema inputSchema = null;
     
@@ -469,10 +469,10 @@ public class DataToSketchUDFTest {
   @Test
   @SuppressWarnings("unused")
   public void checkMisc() throws IOException  {
-    DataToSketchUDF dts = new DataToSketchUDF("512", "1.0");
-    dts = new DataToSketchUDF("512", "1.0", "9001");
-    DataToSketchUDF.Initial dtsi = new DataToSketchUDF.Initial("512", "1.0");
-    DataToSketchUDF.IntermediateFinal dtsif = new DataToSketchUDF.IntermediateFinal("512", "1.0");
+    DataToSketch dts = new DataToSketch("512", "1.0");
+    dts = new DataToSketch("512", "1.0", "9001");
+    DataToSketch.Initial dtsi = new DataToSketch.Initial("512", "1.0");
+    DataToSketch.IntermediateFinal dtsif = new DataToSketch.IntermediateFinal("512", "1.0");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //null bag
     dts.accumulate(inputTuple);
     Tuple resultTuple = dts.getValue();

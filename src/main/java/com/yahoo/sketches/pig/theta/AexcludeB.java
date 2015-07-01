@@ -34,7 +34,7 @@ import com.yahoo.sketches.theta.Sketch;
  * 
  * @author Lee Rhodes
  */
-public class AnotBUDF extends EvalFunc<Tuple> {
+public class AexcludeB extends EvalFunc<Tuple> {
   private final long seed_;
   
   //TOP LEVEL API
@@ -44,7 +44,7 @@ public class AnotBUDF extends EvalFunc<Tuple> {
    * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
    * </ul>
    */
-  public AnotBUDF() {
+  public AexcludeB() {
     this(DEFAULT_UPDATE_SEED);
   }
   
@@ -53,7 +53,7 @@ public class AnotBUDF extends EvalFunc<Tuple> {
    * 
    * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>
    */
-  public AnotBUDF(String seedStr) {
+  public AexcludeB(String seedStr) {
     this(Long.parseLong(seedStr));
   }
   
@@ -62,7 +62,7 @@ public class AnotBUDF extends EvalFunc<Tuple> {
    * 
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public AnotBUDF(long seed) {
+  public AexcludeB(long seed) {
     super();
     this.seed_ = seed;
   }

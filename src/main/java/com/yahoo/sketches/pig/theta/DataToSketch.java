@@ -43,7 +43,7 @@ import com.yahoo.sketches.theta.UpdateSketch;
  * 
  * @author Lee Rhodes
  */
-public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
+public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
   //All parameters kept at the class level must be final, except for the accumUpdateSketch.
   private final int nomEntries_;
@@ -63,7 +63,7 @@ public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tupl
    * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
    * </ul>
    */
-  public DataToSketchUDF() {
+  public DataToSketch() {
     this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
   }
 
@@ -77,7 +77,7 @@ public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tupl
    * 
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
-  public DataToSketchUDF(String nomEntriesStr) {
+  public DataToSketch(String nomEntriesStr) {
     this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
   }
   
@@ -90,7 +90,7 @@ public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tupl
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>
    */
-  public DataToSketchUDF(String nomEntriesStr, String pStr) {
+  public DataToSketch(String nomEntriesStr, String pStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), DEFAULT_UPDATE_SEED);
   }
   
@@ -101,7 +101,7 @@ public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tupl
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>. 
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public DataToSketchUDF(String nomEntriesStr, String pStr, String seedStr) {
+  public DataToSketch(String nomEntriesStr, String pStr, String seedStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
   }
 
@@ -112,7 +112,7 @@ public class DataToSketchUDF extends EvalFunc<Tuple> implements Accumulator<Tupl
    * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public DataToSketchUDF(int nomEntries, float p, long seed) {
+  public DataToSketch(int nomEntries, float p, long seed) {
     super();
     this.nomEntries_ = nomEntries;
     this.p_ = p;

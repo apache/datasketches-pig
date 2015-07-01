@@ -19,13 +19,13 @@ import com.yahoo.sketches.theta.Sketch;
  * 
  * @author LeeRhodes 
  */
-public class EstimateUDF extends EvalFunc<Double> {
+public class Estimate extends EvalFunc<Double> {
   private final long seed_;
   
   /**
    * Constructs with the DEFAULT_UPDATE_SEED used when deserializing the sketch. 
    */
-  public EstimateUDF() {
+  public Estimate() {
     this(Util.DEFAULT_UPDATE_SEED);
   }
   
@@ -33,7 +33,7 @@ public class EstimateUDF extends EvalFunc<Double> {
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
    */
-  public EstimateUDF(String seedStr) {
+  public Estimate(String seedStr) {
     this(Long.parseLong(seedStr));
   }
   
@@ -41,7 +41,7 @@ public class EstimateUDF extends EvalFunc<Double> {
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
    */
-  public EstimateUDF(long seed) {
+  public Estimate(long seed) {
     super();
     seed_ = seed;
   }
