@@ -12,6 +12,7 @@ bin/
 
 #Test output
 test-output/
+/.clover/
 
 # Build artifacts
 target/
@@ -19,7 +20,7 @@ out/
 build/
 jarsIn/
 *.jar
-#build.xml
+build.xml
 .idea
 *.iml
 *.properties
