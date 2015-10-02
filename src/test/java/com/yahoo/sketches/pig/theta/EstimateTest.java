@@ -60,4 +60,16 @@ public class EstimateTest {
     assertEquals(result, 64.0, 0.0);
   }
   
+  @Test
+  public void printlnTest() {
+    println(this.getClass().getSimpleName());
+  }
+  
+  /**
+   * @param s value to print 
+   */
+  static void println(String s) {
+    //System.out.println(s); //disable here
+  }
+  
 }

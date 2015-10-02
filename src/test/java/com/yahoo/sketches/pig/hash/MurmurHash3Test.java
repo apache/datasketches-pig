@@ -312,10 +312,9 @@ public class MurmurHash3Test {
     //end print schemas
   }
   
-  
   @Test
   public void printlnTest() {
-    println("Test");
+    println(this.getClass().getSimpleName());
   }
   
   /**

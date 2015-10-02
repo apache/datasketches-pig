@@ -135,7 +135,7 @@ public class SketchToStringTest {
   
   @Test
   public void printlnTest() {
-    println("Test");
+    println(this.getClass().getSimpleName());
   }
   
   /**

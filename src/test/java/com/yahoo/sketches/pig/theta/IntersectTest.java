@@ -430,16 +430,9 @@ public class IntersectTest {
     //end print schemas
   }
   
-//  public static void main(String[] args) throws IOException{
-//    IntersectTest test = new IntersectTest();
-//    //test.checkNotDBAException();
-//    test.checkExactTopExec();
-//  }
-  
-  
   @Test
   public void printlnTest() {
-    println("Test");
+    println(this.getClass().getSimpleName());
   }
   
   /**
