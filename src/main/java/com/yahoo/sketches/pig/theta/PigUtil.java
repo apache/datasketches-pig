@@ -4,9 +4,6 @@
  */
 package com.yahoo.sketches.pig.theta;
 
-import static com.yahoo.sketches.Family.A_NOT_B;
-import static com.yahoo.sketches.Family.QUICKSELECT;
-
 import java.io.IOException;
 
 import org.apache.pig.data.DataBag;
@@ -16,13 +13,8 @@ import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.theta.AnotB;
 import com.yahoo.sketches.theta.CompactSketch;
-import com.yahoo.sketches.Family;
-import com.yahoo.sketches.theta.Intersection;
-import com.yahoo.sketches.theta.SetOperation;
 import com.yahoo.sketches.theta.Sketch;
-import com.yahoo.sketches.theta.Union;
 import com.yahoo.sketches.theta.UpdateSketch;
 import com.yahoo.sketches.theta.ResizeFactor;
 
@@ -32,7 +24,7 @@ import com.yahoo.sketches.theta.ResizeFactor;
  * @author Lee Rhodes
  */
 class PigUtil {
-  private static final ResizeFactor RF = ResizeFactor.X8;
+  static final ResizeFactor RF = ResizeFactor.X8;
   
   /**
    * Serialize an ordered CompactSketch to SketchTuple 
@@ -135,59 +127,14 @@ class PigUtil {
   }
   
   /**
-   * Return an empty Compact Ordered Sketch Tuple.
+   * Return an empty Compact Ordered Sketch Tuple. Empty sketch is only 8 bytes.
    * @param seed the given seed
    * @return an empty compact ordered sketch tuple
    */
   static final Tuple emptySketchTuple(long seed) {
-    UpdateSketch sketch = newUpdateSketch(16,(float)1.0, seed);
+    UpdateSketch sketch = UpdateSketch.builder().setSeed(seed).setResizeFactor(RF).build(16);
     CompactSketch compOrdSketch = sketch.compact(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
-  }
-  
-  /**
-   * Return a new empty HeapQuickSelectSketch
-   * @param nomEntries the given nominal entries
-   * @param p the given probability p
-   * @param seed the given seed
-   * @return a new empty HeapQuickSelectSketch
-   */
-  static final UpdateSketch newUpdateSketch(int nomEntries, float p, long seed) {
-    return UpdateSketch.builder().setSeed(seed).setP(p).setResizeFactor(RF).
-        setFamily(QUICKSELECT).build(nomEntries);
-  }
-  
-  /**
-   * Return a new Union operation
-   * @param nomEntries the given entries
-   * @param p the given probability p
-   * @param seed the given seed
-   * @return a new Union
-   */
-  static final Union newUnion(int nomEntries, float p, long seed) {
-    return (Union) SetOperation.builder().setP(p).setSeed(seed).
-        setResizeFactor(RF).build(nomEntries, Family.UNION);
-  }
-  
-  /**
-   * Return a new Intersection operation
-   * @param nomEntries the given entries
-   * @param p the given probability p
-   * @param seed the given seed
-   * @return a new Intersection
-   */
-  static final Intersection newIntersection(int nomEntries, float p, long seed) {
-    return (Intersection) SetOperation.builder().setP(p).setSeed(seed).
-        setResizeFactor(RF).build(nomEntries, Family.INTERSECTION);
-  }
-  
-  /**
-   * Return a new AnotB operation
-   * @param seed the given seed
-   * @return a new Intersection
-   */
-  static final AnotB newAnotB(long seed) {
-    return (AnotB) SetOperation.builder().setSeed(seed).build(A_NOT_B);
   }
   
 }

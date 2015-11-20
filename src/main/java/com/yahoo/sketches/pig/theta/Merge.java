@@ -13,7 +13,7 @@ import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.newUnion;
+import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -31,7 +31,6 @@ import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
-import com.yahoo.sketches.theta.Sketch;
 import com.yahoo.sketches.theta.Union;
 
 
@@ -181,13 +180,14 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Union union = newUnion(nomEntries_, p_, seed_);
+    Union union = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
+        buildUnion(nomEntries_);
     DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
     }
     
-    updateUnion(bag, union, seed_);
+    updateUnion(bag, union);
     CompactSketch compactSketch = union.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
@@ -224,12 +224,13 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
     if (accumUnion_ == null) { 
-      accumUnion_ = newUnion(nomEntries_, p_, seed_);
+      accumUnion_ = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
+          buildUnion(nomEntries_);
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
     
-    updateUnion(bag, accumUnion_, seed_);
+    updateUnion(bag, accumUnion_);
   }
 
   /**
@@ -280,9 +281,8 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   * 
   * @param bag A bag of sketchTuples.
   * @param union The union to update
-  * @param seed to check against incoming sketches
   */
- private static void updateUnion(DataBag bag, Union union, long seed) {
+ private static void updateUnion(DataBag bag, Union union) {
    //Bag is not empty. process each innerTuple in the bag
    for (Tuple innerTuple : bag) {
      //validate the inner Tuples
@@ -298,9 +298,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
      if (type == DataType.BYTEARRAY) {
        DataByteArray dba = (DataByteArray) f0;
        if (dba.size() > 0) {
-         Memory srcMem = new NativeMemory(dba.get());
-         Sketch sketch = Sketch.heapify(srcMem, seed);
-         union.update(sketch);
+         union.update(new NativeMemory(dba.get()));
        }
      } 
      else {
@@ -463,7 +461,8 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      Union union = newUnion(myNomEntries_, myP_, mySeed_);
+      Union union = SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF).
+          buildUnion(myNomEntries_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
@@ -486,7 +485,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           // will be passed into the union.
           //It is due to system bagged outputs from multiple mapper Initial functions.  
           //The Intermediate stage was bypassed.
-          updateUnion(innerBag, union, mySeed_); //process all tuples of innerBag
+          updateUnion(innerBag, union); //process all tuples of innerBag
           
         } 
         else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
@@ -495,8 +494,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           // Each dataTuple.DBA:sketch will merged into the union.
           DataByteArray dba = (DataByteArray) f0;
           Memory srcMem = new NativeMemory(dba.get());
-          Sketch sketch = Sketch.heapify(srcMem, mySeed_);
-          union.update(sketch);
+          union.update(srcMem);
         
         } 
         else { // we should never get here.

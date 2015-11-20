@@ -7,7 +7,6 @@ package com.yahoo.sketches.pig.theta;
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
 import static com.yahoo.sketches.pig.theta.PigUtil.compactOrderedSketchToTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.newAnotB;
 
 import java.io.IOException;
 
@@ -23,6 +22,7 @@ import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.AnotB;
 import com.yahoo.sketches.theta.CompactSketch;
+import com.yahoo.sketches.theta.SetOperation;
 import com.yahoo.sketches.theta.Sketch;
 
 /**
@@ -122,7 +122,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
       sketchB = Sketch.heapify(srcMem, seed_);
     }
     
-    AnotB aNOTb = newAnotB(seed_);
+    AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
     aNOTb.update(sketchA, sketchB);
     CompactSketch compactSketch = aNOTb.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);

@@ -13,8 +13,7 @@ import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.newUnion;
-import static com.yahoo.sketches.pig.theta.PigUtil.newUpdateSketch;
+import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -29,13 +28,10 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.Util;
-import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
-import com.yahoo.sketches.theta.Sketch;
 import com.yahoo.sketches.theta.Union;
-import com.yahoo.sketches.theta.UpdateSketch;
 
 /**
  * This is a Pig UDF that builds Sketches from data. 
@@ -45,12 +41,12 @@ import com.yahoo.sketches.theta.UpdateSketch;
  */
 public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
-  //All parameters kept at the class level must be final, except for the accumUpdateSketch.
+  //All parameters kept at the class level must be final, except for the accumUnion.
   private final int nomEntries_;
   private final float p_;
   private final long seed_;
   private final Tuple emptyCompactOrderedSketchTuple_;
-  private UpdateSketch accumUpdateSketch_;
+  private Union accumUnion_;
   
   //TOP LEVEL API
   
@@ -197,12 +193,12 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    UpdateSketch updateSketch = newUpdateSketch(nomEntries_, p_, seed_);
+    Union union = newUnion(nomEntries_, p_, seed_);
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
     
-    updateSketch(bag, updateSketch); //updates sketch with all elements of the bag
-    CompactSketch compOrdSketch = updateSketch.compact(true, null);
+    updateUnion(bag, union); //updates union with all elements of the bag
+    CompactSketch compOrdSketch = union.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
   
@@ -237,13 +233,13 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
-    if (accumUpdateSketch_ == null) { 
-      accumUpdateSketch_ = newUpdateSketch(nomEntries_, p_, seed_);
+    if (accumUnion_ == null) { 
+      accumUnion_ = DataToSketch.newUnion(nomEntries_, p_, seed_);
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
     
-    updateSketch(bag, accumUpdateSketch_);
+    updateUnion(bag, accumUnion_);
   }
 
   /**
@@ -254,8 +250,8 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public Tuple getValue() {
-    if (accumUpdateSketch_ == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
-    CompactSketch compOrdSketch = accumUpdateSketch_.compact(true, null);
+    if (accumUnion_ == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
+    CompactSketch compOrdSketch = accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 
@@ -266,7 +262,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public void cleanup() {
-    accumUpdateSketch_ = null;
+    accumUnion_ = null;
   }
   
   //ALGEBRAIC INTERFACE
@@ -289,16 +285,28 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
   
   //TOP LEVEL PRIVATE STATIC METHODS
   
+  /**
+   * Return a new empty HeapUnion
+   * @param nomEntries the given nominal entries
+   * @param p the given probability p
+   * @param seed the given seed
+   * @return a new empty HeapUnion
+   */
+  private static final Union newUnion(int nomEntries, float p, long seed) {
+    return SetOperation.builder().
+        setSeed(seed).setP(p).setResizeFactor(RF).buildUnion(nomEntries);
+  }
+
   /*************************************************************************************************
-   * Updates a sketch with the data from the given bag.
+   * Updates a union with the data from the given bag.
    * 
    * @param bag A bag of tuples to insert.
-   * @param sketch The sketch to update
+   * @param union the union to update
    */
-  private static void updateSketch(DataBag bag, UpdateSketch sketch) {
+  private static void updateUnion(DataBag bag, Union union) {
     //Bag is not empty. process each innerTuple in the bag
     for (Tuple innerTuple : bag) {
-      Object f0 = extractFieldAtIndex(innerTuple, 0);
+      Object f0 = extractFieldAtIndex(innerTuple, 0); //consider only field 0
       if (f0 == null) {
         continue;
       }
@@ -306,45 +314,41 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
       if (type == null) {
         continue;
       }
-      // add only the first field of the innerTuple to the sketch
+      
       switch (type) {
+        case DataType.NULL:
+          break;
         case DataType.BYTE:
-          sketch.update(((Byte) f0).longValue());
+          union.update((byte) f0);
           break;
         case DataType.INTEGER:
-          sketch.update(((Integer) f0).longValue());
+          union.update((int) f0);
           break;
         case DataType.LONG:
-          sketch.update(((Long) f0).longValue());
+          union.update((long) f0);
           break;
         case DataType.FLOAT:
-          sketch.update(((Float) f0).doubleValue());
+          union.update((float) f0);
           break;
         case DataType.DOUBLE:
-          sketch.update(((Double) f0).doubleValue());
+          union.update((double) f0);
           break;
         case DataType.BYTEARRAY: {
           DataByteArray dba = (DataByteArray) f0;
-          if (dba.size() > 0) {
-            sketch.update(dba.get());
-          }
+          union.update(dba.get()); //checks null, empty
           break;
         }
         case DataType.CHARARRAY: {
-          String s = f0.toString();
-          if ( !s.isEmpty()) {
-            sketch.update(s);
-          }
+          union.update(f0.toString()); //checks null, empty
           break;
         }
-        default:
-          // type not handled by sketches
+        default: // types not handled
           throw new IllegalArgumentException("Field 0 of innerTuple must be one of "
               + "NULL, BYTE, INTEGER, LONG, FLOAT, DOUBLE, BYTEARRAY or CHARARRAY. "
               + "Given Type = " + DataType.findTypeName(type)
               + ", Object = " + f0.toString());
-      }
-    }
+      } //End switch
+    } //End for
   }
   
   //STATIC Initial Class only called by Pig
@@ -499,8 +503,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
-      UpdateSketch updateSketch = newUpdateSketch(myNomEntries_, myP_, mySeed_);
-      Union union = newUnion(myNomEntries_, (float) 1.0, mySeed_);
+      Union union = newUnion(myNomEntries_, myP_, mySeed_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) { //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_; //abort & return empty sketch
@@ -518,28 +521,25 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
           if (innerBag.size() == 0) continue;
           //If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
-          // will be passed into the sketch.
+          // will be passed into the union.
           //It is due to system bagged outputs from multiple mapper Initial functions.  
           //The Intermediate stage was bypassed.
-          updateSketch(innerBag, updateSketch); //process all tuples of innerBag
+          updateUnion(innerBag, union); //process all tuples of innerBag
           
         } 
         else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
-          //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch.
-          //It is due to system bagged outputs from multiple mapper Intermediate functions.
+          //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
+          // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
           DataByteArray dba = ((DataByteArray) f0);
-          Memory srcMem = new NativeMemory(dba.get());
-          Sketch sketch = Sketch.heapify(srcMem, mySeed_);
-          union.update(sketch);
+          union.update(new NativeMemory(dba.get()));
         
         } 
         else { // we should never get here.
           throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "
               + f0.getClass().getName());
         }
-      }
-      union.update(updateSketch);
+      } //End for
       CompactSketch compactSketch = union.getResult(true, null);
       return compactOrderedSketchToTuple(compactSketch);
     }

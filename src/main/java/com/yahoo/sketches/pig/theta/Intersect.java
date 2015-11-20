@@ -13,7 +13,7 @@ import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.newIntersection;
+import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -177,7 +177,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Intersection intersection = newIntersection(nomEntries_, p_, seed_);
+    Intersection intersection = SetOperation.builder().setP(p_).setSeed(seed_).
+        setResizeFactor(RF).buildIntersection(nomEntries_);
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
     
@@ -218,7 +219,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
     if (accumIntersection_ == null) { 
-      accumIntersection_ = newIntersection(nomEntries_, p_, seed_);
+      accumIntersection_ = SetOperation.builder().setP(p_).setSeed(seed_).
+          setResizeFactor(RF).buildIntersection(nomEntries_);
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
@@ -456,7 +458,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      Intersection intersection = newIntersection(myNomEntries_, myP_, mySeed_);
+      Intersection intersection = SetOperation.builder().setP(myP_).setSeed(mySeed_).
+          setResizeFactor(RF).buildIntersection(myNomEntries_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
