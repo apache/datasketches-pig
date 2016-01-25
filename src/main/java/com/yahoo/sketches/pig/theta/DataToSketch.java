@@ -117,9 +117,9 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
-    if (nomEntries < (1 << SetOperation.MIN_LG_NOM_LONGS)) {
+    if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
       throw new IllegalArgumentException("NomEntries too small: "+nomEntries+
-          ", required: "+(1 << SetOperation.MIN_LG_NOM_LONGS));
+          ", required: "+(1 << Util.MIN_LG_NOM_LONGS));
     }
   }
   

@@ -32,18 +32,6 @@ import com.yahoo.sketches.pig.theta.Intersect;
  */
 public class IntersectTest {
   
-  @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void checkConstructorExcep1() {
-    Intersect test = new Intersect("1023");
-  }
-  
-  @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void checkConstructorExcep2() {
-    Intersect test = new Intersect("8");
-  }
-  
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkGetValueExcep() {
     Intersect inter = new Intersect();
@@ -72,27 +60,20 @@ public class IntersectTest {
   @Test
   public void checkConstructors() {
     Intersect inter = new Intersect();
-    inter = new Intersect("1024");
-    inter = new Intersect("1024", "1.0");
-    inter = new Intersect("1024", "1.0", "9001");
-    inter = new Intersect(1024, (float) 1.0, 9001);
+    inter = new Intersect(9001);
     
     Intersect.Initial initial = new Intersect.Initial();
-    initial = new Intersect.Initial("1024");
-    initial = new Intersect.Initial("1024", "1.0");
-    initial = new Intersect.Initial("1024", "1.0", "9001");
+    initial = new Intersect.Initial("9001");
     
     Intersect.IntermediateFinal interFin = new Intersect.IntermediateFinal();
-    interFin = new Intersect.IntermediateFinal("1024");
-    interFin = new Intersect.IntermediateFinal("1024", "1.0");
-    interFin = new Intersect.IntermediateFinal("1024", "1.0", "9001");
-    interFin = new Intersect.IntermediateFinal(1024, (float) 1.0, 9001);
+    interFin = new Intersect.IntermediateFinal("9001");
+    interFin = new Intersect.IntermediateFinal(9001);
     inter.cleanup();
   }
   
   @Test
   public void checkNullInput() throws IOException {
-    EvalFunc<Tuple> interFunc = new Intersect(); //default 4096
+    EvalFunc<Tuple> interFunc = new Intersect();
     EvalFunc<Double> estFunc = new Estimate();
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     //null bag
@@ -107,7 +88,7 @@ public class IntersectTest {
   
   @Test
   public void checkExactTopExec() throws IOException {
-    EvalFunc<Tuple> interFunc = new Intersect(); //default 4096
+    EvalFunc<Tuple> interFunc = new Intersect();
     EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
@@ -133,7 +114,7 @@ public class IntersectTest {
   
   @Test(expectedExceptions = ClassCastException.class)
   public void checkBadClassCast() throws IOException {
-    Accumulator<Tuple> interFunc = new Intersect("256");
+    Accumulator<Tuple> interFunc = new Intersect();
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //valid size, but null
     
     inputTuple.set(0, new Double(1.0)); //wrong type. Cannot intersect datums.
@@ -142,7 +123,7 @@ public class IntersectTest {
   
   @Test
   public void checkNullEmptyAccumulator() throws IOException {
-    Accumulator<Tuple> interFunc = new Intersect("256");
+    Accumulator<Tuple> interFunc = new Intersect();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = null;
@@ -196,7 +177,7 @@ public class IntersectTest {
   
   @Test
   public void checkExactAccumulator() throws IOException {
-    Accumulator<Tuple> interFunc = new Intersect("256");
+    Accumulator<Tuple> interFunc = new Intersect();
     EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
@@ -227,7 +208,7 @@ public class IntersectTest {
   
   @Test
   public void checkExactAlgebraicInitial() throws IOException {
-    EvalFunc<Tuple> interFuncInit = new Intersect.Initial("256");
+    EvalFunc<Tuple> interFuncInit = new Intersect.Initial();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -246,7 +227,7 @@ public class IntersectTest {
   
   @Test
   public void checkAlgFinalFromPriorIntermed() throws IOException {
-    EvalFunc<Tuple> interFuncIFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncIFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -278,7 +259,7 @@ public class IntersectTest {
   
   @Test
   public void checkAlgFinalFromPriorInitial() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -315,7 +296,7 @@ public class IntersectTest {
   
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -335,7 +316,7 @@ public class IntersectTest {
   
   @Test(expectedExceptions = IllegalStateException.class)
   public void checkAlgFinalInnerBagEmpty() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -358,7 +339,7 @@ public class IntersectTest {
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkAlgFinalInnerNotDBA() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -381,7 +362,7 @@ public class IntersectTest {
   @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new Intersect("512");
+    EvalFunc<Tuple> udf = new Intersect();
     
     Schema inputSchema = null;
     

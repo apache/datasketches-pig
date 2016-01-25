@@ -27,6 +27,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
+import com.yahoo.sketches.Util;
 import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
@@ -124,9 +125,9 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
-    if (nomEntries < (1 << SetOperation.MIN_LG_NOM_LONGS)) {
+    if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
       throw new IllegalArgumentException("NomEntries too small: "+nomEntries+
-          ", required: "+(1 << SetOperation.MIN_LG_NOM_LONGS));
+          ", required: "+(1 << Util.MIN_LG_NOM_LONGS));
     }
   }
   

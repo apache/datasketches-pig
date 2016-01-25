@@ -4,16 +4,12 @@
  */
 package com.yahoo.sketches.pig.theta;
 
-import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
-import static com.yahoo.sketches.Util.checkIfPowerOf2;
-import static com.yahoo.sketches.Util.checkProbability;
 import static com.yahoo.sketches.pig.theta.PigUtil.compactOrderedSketchToTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -43,8 +39,6 @@ import com.yahoo.sketches.theta.Sketch;
 public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
   //All parameters kept at the class level must be final, except for the accumUpdateSketch.
-  private final int nomEntries_;
-  private final float p_;
   private final long seed_;
   private final Tuple emptyCompactOrderedSketchTuple_;
   private Intersection accumIntersection_;
@@ -54,77 +48,31 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   /**
    * Default constructor to make pig validation happy.  Assumes:
    * <ul>
-   * <li><a href="{@docRoot}/resources/dictionary.html#defaultNomEntries">See Default Nominal Entries</a></li>
-   * <li><i>p</i> = 1.0. <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, 
-   * <i>p</i></a>.</li>
    * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
    * </ul>
    */
   public Intersect() {
-    this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
-  }
-  
-  /**
-   * String constructor. Assumes:
-   * <ul>
-   * <li><i>p</i> = 1.0. <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, 
-   * <i>p</i></a></li>
-   * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
-   * </ul>
-   * 
-   * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
-   */
-  public Intersect(String nomEntriesStr) {
-    this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
-  }
-  
-  /**
-   * String constructor. Assumes:
-   * <ul>
-   * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
-   * </ul>
-   * 
-   * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
-   * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-   * This functionality is not implemented for SketchIntersections.
-   */
-  public Intersect(String nomEntriesStr, String pStr) {
-    this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), DEFAULT_UPDATE_SEED);
+    this(DEFAULT_UPDATE_SEED);
   }
   
   /**
    * Full string constructor.
    * 
-   * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-   * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>. 
-   * This functionality is not implemented for SketchIntersections.
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Intersect(String nomEntriesStr, String pStr, String seedStr) {
-    this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
+  public Intersect(String seedStr) {
+    this(Long.parseLong(seedStr));
   }
   
   /**
    * Base constructor.
    * 
-   * @param nomEntries <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-   * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-   * This functionality is not implemented for SketchIntersections.
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Intersect(int nomEntries, float p, long seed) {
+  public Intersect(long seed) {
     super();
-    this.nomEntries_ = nomEntries;
-    this.p_ = p;
     this.seed_ = seed;
     this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
-    //Catch these errors during construction, don't wait for the exec to be called.
-    checkIfPowerOf2(nomEntries, "nomEntries");
-    checkProbability(p, "p");
-    if (nomEntries < (1 << SetOperation.MIN_LG_NOM_LONGS)) {
-      throw new IllegalArgumentException("NomEntries too small: "+nomEntries+
-          ", required: "+(1 << SetOperation.MIN_LG_NOM_LONGS));
-    }
   }
   
   //@formatter:off
@@ -177,8 +125,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Intersection intersection = SetOperation.builder().setP(p_).setSeed(seed_).
-        setResizeFactor(RF).buildIntersection(nomEntries_);
+    Intersection intersection = SetOperation.builder().setSeed(seed_).buildIntersection();
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
     
@@ -219,8 +166,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
     if (accumIntersection_ == null) { 
-      accumIntersection_ = SetOperation.builder().setP(p_).setSeed(seed_).
-          setResizeFactor(RF).buildIntersection(nomEntries_);
+      accumIntersection_ = SetOperation.builder().setSeed(seed_).buildIntersection();
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
@@ -322,42 +268,16 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      * Default constructor to make pig validation happy.
      */
     public Initial() {
-      this(Integer.toString(DEFAULT_NOMINAL_ENTRIES), "1.0", 
-          Long.toString(DEFAULT_UPDATE_SEED));
+      this(Long.toString(DEFAULT_UPDATE_SEED));
     }    
     
     /**
      * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the 
      * same constructor arguments as the original UDF. In this case the arguments are ignored.
      * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     */
-    public Initial(String nomEntriesStr) {
-      this(nomEntriesStr, "1.0", Long.toString(DEFAULT_UPDATE_SEED));
-    }
-    
-    /**
-     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the 
-     * same constructor arguments as the original UDF. In this case the arguments are ignored.
-     * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * This functionality is not implemented for SketchIntersections.
-     */
-    public Initial(String nomEntriesStr, String pStr) {
-      this(nomEntriesStr, pStr, Long.toString(DEFAULT_UPDATE_SEED));
-    }
-    
-    /**
-     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the 
-     * same constructor arguments as the original UDF. In this case the arguments are ignored.
-     * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * This functionality is not implemented for SketchIntersections.
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public Initial(String nomEntriesStr, String pStr, String seedStr) {}
+    public Initial(String seedStr) {}
     
     @Override  //Initial exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
@@ -378,79 +298,36 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     //The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
     //The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
-    private final int myNomEntries_;
-    private final float myP_;
     private final long mySeed_;
     private final Tuple myEmptyCompactOrderedSketchTuple_;
     
     /**
      * Default constructor to make pig validation happy.  Assumes:
      * <ul>
-     * <li><a href="{@docRoot}/resources/dictionary.html#defaultNomEntries">See Default Nominal Entries</a></li>
-     * <li><i>p</i> = 1.0. <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, 
-     * <i>p</i></a>.</li>
      * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
      * </ul>
      */
     public IntermediateFinal() {
-      this(Integer.toString(DEFAULT_NOMINAL_ENTRIES), "1.0", 
-          Long.toString(DEFAULT_UPDATE_SEED));
-    }
-    
-    /**
-     * Constructor for the intermediate and final passes of an Algebraic function. Pig will call 
-     * this and pass the same constructor arguments as the base UDF.  Assumes:
-     * <ul>
-     * <li><i>p</i> = 1.0. <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, 
-     * <i>p</i></a>.</li>
-     * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
-     * </ul>
-     * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     */
-    public IntermediateFinal(String nomEntriesStr) {
-      this(nomEntriesStr, "1.0", Long.toString(DEFAULT_UPDATE_SEED));
-    }
-    
-    /**
-     * Constructor for the intermediate and final passes of an Algebraic function. Pig will call 
-     * this and pass the same constructor arguments as the base UDF.  Assumes:
-     * <ul>
-     * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
-     * </ul>
-     * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     */
-    public IntermediateFinal(String nomEntriesStr, String pStr) {
-      this(nomEntriesStr, pStr, Long.toString(DEFAULT_UPDATE_SEED));
+      this(DEFAULT_UPDATE_SEED);
     }
     
     /**
      * Constructor with strings for the intermediate and final passes of an Algebraic function. 
      * Pig will call this and pass the same constructor arguments as the original UDF.
      * 
-     * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * This functionality is not implemented for SketchIntersections.
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(String nomEntriesStr, String pStr, String seedStr) {
-      this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
+    public IntermediateFinal(String seedStr) {
+      this(Long.parseLong(seedStr));
     }
 
     /**
      * Constructor with primitives for the intermediate and final passes of an Algebraic function. 
      * Pig will call this and pass the same constructor arguments as the Top Level UDF.
      * 
-     * @param nomEntries <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
-     * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
-     * This functionality is not implemented for SketchIntersections.
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(int nomEntries, float p, long seed) {
-      this.myNomEntries_ = nomEntries;
-      this.myP_ = p;
+    public IntermediateFinal(long seed) {
       this.mySeed_ = seed;
       this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
@@ -458,8 +335,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      Intersection intersection = SetOperation.builder().setP(myP_).setSeed(mySeed_).
-          setResizeFactor(RF).buildIntersection(myNomEntries_);
+      Intersection intersection = SetOperation.builder().setSeed(mySeed_).buildIntersection();
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
