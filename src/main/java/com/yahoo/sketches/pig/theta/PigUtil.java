@@ -16,7 +16,7 @@ import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.Sketch;
 import com.yahoo.sketches.theta.UpdateSketch;
-import com.yahoo.sketches.theta.ResizeFactor;
+import com.yahoo.sketches.ResizeFactor;
 
 /**
  * Common methods for the pig classes.
