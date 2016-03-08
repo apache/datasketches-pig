@@ -18,10 +18,6 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 
-/**
- * This is a generic implementation to be specialized in concrete UDFs 
- * @param <S> Summary type
- */
 abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private int numValues_;
