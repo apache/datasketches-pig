@@ -18,10 +18,15 @@ import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 
 /**
- * This UDF converts a Sketch<DoubleSummary> to an estimate and an array of values
- * Result: (estimate:double, (value1, value2, ...))
+ * This UDF converts a Sketch<DoubleSummary> to estimates.
+ * The first estimate is the estimate of the number of unique
+ * keys in the original population.
+ * The second is the estimate of the sum of the parameter
+ * in the original population (sums of the values in the sketch
+ * scaled to the original population). This estimate assumes
+ * that the DoubleSummary was used in the Sum mode.
  */
-public class DoubleSummarySketchToResult extends EvalFunc<Tuple> {
+public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
   @Override
   public Tuple exec(Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
@@ -33,13 +38,12 @@ public class DoubleSummarySketchToResult extends EvalFunc<Tuple> {
 
     Tuple output = TupleFactory.getInstance().newTuple(2);
     output.set(0, sketch.getEstimate());
-    double[] values = new double[sketch.getRetainedEntries()];
+    double sum = 0;
     SketchIterator<DoubleSummary> it = sketch.iterator();
-    int i = 0;
     while (it.next()) {
-      values[i++] = it.getSummary().getValue();
+      sum += it.getSummary().getValue();
     }
-    output.set(1, Util.doubleArrayToTuple(values));
+    output.set(1, sum / sketch.getTheta());
 
     return output;
   }

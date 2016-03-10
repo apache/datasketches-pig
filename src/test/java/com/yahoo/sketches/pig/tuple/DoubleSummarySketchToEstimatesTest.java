@@ -4,8 +4,6 @@
  */
 package com.yahoo.sketches.pig.tuple;
 
-import java.util.Arrays;
-
 import org.testng.annotations.Test;
 import org.testng.Assert;
 import org.apache.pig.EvalFunc;
@@ -17,33 +15,31 @@ import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
-public class DoubleSummarySketchToResultTest {
+public class DoubleSummarySketchToEstimatesTest {
   @Test
   public void emptySketch() throws Exception {
-    EvalFunc<Tuple> func = new DoubleSummarySketchToResult();
+    EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
     UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()));
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 2);
-    Assert.assertEquals(resultTuple.get(0), 0.0); // estimate
-    Assert.assertEquals(((Tuple)resultTuple.get(1)).size(), 0);
+    Assert.assertEquals(resultTuple.get(0), 0.0);
+    Assert.assertEquals(resultTuple.get(0), 0.0);
   }
 
   @Test
   public void normalCase() throws Exception {
-    EvalFunc<Tuple> func = new DoubleSummarySketchToResult();
+    EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
     UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
-    sketch.update("a", 1.0);
-    sketch.update("b", 1.0);
-    sketch.update("a", 2.0);
-    sketch.update("b", 2.0);
+    int iterations = 100000;
+    for (int i = 0; i < iterations; i++) sketch.update(i, 1.0);
+    for (int i = 0; i < iterations; i++) sketch.update(i, 1.0);
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()));
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 2);
-    Assert.assertEquals(resultTuple.get(0), 2.0); // estimate
-    Assert.assertEquals(((Tuple)resultTuple.get(1)).size(), 2);
-    Assert.assertEquals(((Tuple)resultTuple.get(1)).getAll(), Arrays.asList(3.0, 3.0));
+    Assert.assertEquals((double) resultTuple.get(0), iterations, iterations * 0.03);
+    Assert.assertEquals((double) resultTuple.get(1), 2 * iterations, 2 * iterations * 0.03);
   }
 }
