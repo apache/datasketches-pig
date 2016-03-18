@@ -40,21 +40,4 @@ class SerializerDeserializer {
     byte[] bytes = ((DataByteArray) tuple.get(0)).get();
     return ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes));
   }
-
-  static Tuple serializeTupleSketchToTuple(Sketch<?> sketch) throws ExecException {
-    Tuple outputTuple = tupleFactory.newTuple(1);
-    outputTuple.set(0, new DataByteArray(sketch.toByteArray()));
-    return outputTuple;
-  }
-
-  static <S extends Summary> Sketch<S> deserializeTupleSketchFromTuple(Tuple tuple) throws ExecException {
-    DataByteArray sketchBytes = (DataByteArray) tuple.get(0);
-    if (sketchBytes == null) return null;
-    return Sketches.heapifySketch(new NativeMemory(sketchBytes.get()));
-  }
-
-  static <S extends Summary> Sketch<S> deserializeTupleSketchFromDataByteArray(DataByteArray sketchBytes) {
-    if (sketchBytes == null) return null;
-    return Sketches.heapifySketch(new NativeMemory(sketchBytes.get()));
-  }
 }
