@@ -9,6 +9,7 @@ import org.testng.Assert;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.DoubleSummary;
@@ -16,6 +17,20 @@ import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 public class DoubleSummarySketchToEstimatesTest {
+  @Test
+  public void nullInput() throws Exception {
+    EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void emptyInput() throws Exception {
+    EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
