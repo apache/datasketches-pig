@@ -9,11 +9,26 @@ import org.testng.Assert;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 public class ArrayOfDoublesSketchToEstimatesTest {
+  @Test
+  public void nullInput() throws Exception {
+    EvalFunc<Tuple> func = new ArrayOfDoublesSketchToEstimates();
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void emptyInput() throws Exception {
+    EvalFunc<Tuple> func = new ArrayOfDoublesSketchToEstimates();
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<Tuple> func = new ArrayOfDoublesSketchToEstimates();

@@ -57,14 +57,12 @@ abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
         // this is from a prior call to the initial function, so there is a nested bag.
         for (Tuple innerTuple: (DataBag) item) {
           ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
-          if (incomingSketch.isEmpty()) continue;
           union.update(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
         // Merge it with the current sketch.
         ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
-        if (incomingSketch.isEmpty()) continue;
         union.update(incomingSketch);
       } else {
         // we should never get here.

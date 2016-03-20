@@ -74,9 +74,6 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
         continue;
       }
       ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
-      if (incomingSketch.isEmpty()) {
-        continue;
-      }
       union_.update(incomingSketch);
     }
   }
