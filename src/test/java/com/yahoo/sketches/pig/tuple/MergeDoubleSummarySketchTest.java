@@ -12,6 +12,7 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.Sketches;
@@ -24,6 +25,20 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 import java.util.Random;
 
 public class MergeDoubleSummarySketchTest {
+  @Test
+  public void execNullInput() throws Exception {
+    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("32");
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void execEmptyInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("32");
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
   @Test
   public void exec() throws Exception {
     EvalFunc<Tuple> func = new MergeDoubleSummarySketch("4096");
@@ -78,6 +93,32 @@ public class MergeDoubleSummarySketchTest {
     for (DoubleSummary summary: sketch.getSummaries()) {
       Assert.assertEquals(summary.getValue(), 3.0, 0.0);
     }
+  }
+
+  @Test
+  public void accumulatorNullInput() throws Exception {
+    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    func.accumulate(null);
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptyInputTuple() throws Exception {
+    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    func.accumulate(TupleFactory.getInstance().newTuple());
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
   @Test
