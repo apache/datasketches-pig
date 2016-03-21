@@ -53,6 +53,34 @@ public class MergeDoubleSummarySketchTest {
   }
 
   @Test
+  public void execMaxMode() throws Exception {
+    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("4096", "Max");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    {
+      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      sketch.update(1, 1.0);
+      sketch.update(2, 1.0);
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
+    }
+    {
+      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      sketch.update(1, 3.0);
+      sketch.update(2, 3.0);
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
+    }
+    Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
+    for (DoubleSummary summary: sketch.getSummaries()) {
+      Assert.assertEquals(summary.getValue(), 3.0, 0.0);
+    }
+  }
+
+  @Test
   public void accumulator() throws Exception {
     Accumulator<Tuple> func = new MergeDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -101,8 +129,8 @@ public class MergeDoubleSummarySketchTest {
   }
 
   @Test
-  public void algebraicIntemediateFinalExact() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("4096");
+  public void algebraicIntemediateFinalExactMinMode() throws Exception {
+    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("4096", "Min");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     // this is to simulate the output from Initial
@@ -117,8 +145,8 @@ public class MergeDoubleSummarySketchTest {
     // this is to simulate the output from a prior call of IntermediateFinal
     {
       UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
-      sketch.update(1, 1.0);
-      sketch.update(2, 1.0);
+      sketch.update(1, 3.0);
+      sketch.update(2, 3.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
 
@@ -130,7 +158,7 @@ public class MergeDoubleSummarySketchTest {
     Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
     for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 2.0, 0.0);
+      Assert.assertEquals(summary.getValue(), 1.0, 0.0);
     }
   }
 
