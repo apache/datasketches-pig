@@ -54,6 +54,29 @@ public class DataToDoubleSummarySketchTest {
   }
 
   @Test
+  public void execMinMode() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32", "Min");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    bag.add(PigUtil.objectsToTuple("a", 1.0));
+    bag.add(PigUtil.objectsToTuple("b", 2.0));
+    bag.add(PigUtil.objectsToTuple("a", 2.0));
+    bag.add(PigUtil.objectsToTuple("b", 1.0));
+
+    Tuple inputTuple = PigUtil.objectsToTuple(bag);
+    Tuple resultTuple = func.exec(inputTuple);
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
+
+    for (DoubleSummary summary: sketch.getSummaries()) {
+      Assert.assertEquals(summary.getValue(), 1.0);
+    }
+  }
+
+  @Test
   public void accumulator() throws Exception {
     Accumulator<Tuple> func = new DataToDoubleSummarySketch("32");
 
@@ -145,15 +168,18 @@ public class DataToDoubleSummarySketchTest {
   }
 
   @Test
-  public void execMinMode() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("4", "Min");
+  public void algebraicIntermediateFinalMaxMode() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch.IntermediateFinal("32", "Max");
+    Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
-    bag.add(PigUtil.objectsToTuple("a", 1.0));
-    bag.add(PigUtil.objectsToTuple("b", 2.0));
-    bag.add(PigUtil.objectsToTuple("a", 2.0));
-    bag.add(PigUtil.objectsToTuple("b", 1.0));
+    inputTuple.set(0, bag);
 
-    Tuple inputTuple = PigUtil.objectsToTuple(bag);
+    // this is to simulate the output from Initial
+    bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("a", 1.0))));
+    bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("b", 1.0))));
+    bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("a", 2.0))));
+    bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("b", 2.0))));
+
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
@@ -163,7 +189,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 1.0);
+      Assert.assertEquals(summary.getValue(), 2.0);
     }
   }
 }
