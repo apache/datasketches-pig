@@ -52,6 +52,21 @@ public class DataToArrayOfDoublesSketchTest {
   }
 
   @Test
+  public void execWithSampling() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("1024", "0.5", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    int uniques = 10000;
+    for (int i = 0; i < uniques; i++) bag.add(PigUtil.objectsToTuple(i, 1.0));
+    Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
+  }
+
+  @Test
   public void accumulator() throws Exception {
     Accumulator<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
 
@@ -141,5 +156,22 @@ public class DataToArrayOfDoublesSketchTest {
     for (double[] values: sketch.getValues()) {
       Assert.assertEquals(values[0], 3.0);
     }
+  }
+
+  @Test
+  public void algebraicIntermediateFinalWithSampling() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.IntermediateFinal("1024", "0.5", "1");
+
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    int uniques = 10000;
+    for (int i = 0; i < uniques; i++) bag.add(PigUtil.objectsToTuple(i, 1.0));
+
+    Tuple resultTuple = func.exec(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple(bag))));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
   }
 }
