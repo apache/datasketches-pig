@@ -64,7 +64,7 @@ abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements
       return;
     }
     DataBag bag = (DataBag) inputTuple.get(0);
-    if ((bag == null) || (bag.size() == 0)) {
+    if (bag.size() == 0) {
       return;
     }
   
@@ -77,9 +77,6 @@ abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements
         continue;
       }
       Sketch<S> incomingSketch = SerializerDeserializer.deserializeSketchFromTuple(innerTuple);
-      if (incomingSketch.isEmpty()) {
-        continue;
-      }
       union_.update(incomingSketch);
     }
   }
