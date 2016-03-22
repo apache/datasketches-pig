@@ -69,7 +69,7 @@ abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<T
     }
     Tuple outputTuple;
     try {
-      outputTuple = SerializerDeserializer.serializeSketchToTuple(accumSketch_.compact());
+      outputTuple = Util.serializeSketchToTuple(accumSketch_.compact());
     } catch (ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }

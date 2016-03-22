@@ -56,13 +56,13 @@ abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
       if (item instanceof DataBag) {
         // this is from a prior call to the initial function, so there is a nested bag.
         for (Tuple innerTuple: (DataBag) item) {
-          ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
+          ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
           union.update(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
         // Merge it with the current sketch.
-        ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
+        ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
         union.update(incomingSketch);
       } else {
         // we should never get here.
@@ -70,6 +70,6 @@ abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
       }
     }
     ArrayOfDoublesSketch result = union.getResult();
-    return SerializerDeserializer.serializeArrayOfDoublesSketchToTuple(result);
+    return Util.serializeArrayOfDoublesSketchToTuple(result);
   }
 }

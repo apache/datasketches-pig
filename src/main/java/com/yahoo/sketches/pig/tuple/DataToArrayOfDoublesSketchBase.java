@@ -62,7 +62,7 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     }
     Tuple outputTuple;
     try {
-      outputTuple = SerializerDeserializer.serializeArrayOfDoublesSketchToTuple(accumSketch_.compact());
+      outputTuple = Util.serializeArrayOfDoublesSketchToTuple(accumSketch_.compact());
     } catch (ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }

@@ -76,7 +76,7 @@ abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements
       if ((sz != 1) || (innerTuple.get(0) == null)) {
         continue;
       }
-      Sketch<S> incomingSketch = SerializerDeserializer.deserializeSketchFromTuple(innerTuple);
+      Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple);
       union_.update(incomingSketch);
     }
   }
@@ -85,7 +85,7 @@ abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements
   public Tuple getValue() {
     if (union_ == null) { //return an empty sketch
       try {
-        return SerializerDeserializer.serializeSketchToTuple(Sketches.createEmptySketch());
+        return Util.serializeSketchToTuple(Sketches.createEmptySketch());
       } catch (ExecException ex) {
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }
@@ -93,7 +93,7 @@ abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements
   
     try {
       Sketch<S> result = union_.getResult();
-      return SerializerDeserializer.serializeSketchToTuple(result);
+      return Util.serializeSketchToTuple(result);
     } catch (ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }
