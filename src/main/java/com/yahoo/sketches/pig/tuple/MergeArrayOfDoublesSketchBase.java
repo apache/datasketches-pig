@@ -61,7 +61,7 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       return;
     }
     DataBag bag = (DataBag) inputTuple.get(0);
-    if ((bag == null) || (bag.size() == 0)) {
+    if (bag.size() == 0) {
       return;
     }
   

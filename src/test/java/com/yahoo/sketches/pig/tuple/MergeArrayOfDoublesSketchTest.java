@@ -92,6 +92,50 @@ public class MergeArrayOfDoublesSketchTest {
   }
 
   @Test
+  public void accumulatorNotABag() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple((Object) null));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptyBag() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag()));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptySketch() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    {
+      ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
+    }
+    func.accumulate(PigUtil.objectsToTuple(bag));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
   public void accumulator() throws Exception {
     Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
