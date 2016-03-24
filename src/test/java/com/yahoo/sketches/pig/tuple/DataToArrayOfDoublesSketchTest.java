@@ -22,6 +22,51 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 public class DataToArrayOfDoublesSketchTest {
   @Test
+  public void execNullInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void execEmptyInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void execEmptyBag() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    Tuple inputTuple = PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag());
+    Tuple resultTuple = func.exec(inputTuple);
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void execWrongSizeOfInnerTuple() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    bag.add(PigUtil.objectsToTuple(1));
+    Tuple inputTuple = PigUtil.objectsToTuple(bag);
+    func.exec(inputTuple);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void execWrongKeyType() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    bag.add(PigUtil.objectsToTuple(new Object(), 1.0)); // Object in place of key is not supported
+    Tuple inputTuple = PigUtil.objectsToTuple(bag);
+    func.exec(inputTuple);
+  }
+
+  @Test
   public void execAllInputTypes() throws Exception {
     EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
