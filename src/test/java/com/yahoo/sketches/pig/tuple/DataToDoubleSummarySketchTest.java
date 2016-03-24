@@ -24,6 +24,20 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 public class DataToDoubleSummarySketchTest {
   @Test
+  public void execNullInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void execEmptyInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
   public void execAllInputTypes() throws Exception {
     EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
