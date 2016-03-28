@@ -61,7 +61,7 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       return;
     }
     DataBag bag = (DataBag) inputTuple.get(0);
-    if ((bag == null) || (bag.size() == 0)) {
+    if (bag.size() == 0) {
       return;
     }
   
@@ -73,7 +73,7 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       if ((sz != 1) || (innerTuple.get(0) == null)) {
         continue;
       }
-      ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
+      ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
       union_.update(incomingSketch);
     }
   }
@@ -82,7 +82,7 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   public Tuple getValue() {
     if (union_ == null) { //return an empty sketch
       try {
-        return SerializerDeserializer.serializeArrayOfDoublesSketchToTuple(EMPTY_SKETCH);
+        return Util.serializeArrayOfDoublesSketchToTuple(EMPTY_SKETCH);
       } catch (ExecException ex) {
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }
@@ -90,7 +90,7 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   
     try {
       ArrayOfDoublesSketch result = union_.getResult();
-      return SerializerDeserializer.serializeArrayOfDoublesSketchToTuple(result);
+      return Util.serializeArrayOfDoublesSketchToTuple(result);
     } catch (ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }

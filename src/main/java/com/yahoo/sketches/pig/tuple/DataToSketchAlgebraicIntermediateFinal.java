@@ -74,7 +74,7 @@ abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSumm
         // This is a sketch from a prior call to the 
         // Intermediate function. merge it with the 
         // current sketch.
-        Sketch<S> incomingSketch = SerializerDeserializer.deserializeSketchFromTuple(dataTuple);
+        Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
         if (incomingSketch.isEmpty()) continue;
         union.update(incomingSketch);
       } else {
@@ -83,6 +83,6 @@ abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSumm
       }
     }
     if (sketch != null) union.update(sketch);
-    return SerializerDeserializer.serializeSketchToTuple(union.getResult());
+    return Util.serializeSketchToTuple(union.getResult());
   }
 }

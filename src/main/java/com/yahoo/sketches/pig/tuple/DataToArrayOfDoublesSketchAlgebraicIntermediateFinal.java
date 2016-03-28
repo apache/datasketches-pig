@@ -71,7 +71,7 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
         // This is a sketch from a prior call to the 
         // Intermediate function. merge it with the 
         // current sketch.
-        ArrayOfDoublesSketch incomingSketch = SerializerDeserializer.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
+        ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
         if (incomingSketch.isEmpty()) continue;
         union.update(incomingSketch);
       } else {
@@ -80,6 +80,6 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
       }
     }
     if (sketch != null) union.update(sketch);
-    return SerializerDeserializer.serializeArrayOfDoublesSketchToTuple(union.getResult());
+    return Util.serializeArrayOfDoublesSketchToTuple(union.getResult());
   }
 }

@@ -12,6 +12,7 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
@@ -22,6 +23,20 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import java.util.Random;
 
 public class MergeArrayOfDoublesSketchTest {
+  @Test
+  public void execNullInput() throws Exception {
+    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Tuple resultTuple = func.exec(null);
+    Assert.assertNull(resultTuple);
+  }
+
+  @Test
+  public void execEmptyInputTuple() throws Exception {
+    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
+    Assert.assertNull(resultTuple);
+  }
+
   @Test
   public void exec() throws Exception {
     EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
@@ -48,6 +63,102 @@ public class MergeArrayOfDoublesSketchTest {
     for (double[] values: sketch.getValues()) {
       Assert.assertEquals(values[0], 2.0, 0.0);
     }
+  }
+
+  @Test
+  public void accumulatorNullInput() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(null);
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptyInputTuple() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(TupleFactory.getInstance().newTuple());
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorNotABag() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple((Object) null));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptyBag() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag()));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptyInnerTuple() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(TupleFactory.getInstance().newTuple())));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorNullSketch() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple((Object) null))));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
+  }
+
+  @Test
+  public void accumulatorEmptySketch() throws Exception {
+    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    {
+      ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
+    }
+    func.accumulate(PigUtil.objectsToTuple(bag));
+    Tuple resultTuple = func.getValue();
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    Assert.assertTrue(bytes.size() > 0);
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
   @Test
