@@ -481,6 +481,37 @@ public class DataToSketchTest {
   }
   
   @Test
+  public void checkSmall() throws IOException {
+    EvalFunc<Tuple> func = new DataToSketch("32");
+
+    Tuple inputTuple = null;
+    Tuple resultTuple = func.exec(inputTuple);
+    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    
+    assertTrue(sketch.isEmpty());
+    
+    inputTuple = TupleFactory.getInstance().newTuple(1);
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    inputTuple.set(0, bag);
+
+    int u = 32;
+    for (int ii = 0; ii < u; ii++ ) {
+      Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
+      dataTuple.set(0, ii);
+
+      bag.add(dataTuple);
+    }
+
+    resultTuple = func.exec(inputTuple);
+    assertNotNull(resultTuple);
+    assertEquals(resultTuple.size(), 1);
+    DataByteArray bytes = (DataByteArray) resultTuple.get(0);
+    assertTrue(bytes.size() > 0);
+    sketch = tupleToSketch(resultTuple, seed_);
+    assertEquals(sketch.getEstimate(), u, 0.0);
+  }
+  
+  @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
