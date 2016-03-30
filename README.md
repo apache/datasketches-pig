@@ -2,7 +2,7 @@
 
 =================
 
-#Sketch Adaptors for Pig 
+#Sketch UDFs for Pig 
 Depends on sketches-core, which is included in the sketches-pig-X.Y.Z.jar
 
 [travis]:https://travis-ci.org//DataSketches/sketches-pig/builds?branch=master
