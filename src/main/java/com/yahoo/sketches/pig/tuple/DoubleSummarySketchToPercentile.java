@@ -20,7 +20,7 @@ import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 
 /**
- * This UDF is to get a percentile value from a Sketch<DoubleSummary>.
+ * This UDF is to get a percentile value from a Sketch&lt;DoubleSummary&gt;.
  * The values from DoubleSummary objects in the sketch are extracted,
  * and a single value with the given rank is returned. The rank is in
  * percent. For example, 50th percentile is the median value of the

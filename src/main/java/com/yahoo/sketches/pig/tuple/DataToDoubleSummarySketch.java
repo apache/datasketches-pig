@@ -10,7 +10,7 @@ import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 
 /**
- * This UDF creates a Sketch<DoubleSummary> from raw data.
+ * This UDF creates a Sketch&lt;DoubleSummary&gt; from raw data.
  * It supports all three ways: exec(), Accumulator and Algebraic.
  */
 public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummary> implements Algebraic {

@@ -18,7 +18,7 @@ import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 
 /**
- * This UDF converts a Sketch<DoubleSummary> to estimates.
+ * This UDF converts a Sketch&lt;DoubleSummary&gt; to estimates.
  * The first estimate is the estimate of the number of unique
  * keys in the original population.
  * The second is the estimate of the sum of the parameter
