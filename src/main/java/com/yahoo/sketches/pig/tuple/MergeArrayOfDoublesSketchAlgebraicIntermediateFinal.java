@@ -20,13 +20,8 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
  * This is to calculate the intermediate pass (combiner) or the final pass
  * (reducer) of an Algebraic sketch operation. This may be called multiple times
  * (from the mapper and from the reducer). It will receive a bag of values
- * returned by either the Intermediate stage or the {@link Initial} stages, so
+ * returned by either the Intermediate or the Initial stages, so
  * it needs to be able to differentiate between and interpret both types.
- *
- * <p>
- * The basic algorithm here is to leverage the Accumulate Union methods of the
- * {@link SetOperations} class.
- *
  */
 abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalFunc<Tuple> {
   private int sketchSize_;

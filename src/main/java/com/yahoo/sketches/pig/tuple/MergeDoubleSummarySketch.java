@@ -10,7 +10,7 @@ import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 
 /**
- * This is to merge Sketch<DoubleSummary>.
+ * This is to merge Sketch&lt;DoubleSummary&gt;.
  * It supports all three ways: exec(), Accumulator and Algebraic
  */
 public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> implements Algebraic {
