@@ -72,7 +72,6 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
         // Intermediate function. merge it with the 
         // current sketch.
         ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
-        if (incomingSketch.isEmpty()) continue;
         union.update(incomingSketch);
       } else {
         // we should never get here.
