@@ -75,7 +75,6 @@ abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSumm
         // Intermediate function. merge it with the 
         // current sketch.
         Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
-        if (incomingSketch.isEmpty()) continue;
         union.update(incomingSketch);
       } else {
         // we should never get here.
