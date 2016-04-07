@@ -301,7 +301,6 @@ public class MergeDoubleSummarySketchTest {
     Assert.assertTrue(bytes.size() > 0);
     Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 40000.0, 40000.0 * 0.01);
-    Assert.assertTrue(sketch.getRetainedEntries() > 16384);
     for (DoubleSummary summary: sketch.getSummaries()) {
       Assert.assertEquals(summary.getValue(), 1.0, 0.0);
     }
@@ -327,7 +326,6 @@ public class MergeDoubleSummarySketchTest {
     Assert.assertTrue(bytes.size() > 0);
     Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 10000.0, 10000.0 * 0.02);
-    Assert.assertTrue(sketch.getRetainedEntries() > 1024);
     for (DoubleSummary summary: sketch.getSummaries()) {
       Assert.assertEquals(summary.getValue(), 1.0, 0.0);
     }
@@ -404,7 +402,6 @@ public class MergeDoubleSummarySketchTest {
     Assert.assertTrue(bytes.size() > 0);
     Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
-    Assert.assertTrue(sketch.getRetainedEntries() > 16384);
     double sum = 0;
     for (DoubleSummary summary: sketch.getSummaries()) {
       sum += summary.getValue();
