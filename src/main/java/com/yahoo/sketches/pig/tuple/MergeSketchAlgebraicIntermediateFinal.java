@@ -26,14 +26,14 @@ import com.yahoo.sketches.tuple.SummaryFactory;
  * 
  * @param <S> Type of Summary
  */
-abstract class MergeSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
+public abstract class MergeSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
   private int sketchSize_;
   private SummaryFactory<S> summaryFactory_;
   private boolean isFirstCall_ = true;
 
-  MergeSketchAlgebraicIntermediateFinal() {}
+  public MergeSketchAlgebraicIntermediateFinal() {}
 
-  MergeSketchAlgebraicIntermediateFinal(int sketchSize, SummaryFactory<S> summaryFactory) {
+  public MergeSketchAlgebraicIntermediateFinal(int sketchSize, SummaryFactory<S> summaryFactory) {
     this.sketchSize_ = sketchSize;
     this.summaryFactory_ = summaryFactory;
   }
