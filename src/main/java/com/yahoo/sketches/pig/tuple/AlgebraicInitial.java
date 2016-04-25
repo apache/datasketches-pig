@@ -13,7 +13,7 @@ import org.apache.pig.data.Tuple;
 /**
  * This is a common pass-through implementation for initial step of an Algebraic operation  
  */
-abstract class AlgebraicInitial extends EvalFunc<Tuple> {
+public abstract class AlgebraicInitial extends EvalFunc<Tuple> {
   @Override
   public Tuple exec(Tuple inputTuple) throws IOException {
     DataBag bag = (DataBag) inputTuple.get(0);

@@ -28,7 +28,7 @@ import com.yahoo.sketches.tuple.SummaryFactory;
  * @param <U> Type of the update value
  * @param <S> Type of the summary
  */
-abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> {
+public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> {
   private int sketchSize_;
   private float samplingProbability_;
   private SummaryFactory<S> summaryFactory_;
@@ -37,13 +37,13 @@ abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSumm
   /**
    * Default constructor to make pig validation happy.
    */
-  DataToSketchAlgebraicIntermediateFinal() {}
+  public DataToSketchAlgebraicIntermediateFinal() {}
   
-  DataToSketchAlgebraicIntermediateFinal(int sketchSize, SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(int sketchSize, SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
   
-  DataToSketchAlgebraicIntermediateFinal(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
     this.sketchSize_ = sketchSize;
     this.samplingProbability_ = samplingProbability;
     this.summaryFactory_ = summaryFactory;

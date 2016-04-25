@@ -25,18 +25,18 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
  * @param <U> Update type
  * @param <S> Summary type
  */
-abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
+public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private float samplingProbability_;
   private SummaryFactory<S> summaryFactory_;
   private UpdatableSketch<U, S> accumSketch_;
   private boolean isFirstCall_ = true;
 
-  DataToSketch(int sketchSize, SummaryFactory<S> summaryFactory) {
+  public DataToSketch(int sketchSize, SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
 
-  DataToSketch(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
+  public DataToSketch(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
     super();
     this.sketchSize_ = sketchSize;
     this.samplingProbability_ = samplingProbability; 
