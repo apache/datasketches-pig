@@ -34,7 +34,7 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
 
     DataByteArray dba = (DataByteArray) input.get(0);
     final FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(dba.get()), new ArrayOfStringsSerDe());
-    FrequentItemsSketch<String>.Row[] result = sketch.getFrequentItems(ErrorType.NO_FALSE_POSITIVES);
+    final FrequentItemsSketch<String>.Row[] result = sketch.getFrequentItems(ErrorType.NO_FALSE_POSITIVES);
 
     final DataBag bag = BagFactory.getInstance().newDefaultBag();
     for (int i = 0; i < result.length; i++) {
@@ -49,14 +49,14 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
   }
 
   @Override
-  public Schema outputSchema(Schema inputSchema) {
-    Schema tupleSchema = new Schema();
+  public Schema outputSchema(final Schema inputSchema) {
+    final Schema tupleSchema = new Schema();
     tupleSchema.add(new Schema.FieldSchema("item", DataType.CHARARRAY));
     tupleSchema.add(new Schema.FieldSchema("estimate", DataType.LONG));
     tupleSchema.add(new Schema.FieldSchema("upper_bound", DataType.LONG));
     tupleSchema.add(new Schema.FieldSchema("lower_bound", DataType.LONG));
     try {
-      Schema bagSchema = new Schema(new Schema.FieldSchema("item_tuple", tupleSchema, DataType.TUPLE));
+      final Schema bagSchema = new Schema(new Schema.FieldSchema("item_tuple", tupleSchema, DataType.TUPLE));
       return new Schema(new Schema.FieldSchema("bag_of_item_tuples", bagSchema, DataType.BAG));
     } catch (FrontendException e) {
       throw new RuntimeException(e);
