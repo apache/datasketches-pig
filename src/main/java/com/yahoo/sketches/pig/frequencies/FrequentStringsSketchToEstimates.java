@@ -10,8 +10,11 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.logicalLayer.FrontendException;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
 import com.yahoo.sketches.frequencies.ErrorType;
@@ -43,5 +46,16 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
       bag.add(tuple);
     }
     return bag;
+  }
+
+  @Override
+  public Schema outputSchema(Schema inputSchema) {
+    Schema tupleSchema = new Schema(new Schema.FieldSchema("sample_id", DataType.CHARARRAY));
+    try {
+      Schema bagSchema = new Schema(new Schema.FieldSchema("sample_id_tuple", tupleSchema, DataType.TUPLE));
+      return new Schema(new Schema.FieldSchema("bag_of_sample_id_tuples", bagSchema, DataType.BAG));
+    } catch (FrontendException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
