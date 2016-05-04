@@ -9,7 +9,7 @@ import org.apache.pig.Algebraic;
 import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
 
 /**
- * This is to merge Sketch&lt;DoubleSummary&gt;.
+ * This is to merge FrequentItemsSketch&lt;String&gt;.
  * It supports all three ways: exec(), Accumulator and Algebraic
  */
 public class MergeFrequentStringsSketch extends MergeFrequentItemsSketch<String> implements Algebraic {

@@ -20,7 +20,7 @@ import com.yahoo.sketches.memory.NativeMemory;
 
 /**
  * This UDF converts a FrequentItemsSketch&lt;String&gt; to estimates:
- * ((item, estimate, upper bound, lower bound), ...)
+ * {(item, estimate, upper bound, lower bound), ...}
  */
 public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
   @Override
