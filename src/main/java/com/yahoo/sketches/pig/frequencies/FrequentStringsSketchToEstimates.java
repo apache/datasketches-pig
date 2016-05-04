@@ -50,10 +50,14 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
 
   @Override
   public Schema outputSchema(Schema inputSchema) {
-    Schema tupleSchema = new Schema(new Schema.FieldSchema("sample_id", DataType.CHARARRAY));
+    Schema tupleSchema = new Schema();
+    tupleSchema.add(new Schema.FieldSchema("item", DataType.CHARARRAY));
+    tupleSchema.add(new Schema.FieldSchema("estimate", DataType.LONG));
+    tupleSchema.add(new Schema.FieldSchema("upper_bound", DataType.LONG));
+    tupleSchema.add(new Schema.FieldSchema("lower_bound", DataType.LONG));
     try {
-      Schema bagSchema = new Schema(new Schema.FieldSchema("sample_id_tuple", tupleSchema, DataType.TUPLE));
-      return new Schema(new Schema.FieldSchema("bag_of_sample_id_tuples", bagSchema, DataType.BAG));
+      Schema bagSchema = new Schema(new Schema.FieldSchema("item_tuple", tupleSchema, DataType.TUPLE));
+      return new Schema(new Schema.FieldSchema("bag_of_item_tuples", bagSchema, DataType.BAG));
     } catch (FrontendException e) {
       throw new RuntimeException(e);
     }
