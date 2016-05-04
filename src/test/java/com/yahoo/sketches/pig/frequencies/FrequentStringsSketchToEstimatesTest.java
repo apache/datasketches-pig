@@ -5,8 +5,11 @@ import java.util.Iterator;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -65,5 +68,21 @@ public class FrequentStringsSketchToEstimatesTest {
     Assert.assertEquals((long)tuple2.get(1), 1L);
     Assert.assertEquals((long)tuple2.get(2), 1L);
     Assert.assertEquals((long)tuple2.get(3), 1L);
+  }
+
+  @Test
+  public void schema() throws Exception {
+    EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
+    Schema schema = func.outputSchema(null);
+    Assert.assertNotNull(schema);
+    Assert.assertEquals(schema.size(), 1);
+    Assert.assertEquals(schema.getField(0).type, DataType.BAG);
+    Assert.assertEquals(schema.getField(0).schema.size(), 1);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).type, DataType.TUPLE);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).schema.size(), 4);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).schema.getField(0).type, DataType.CHARARRAY);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).schema.getField(1).type, DataType.LONG);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).schema.getField(2).type, DataType.LONG);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).schema.getField(3).type, DataType.LONG);
   }
 }
