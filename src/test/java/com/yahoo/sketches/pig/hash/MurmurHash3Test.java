@@ -238,7 +238,7 @@ public class MurmurHash3Test {
   
   /**
    * Test the outputSchema method for MurmurHash3.
-   * @throws IOException 
+   * @throws IOException thrown by Pig
    */
   @SuppressWarnings("null")
   @Test

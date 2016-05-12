@@ -23,7 +23,7 @@ public class PigTestingUtil {
    * Returns a tuple constructed from the given array of objects.
    * 
    * @param in Array of objects.
-   * @throws ExecException
+   * @throws ExecException this is thrown by Pig
    * @return tuple
    */
   public static Tuple createTupleFromArray(Object[] in) throws ExecException {
