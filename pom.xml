@@ -146,6 +146,8 @@
                   </excludes>
                 </relocation>
               </relocations>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>with-shaded-core</shadedClassifierName>
             </configuration>
           </execution>
         </executions>
