@@ -43,7 +43,7 @@ public class FrequentStringsSketchToEstimatesTest {
   }
 
   @Test
-  public void normalCase() throws Exception {
+  public void exact() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
     FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
     sketch.update("a");
@@ -68,6 +68,34 @@ public class FrequentStringsSketchToEstimatesTest {
     Assert.assertEquals((long)tuple2.get(1), 1L);
     Assert.assertEquals((long)tuple2.get(2), 1L);
     Assert.assertEquals((long)tuple2.get(3), 1L);
+  }
+
+  @Test
+  public void estimation() throws Exception {
+    FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+    sketch.update("1", 1000);
+    sketch.update("2", 500);
+    sketch.update("3", 200);
+    sketch.update("4", 100);
+    sketch.update("5", 50);
+    sketch.update("6", 20);
+    sketch.update("7", 10);
+    sketch.update("8", 5);
+    sketch.update("9", 2);
+    sketch.update("10");
+    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe())));
+
+    EvalFunc<DataBag> func1 = new FrequentStringsSketchToEstimates("NO_FALSE_POSITIVES");
+    DataBag bag1 = func1.exec(inputTuple);
+    Assert.assertNotNull(bag1);
+    Assert.assertTrue(bag1.size() < 10);
+
+    EvalFunc<DataBag> func2 = new FrequentStringsSketchToEstimates("NO_FALSE_NEGATIVES");
+    DataBag bag2 = func2.exec(inputTuple);
+    Assert.assertNotNull(bag2);
+    Assert.assertTrue(bag2.size() < 10);
+
+    Assert.assertTrue(bag1.size() < bag2.size());
   }
 
   @Test
