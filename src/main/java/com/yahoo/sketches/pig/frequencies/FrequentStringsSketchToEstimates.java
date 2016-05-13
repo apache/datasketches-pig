@@ -26,15 +26,33 @@ import com.yahoo.sketches.memory.NativeMemory;
  * {(item, estimate, upper bound, lower bound), ...}
  */
 public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
+
+  private final ErrorType errorType;
+
+  /**
+   * Instantiate UDF with default error type
+   */
+  public FrequentStringsSketchToEstimates() {
+    this.errorType = ErrorType.NO_FALSE_POSITIVES;
+  }
+
+  /**
+   * Instantiate UDF with given error type
+   * @param errorType string representation of error type
+   */
+  public FrequentStringsSketchToEstimates(final String errorType) {
+    this.errorType = ErrorType.valueOf(errorType);
+  }
+
   @Override
   public DataBag exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
       return null;
     }
 
-    DataByteArray dba = (DataByteArray) input.get(0);
+    final DataByteArray dba = (DataByteArray) input.get(0);
     final FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(dba.get()), new ArrayOfStringsSerDe());
-    final FrequentItemsSketch<String>.Row[] result = sketch.getFrequentItems(ErrorType.NO_FALSE_POSITIVES);
+    final FrequentItemsSketch<String>.Row[] result = sketch.getFrequentItems(this.errorType);
 
     final DataBag bag = BagFactory.getInstance().newDefaultBag();
     for (int i = 0; i < result.length; i++) {
