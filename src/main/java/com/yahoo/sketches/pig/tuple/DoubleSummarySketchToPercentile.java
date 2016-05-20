@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.QuantilesSketch;
@@ -27,12 +26,12 @@ import com.yahoo.sketches.tuple.Sketches;
  * distribution (the number separating the higher half of a probability
  * distribution from the lower half).
  */
-public class DoubleSummarySketchToPercentile extends EvalFunc<Tuple> {
+public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
 
   private static final int QUANTILES_SKETCH_SIZE = 1024;
 
   @Override
-  public Tuple exec(Tuple input) throws IOException {
+  public Double exec(Tuple input) throws IOException {
     if (input.size() != 2) throw new IllegalArgumentException("expected two inputs: sketch and pecentile");
 
     DataByteArray dba = (DataByteArray) input.get(0);
@@ -46,9 +45,7 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Tuple> {
     while (it.next()) {
       qs.update(it.getSummary().getValue());
     }
-    Tuple output = TupleFactory.getInstance().newTuple(1);
-    output.set(0, qs.getQuantile(percentile / 100));
-    return output;
+    return qs.getQuantile(percentile / 100);
   }
 
 }
