@@ -18,6 +18,7 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.memory.NativeMemory;
+import com.yahoo.sketches.quantiles.QuantilesSketch;
 import com.yahoo.sketches.quantiles.Union;
 import com.yahoo.sketches.quantiles.UnionBuilder;
 
@@ -125,12 +126,15 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
   @Override // TOP LEVEL EXEC
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
-    final Union union = unionBuilder_.build();
     if (inputTuple != null && inputTuple.size() > 0) {
+      final Union union = unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) union.update((Double) innerTuple.get(0));
+      final QuantilesSketch resultSketch = union.getResultAndReset();
+      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
     }
-    return tupleFactory_.newTuple(new DataByteArray(union.getResultAndReset().toByteArray()));
+    // return empty sketch
+    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
   }
 
   @Override
@@ -176,8 +180,12 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public Tuple getValue() {
-    final Union union = accumUnion_ == null ? unionBuilder_.build() : accumUnion_;
-    return tupleFactory_.newTuple(new DataByteArray(union.getResultAndReset().toByteArray()));
+    if (accumUnion_ != null) {
+      final QuantilesSketch resultSketch = accumUnion_.getResultAndReset();
+      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+    }
+    // return empty sketch
+    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
   }
 
   /**
@@ -283,8 +291,8 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
 
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
-      final Union union = unionBuilder_.build();
-      if (inputTuple != null && inputTuple.size() != 0) {
+      if (inputTuple != null && inputTuple.size() > 0) {
+        final Union union = unionBuilder_.build();
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
@@ -308,8 +316,11 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
                 + f0.getClass().getName());
           }
         }
+        final QuantilesSketch resultSketch = union.getResultAndReset();
+        if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
       }
-      return tupleFactory_.newTuple(new DataByteArray(union.getResultAndReset().toByteArray()));
+      // return empty sketch
+      return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
     }
   } // end IntermediateFinal
 
