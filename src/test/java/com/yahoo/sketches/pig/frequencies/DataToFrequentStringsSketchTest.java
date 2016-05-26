@@ -154,7 +154,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultBag.size(), 3);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void algebraicIntermediateFinalWrongType() throws Exception {
     EvalFunc<Tuple> func = new DataToFrequentStringsSketch.IntermediateFinal("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
