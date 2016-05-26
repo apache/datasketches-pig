@@ -219,4 +219,18 @@ public class DataToArrayOfDoublesSketchTest {
     ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
   }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void algebraicIntermediateFinalNullBag() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.IntermediateFinal("32", "1");
+    func.exec(TupleFactory.getInstance().newTuple(1));
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void algebraicIntermediateFinalWrongType() throws Exception {
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.IntermediateFinal("32", "1");
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    bag.add(TupleFactory.getInstance().newTuple(1.0));
+    func.exec(TupleFactory.getInstance().newTuple(bag));
+  }
 }
