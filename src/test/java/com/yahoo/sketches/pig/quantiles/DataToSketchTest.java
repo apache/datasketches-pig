@@ -9,8 +9,10 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.QuantilesSketch;
@@ -150,6 +152,27 @@ public class DataToSketchTest {
     QuantilesSketch sketch = getSketch(resultTuple);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void algebraicIntermediateFinalWrongType() throws Exception {
+    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal();
+    DataBag bag = bagFactory.newDefaultBag();
+
+    // this bag must have tuples with either bags or data byte arrays
+    bag.add(tupleFactory.newTuple(1.0));
+    func.exec(tupleFactory.newTuple(bag));
+  }
+
+  @Test
+  public void schema() throws Exception {
+    EvalFunc<Tuple> func = new DataToSketch();
+    Schema schema = func.outputSchema(new Schema());
+    Assert.assertNotNull(schema);
+    Assert.assertEquals(schema.size(), 1);
+    Assert.assertEquals(schema.getField(0).type, DataType.TUPLE);
+    Assert.assertEquals(schema.getField(0).schema.size(), 1);
+    Assert.assertEquals(schema.getField(0).schema.getField(0).type, DataType.BYTEARRAY);
   }
 
   // end of tests

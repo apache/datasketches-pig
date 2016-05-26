@@ -48,10 +48,6 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
     final FrequentItemsSketch<T> sketch = new FrequentItemsSketch<T>(sketchSize_);
 
     DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) {
-      throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
-    }
-
     for (Tuple dataTuple: bag) {
       Object item = dataTuple.get(0);
       if (item instanceof DataBag) {
