@@ -3,7 +3,8 @@
 =================
 
 #Sketch UDFs for Pig 
-Depends on sketches-core, which is included in the sketches-pig-X.Y.Z.jar
+Depends on sketches-core.  The released jars include a jar with just the Pig UDFs and a shaded jar
+that also includes a shaded sketches-core. 
 
 [travis]:https://travis-ci.org//DataSketches/sketches-pig/builds?branch=master
 [travis img]:https://secure.travis-ci.org/DataSketches/sketches-pig.svg?branch=master
