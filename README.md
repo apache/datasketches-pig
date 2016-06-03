@@ -17,5 +17,3 @@ that also includes a shaded sketches-core.
 
 [versioneye]:https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b
 [versioneye img]:https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b/badge.svg?style=flat
-
-[![Dependency Status](https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b)
