@@ -60,7 +60,7 @@ class PigUtil {
     DataByteArray sketchDBA = null;
     sketchDBA = (DataByteArray) extractFieldAtIndex(tuple, 0);
     Memory srcMem = new NativeMemory(sketchDBA.get());
-    Sketch sketch = Sketch.heapify(srcMem, seed);
+    Sketch sketch = Sketch.wrap(srcMem, seed);
     return sketch;
   }
   

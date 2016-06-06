@@ -112,14 +112,14 @@ public class AexcludeB extends EvalFunc<Tuple> {
     if (objA != null) {
       DataByteArray dbaA = (DataByteArray)objA;
       Memory srcMem = new NativeMemory(dbaA.get());
-      sketchA = Sketch.heapify(srcMem, seed_);
+      sketchA = Sketch.wrap(srcMem, seed_);
     }
     Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
       DataByteArray dbaB = (DataByteArray)objB;
       Memory srcMem = new NativeMemory(dbaB.get());
-      sketchB = Sketch.heapify(srcMem, seed_);
+      sketchB = Sketch.wrap(srcMem, seed_);
     }
     
     AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
