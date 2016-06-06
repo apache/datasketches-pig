@@ -12,8 +12,9 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
+import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
+import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 
 /**
@@ -36,35 +37,34 @@ abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
   }
 
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("algebraic is used");  // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
     }
-    ArrayOfDoublesUnion union = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
+    final ArrayOfDoublesUnion union = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
 
-    DataBag bag = (DataBag) inputTuple.get(0);
+    final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
 
-    for (Tuple dataTuple: bag) {
-      Object item = dataTuple.get(0);
+    for (final Tuple dataTuple: bag) {
+      final Object item = dataTuple.get(0);
       if (item instanceof DataBag) {
         // this is from a prior call to the initial function, so there is a nested bag.
-        for (Tuple innerTuple: (DataBag) item) {
-          ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
-          union.update(incomingSketch);
+        for (final Tuple innerTuple: (DataBag) item) {
+          final DataByteArray dba = (DataByteArray) innerTuple.get(0);
+          union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
         // Merge it with the current sketch.
-        ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(dataTuple);
-        union.update(incomingSketch);
+        final DataByteArray dba = (DataByteArray) item;
+        union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
       } else {
         // we should never get here.
         throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
-    ArrayOfDoublesSketch result = union.getResult();
-    return Util.serializeArrayOfDoublesSketchToTuple(result);
+    return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));
   }
 }

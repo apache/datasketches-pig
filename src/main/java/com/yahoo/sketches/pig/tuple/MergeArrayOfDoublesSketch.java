@@ -16,7 +16,7 @@ public class MergeArrayOfDoublesSketch extends MergeArrayOfDoublesSketchBase imp
    * @param sketchSize String representation of sketch size
    * @param numValues String representation of number of values per key
    */
-  public MergeArrayOfDoublesSketch(String sketchSize, String numValues) {
+  public MergeArrayOfDoublesSketch(final String sketchSize, final String numValues) {
     super(Integer.parseInt(sketchSize), Integer.parseInt(numValues));
   }
 
@@ -47,7 +47,7 @@ public class MergeArrayOfDoublesSketch extends MergeArrayOfDoublesSketchBase imp
      * @param sketchSize String representation of sketch size
      * @param numValues String representation of number of values per key
      */
-    public Initial(String sketchSize, String numValues) {}
+    public Initial(final String sketchSize, final String numValues) {}
   }
 
   public static class IntermediateFinal extends MergeArrayOfDoublesSketchAlgebraicIntermediateFinal {
@@ -62,7 +62,7 @@ public class MergeArrayOfDoublesSketch extends MergeArrayOfDoublesSketchBase imp
      * @param sketchSize String representation of sketch size
      * @param numValues String representation of number of values per key
      */
-    public IntermediateFinal(String sketchSize, String numValues) {
+    public IntermediateFinal(final String sketchSize, final String numValues) {
       super(Integer.parseInt(sketchSize), Integer.parseInt(numValues));
     }
   }

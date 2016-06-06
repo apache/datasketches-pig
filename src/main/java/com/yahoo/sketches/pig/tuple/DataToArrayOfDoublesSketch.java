@@ -16,7 +16,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
    * @param sketchSize String representation of sketch size
    * @param numValues Number of double values to keep for each key
    */
-  public DataToArrayOfDoublesSketch(String sketchSize, String numValues) {
+  public DataToArrayOfDoublesSketch(final String sketchSize, final String numValues) {
     super(Integer.parseInt(sketchSize), Integer.parseInt(numValues));
   }
 
@@ -26,7 +26,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
    * @param samplingProbability probability from 0 to 1
    * @param numValues Number of double values to keep for each key
    */
-  public DataToArrayOfDoublesSketch(String sketchSize, String samplingProbability, String numValues) {
+  public DataToArrayOfDoublesSketch(final String sketchSize, final String samplingProbability, final String numValues) {
     super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability), Integer.parseInt(numValues));
   }
 
@@ -52,7 +52,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
      * @param sketchSize String representation of sketch size
      * @param numValues Number of double values to keep for each key
      */
-    public Initial(String sketchSize, String numValues) {}
+    public Initial(final String sketchSize, final String numValues) {}
 
     /**
      * Constructor for the initial pass of an Algebraic function. This will be passed the same
@@ -61,7 +61,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
      * @param samplingProbability probability from 0 to 1
      * @param numValues Number of double values to keep for each key
      */
-    public Initial(String sketchSize, String samplingProbability, String numValues) {}
+    public Initial(final String sketchSize, final String samplingProbability, final String numValues) {}
 
     /**
      * Default constructor to make pig validation happy
@@ -76,7 +76,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
      * @param sketchSize String representation of sketch size
      * @param numValues Number of double values to keep for each key
      */
-    public IntermediateFinal(String sketchSize, String numValues) {
+    public IntermediateFinal(final String sketchSize, final String numValues) {
       super(Integer.parseInt(sketchSize), Integer.parseInt(numValues));
     }
 
@@ -87,7 +87,7 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
      * @param samplingProbability probability from 0 to 1
      * @param numValues Number of double values to keep for each key
      */
-    public IntermediateFinal(String sketchSize, String samplingProbability, String numValues) {
+    public IntermediateFinal(final String sketchSize, final String samplingProbability, final String numValues) {
       super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability), Integer.parseInt(numValues));
     }
 

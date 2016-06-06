@@ -19,7 +19,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
    * Constructor with default mode (sum)
    * @param sketchSize String representation of sketch size
    */
-  public MergeDoubleSummarySketch(String sketchSize) {
+  public MergeDoubleSummarySketch(final String sketchSize) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
   }
 
@@ -28,7 +28,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
    * @param sketchSize String representation of sketch size
    * @param summaryMode String representation of mode (sum, min or max)
    */
-  public MergeDoubleSummarySketch(String sketchSize, String summaryMode) {
+  public MergeDoubleSummarySketch(final String sketchSize, final String summaryMode) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
   }
 
@@ -58,7 +58,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
      * constructor arguments as the original UDF.
      * @param sketchSize String representation of sketch size
      */
-    public Initial(String sketchSize) {}
+    public Initial(final String sketchSize) {}
 
     /**
      * Constructor for the initial pass of an Algebraic function. This will be passed the same
@@ -66,7 +66,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
      * @param sketchSize String representation of sketch size
      * @param summaryMode String representation of mode (sum, min or max)
      */
-    public Initial(String sketchSize, String summaryMode) {}
+    public Initial(final String sketchSize, final String summaryMode) {}
   }
 
   public static class IntermediateFinal extends MergeSketchAlgebraicIntermediateFinal<DoubleSummary> {
@@ -80,7 +80,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
      * passed the same constructor arguments as the original UDF.
      * @param sketchSize String representation of sketch size
      */
-    public IntermediateFinal(String sketchSize) {
+    public IntermediateFinal(final String sketchSize) {
       super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
     }
 
@@ -90,7 +90,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
      * @param sketchSize String representation of sketch size
      * @param summaryMode String representation of mode (sum, min or max)
      */
-    public IntermediateFinal(String sketchSize, String summaryMode) {
+    public IntermediateFinal(final String sketchSize, final String summaryMode) {
       super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
     }
   }

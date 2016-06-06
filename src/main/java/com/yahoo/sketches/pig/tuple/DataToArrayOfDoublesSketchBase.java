@@ -25,11 +25,11 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
   private ArrayOfDoublesUpdatableSketch accumSketch_;
   private boolean isFirstCall_ = true;
 
-  DataToArrayOfDoublesSketchBase(int sketchSize, int numValues) {
+  DataToArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
     this(sketchSize, 1f, numValues);
   }
 
-  DataToArrayOfDoublesSketchBase(int sketchSize, float samplingProbability, int numValues) {
+  DataToArrayOfDoublesSketchBase(final int sketchSize, final float samplingProbability, final int numValues) {
     super();
     sketchSize_ = sketchSize;
     samplingProbability_ = samplingProbability; 
@@ -37,7 +37,7 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
   }
 
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException {
+  public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("accumulate is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
@@ -46,7 +46,7 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
       accumSketch_ = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
-    DataBag bag = (DataBag) inputTuple.get(0);
+    final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, accumSketch_, numValues_);
   }
 
@@ -60,17 +60,11 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     if (accumSketch_ == null) {
       accumSketch_ = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
     }
-    Tuple outputTuple;
-    try {
-      outputTuple = Util.serializeArrayOfDoublesSketchToTuple(accumSketch_.compact());
-    } catch (ExecException ex) {
-      throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
-    }
-    return outputTuple;
+    return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
   }
 
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("exec is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
@@ -78,19 +72,21 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
     }
-    accumulate(inputTuple);
-    Tuple outputTuple = getValue();
-    cleanup();
-    return outputTuple;
+    if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
+
+    final ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+    final DataBag bag = (DataBag) inputTuple.get(0);
+    updateSketch(bag, sketch, numValues_);
+    return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
   }
 
-  static void updateSketch(DataBag bag, ArrayOfDoublesUpdatableSketch sketch, int numValues) throws ExecException {
+  static void updateSketch(final DataBag bag, final ArrayOfDoublesUpdatableSketch sketch, final int numValues) throws ExecException {
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
-    double[] values = new double[numValues];
-    for (Tuple tuple: bag) {
+    final double[] values = new double[numValues];
+    for (final Tuple tuple: bag) {
       if (tuple.size() != numValues + 1) throw new IllegalArgumentException("Inner tuple of input bag must have " + (numValues + 1) + " fields.");
 
-      Object key = tuple.get(0);
+      final Object key = tuple.get(0);
       if (key == null) continue;
       for (int i = 0; i < numValues; i++) values[i] = (Double) tuple.get(i + 1);
 
@@ -111,11 +107,11 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
         sketch.update((Double) key, values);
         break;
       case DataType.BYTEARRAY:
-        DataByteArray dba = (DataByteArray) key;
+        final DataByteArray dba = (DataByteArray) key;
         if (dba.size() != 0) sketch.update(dba.get(), values);
         break;
       case DataType.CHARARRAY:
-        String s = key.toString();
+        final String s = key.toString();
         if (!s.isEmpty()) sketch.update(s, values);
         break;
       default:

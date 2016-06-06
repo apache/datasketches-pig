@@ -14,9 +14,9 @@ import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.Union;
-import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 import com.yahoo.sketches.tuple.UpdatableSummary;
+import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SummaryFactory;
 
 /**
@@ -39,49 +39,49 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
    */
   public DataToSketchAlgebraicIntermediateFinal() {}
   
-  public DataToSketchAlgebraicIntermediateFinal(int sketchSize, SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
   
-  public DataToSketchAlgebraicIntermediateFinal(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, final float samplingProbability, final SummaryFactory<S> summaryFactory) {
     this.sketchSize_ = sketchSize;
     this.samplingProbability_ = samplingProbability;
     this.summaryFactory_ = summaryFactory;
   }
   
+  @SuppressWarnings("unchecked")
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("algebraic is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
     }
-    UpdatableSketch<U, S> sketch = null;
-    Union<S> union = new Union<S>(sketchSize_, summaryFactory_);
+    final Union<S> union = new Union<S>(sketchSize_, summaryFactory_);
 
-    DataBag bag = (DataBag) inputTuple.get(0);
+    final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
       throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
     }
 
-    for (Tuple dataTuple: bag) {
-      Object item = dataTuple.get(0);
+    for (final Tuple dataTuple: bag) {
+      final Object item = dataTuple.get(0);
       if (item instanceof DataBag) {
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
-        if (sketch == null) sketch = new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
-        DataToSketch.updateSketch((DataBag)item, sketch);
+        UpdatableSketch<U, S> sketch = new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
+        DataToSketch.updateSketch((DataBag) item, sketch);
+        union.update(sketch);
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a prior call to the 
         // Intermediate function. merge it with the 
         // current sketch.
-        Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
+        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
         union.update(incomingSketch);
       } else {
         // we should never get here.
         throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
-    if (sketch != null) union.update(sketch);
-    return Util.serializeSketchToTuple(union.getResult());
+    return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));
   }
 }

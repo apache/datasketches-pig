@@ -32,11 +32,11 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   private UpdatableSketch<U, S> accumSketch_;
   private boolean isFirstCall_ = true;
 
-  public DataToSketch(int sketchSize, SummaryFactory<S> summaryFactory) {
+  public DataToSketch(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
 
-  public DataToSketch(int sketchSize, float samplingProbability, SummaryFactory<S> summaryFactory) {
+  public DataToSketch(final int sketchSize, final float samplingProbability, final SummaryFactory<S> summaryFactory) {
     super();
     this.sketchSize_ = sketchSize;
     this.samplingProbability_ = samplingProbability; 
@@ -44,7 +44,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   }
 
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException {
+  public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("accumulate is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
@@ -53,7 +53,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
       accumSketch_ = new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
-    DataBag bag = (DataBag) inputTuple.get(0);
+    final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, accumSketch_);
   }
 
@@ -67,17 +67,11 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
     if (accumSketch_ == null) {
       accumSketch_ = new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
     }
-    Tuple outputTuple;
-    try {
-      outputTuple = Util.serializeSketchToTuple(accumSketch_.compact());
-    } catch (ExecException ex) {
-      throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
-    }
-    return outputTuple;
+    return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
   }
 
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("exec is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
@@ -85,21 +79,23 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
     }
-    accumulate(inputTuple);
-    Tuple outputTuple = getValue();
-    cleanup();
-    return outputTuple;
+    if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
+
+    final UpdatableSketch<U, S> sketch = new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
+    final DataBag bag = (DataBag) inputTuple.get(0);
+    updateSketch(bag, sketch);
+    return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
   }
 
-  static <U, S extends UpdatableSummary<U>> void updateSketch(DataBag bag, UpdatableSketch<U, S> sketch) throws ExecException {
+  static <U, S extends UpdatableSummary<U>> void updateSketch(final DataBag bag, final UpdatableSketch<U, S> sketch) throws ExecException {
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
-    for (Tuple tuple: bag) {
+    for (final Tuple tuple: bag) {
       if (tuple.size() != 2) throw new IllegalArgumentException("Inner tuple of input bag must have 2 fields.");
 
-      Object key = tuple.get(0);
+      final Object key = tuple.get(0);
       if (key == null) continue;
       @SuppressWarnings("unchecked")
-      U value = (U) tuple.get(1);
+      final U value = (U) tuple.get(1);
 
       switch (tuple.getType(0)) {
       case DataType.BYTE:
@@ -118,11 +114,11 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
         sketch.update((Double) key, value);
         break;
       case DataType.BYTEARRAY:
-        DataByteArray dba = (DataByteArray) key;
+        final DataByteArray dba = (DataByteArray) key;
         if (dba.size() != 0) sketch.update(dba.get(), value);
         break;
       case DataType.CHARARRAY:
-        String s = key.toString();
+        final String s = key.toString();
         if (!s.isEmpty()) sketch.update(s, value);
         break;
       default:

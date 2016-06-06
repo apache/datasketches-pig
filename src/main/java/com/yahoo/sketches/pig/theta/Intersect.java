@@ -241,7 +241,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      if (type == DataType.BYTEARRAY) {
        DataByteArray dba = (DataByteArray) f0;
        Memory srcMem = new NativeMemory(dba.get());
-       Sketch sketch = Sketch.heapify(srcMem, seed);
+       Sketch sketch = Sketch.wrap(srcMem, seed);
        intersection.update(sketch);
      } 
      else {
@@ -367,9 +367,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           // Each dataTuple.DBA:sketch will merged into the union.
           DataByteArray dba = (DataByteArray) f0;
           Memory srcMem = new NativeMemory(dba.get());
-          Sketch sketch = Sketch.heapify(srcMem, mySeed_);
+          Sketch sketch = Sketch.wrap(srcMem, mySeed_);
           intersection.update(sketch);
-        
         } 
         else { // we should never get here.
           throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "

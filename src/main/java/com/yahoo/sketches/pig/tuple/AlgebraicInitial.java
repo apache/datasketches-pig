@@ -15,8 +15,8 @@ import org.apache.pig.data.Tuple;
  */
 public abstract class AlgebraicInitial extends EvalFunc<Tuple> {
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
-    DataBag bag = (DataBag) inputTuple.get(0);
+  public Tuple exec(final Tuple inputTuple) throws IOException {
+    final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
     return inputTuple;
   }
