@@ -27,20 +27,20 @@ import com.yahoo.sketches.memory.NativeMemory;
  */
 public class ArrayOfDoublesSketchToEstimates extends EvalFunc<Tuple> {
   @Override
-  public Tuple exec(Tuple input) throws IOException {
+  public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
       return null;
     }
 
-    DataByteArray dba = (DataByteArray) input.get(0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(dba.get()));
+    final DataByteArray dba = (DataByteArray) input.get(0);
+    final ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get()));
 
-    double[] estimates = new double[sketch.getNumValues() + 1];
+    final double[] estimates = new double[sketch.getNumValues() + 1];
     estimates[0] = sketch.getEstimate();
     if (sketch.getRetainedEntries() > 0) { // remove unnecessary check when version of sketches-core > 0.4.0
-      ArrayOfDoublesSketchIterator it = sketch.iterator();
+      final ArrayOfDoublesSketchIterator it = sketch.iterator();
       while (it.next()) {
-        double[] values = it.getValues();
+        final double[] values = it.getValues();
         for (int i = 0; i < sketch.getNumValues(); i++) {
           estimates[i + 1] += values[i];
         }

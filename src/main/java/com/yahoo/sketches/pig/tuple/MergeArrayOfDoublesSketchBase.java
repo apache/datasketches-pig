@@ -11,22 +11,22 @@ import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
+import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
+import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
+import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 
 abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
-  private int numValues_;
-  private ArrayOfDoublesUnion union_;
+  private final int numValues_;
+  private ArrayOfDoublesUnion accumUnion_;
   private boolean isFirstCall_ = true;
 
-  private static final ArrayOfDoublesSketch EMPTY_SKETCH = new ArrayOfDoublesUpdatableSketchBuilder().build().compact();
-
-  MergeArrayOfDoublesSketchBase(int sketchSize, int numValues) {
+  MergeArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
     super();
     sketchSize_ = sketchSize;
     numValues_ = numValues;
@@ -41,14 +41,14 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
     }
-    accumulate(inputTuple);
-    Tuple outputTuple = getValue();
-    cleanup();
-    return outputTuple;
+    final DataBag bag = (DataBag) inputTuple.get(0);
+    final ArrayOfDoublesUnion union = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
+    updateUnion(bag, union);
+    return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));
   }
 
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException {
+  public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       Logger.getLogger(getClass()).info("accumulator is used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
@@ -56,49 +56,37 @@ abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
     if ((inputTuple == null) || (inputTuple.size() != 1)) {
       return;
     }
-    Object obj = inputTuple.get(0);
-    if (!(obj instanceof DataBag)) {
-      return;
+    final DataBag bag = (DataBag) inputTuple.get(0);
+    if (bag == null || bag.size() == 0) return;
+    if (accumUnion_ == null) {
+      accumUnion_ = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
     }
-    DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag.size() == 0) {
-      return;
-    }
-  
-    if (union_ == null) {
-      union_ = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
-    }
-    for (Tuple innerTuple: bag) {
-      int sz = innerTuple.size();
-      if ((sz != 1) || (innerTuple.get(0) == null)) {
-        continue;
-      }
-      ArrayOfDoublesSketch incomingSketch = Util.deserializeArrayOfDoublesSketchFromTuple(innerTuple);
-      union_.update(incomingSketch);
-    }
+    updateUnion(bag, accumUnion_);
   }
 
   @Override
   public Tuple getValue() {
-    if (union_ == null) { //return an empty sketch
-      try {
-        return Util.serializeArrayOfDoublesSketchToTuple(EMPTY_SKETCH);
-      } catch (ExecException ex) {
-        throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
-      }
+    if (accumUnion_ == null) { //return an empty sketch
+      return Util.tupleFactory.newTuple(new DataByteArray(
+        new ArrayOfDoublesUpdatableSketchBuilder().setNumberOfValues(numValues_).build().compact().toByteArray())
+      );
     }
-  
-    try {
-      ArrayOfDoublesSketch result = union_.getResult();
-      return Util.serializeArrayOfDoublesSketchToTuple(result);
-    } catch (ExecException ex) {
-      throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
-    }
+    return Util.tupleFactory.newTuple(new DataByteArray(accumUnion_.getResult().toByteArray()));
   }
 
   @Override
   public void cleanup() {
-    if (union_ != null) union_.reset();
+    if (accumUnion_ != null) accumUnion_.reset();
+  }
+
+  private static void updateUnion(final DataBag bag, final ArrayOfDoublesUnion union) throws ExecException {
+    for (final Tuple innerTuple: bag) {
+      if ((innerTuple.size() != 1) || (innerTuple.get(0) == null)) {
+        continue;
+      }
+      final DataByteArray dba = (DataByteArray) innerTuple.get(0);
+      union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
+    }
   }
 
 }

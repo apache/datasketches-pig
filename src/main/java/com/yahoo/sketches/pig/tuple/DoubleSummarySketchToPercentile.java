@@ -31,17 +31,17 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
   private static final int QUANTILES_SKETCH_SIZE = 1024;
 
   @Override
-  public Double exec(Tuple input) throws IOException {
+  public Double exec(final Tuple input) throws IOException {
     if (input.size() != 2) throw new IllegalArgumentException("expected two inputs: sketch and pecentile");
 
-    DataByteArray dba = (DataByteArray) input.get(0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
+    final DataByteArray dba = (DataByteArray) input.get(0);
+    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
 
-    double percentile = (double) input.get(1);
+    final double percentile = (double) input.get(1);
     if (percentile < 0 || percentile > 100) throw new IllegalArgumentException("percentile must be between 0 and 100");
 
-    QuantilesSketch qs = new QuantilesSketchBuilder().build(QUANTILES_SKETCH_SIZE);
-    SketchIterator<DoubleSummary> it = sketch.iterator();
+    final QuantilesSketch qs = new QuantilesSketchBuilder().build(QUANTILES_SKETCH_SIZE);
+    final SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
       qs.update(it.getSummary().getValue());
     }

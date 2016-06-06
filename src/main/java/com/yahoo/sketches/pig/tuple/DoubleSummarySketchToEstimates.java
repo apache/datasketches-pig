@@ -28,18 +28,18 @@ import com.yahoo.sketches.tuple.Sketches;
  */
 public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
   @Override
-  public Tuple exec(Tuple input) throws IOException {
+  public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
       return null;
     }
 
-    DataByteArray dba = (DataByteArray) input.get(0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
+    final DataByteArray dba = (DataByteArray) input.get(0);
+    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
 
-    Tuple output = TupleFactory.getInstance().newTuple(2);
+    final Tuple output = TupleFactory.getInstance().newTuple(2);
     output.set(0, sketch.getEstimate());
     double sum = 0;
-    SketchIterator<DoubleSummary> it = sketch.iterator();
+    final SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
       sum += it.getSummary().getValue();
     }

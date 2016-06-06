@@ -18,7 +18,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
    * Constructor with default mode (sum)
    * @param sketchSize String representation of sketch size
    */
-  public DataToDoubleSummarySketch(String sketchSize) {
+  public DataToDoubleSummarySketch(final String sketchSize) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
   }
 
@@ -27,7 +27,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
    * @param sketchSize String representation of sketch size
    * @param summaryMode String representation of mode (sum, min or max)
    */
-  public DataToDoubleSummarySketch(String sketchSize, String summaryMode) {
+  public DataToDoubleSummarySketch(final String sketchSize, final String summaryMode) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
   }
 
@@ -52,7 +52,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * constructor arguments as the original UDF.
      * @param sketchSize String representation of sketch size
      */
-    public Initial(String sketchSize) {}
+    public Initial(final String sketchSize) {}
 
     /**
      * Constructor for the initial pass of an Algebraic function. This will be passed the same
@@ -60,7 +60,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * @param sketchSize String representation of sketch size
      * @param summaryMode String representation of mode (sum, min or max)
      */
-    public Initial(String sketchSize, String summaryMode) {}
+    public Initial(final String sketchSize, final String summaryMode) {}
 
     /**
      * Default constructor to make pig validation happy
@@ -74,7 +74,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * passed the same constructor arguments as the original UDF.
      * @param sketchSize String representation of sketch size
      */
-    public IntermediateFinal(String sketchSize) {
+    public IntermediateFinal(final String sketchSize) {
       super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
     }
 
@@ -84,7 +84,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * @param sketchSize String representation of sketch size
      * @param summaryMode String representation of mode (sum, min or max)
      */
-    public IntermediateFinal(String sketchSize, String summaryMode) {
+    public IntermediateFinal(final String sketchSize, final String summaryMode) {
       super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
     }
 
