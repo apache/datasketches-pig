@@ -24,6 +24,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.yahoo.sketches.SketchesStateException;
 import com.yahoo.sketches.pig.theta.Estimate;
 import com.yahoo.sketches.pig.theta.Intersect;
 
@@ -294,7 +295,7 @@ public class IntersectTest {
     assertEquals(est, 64.0, 0.0);
   }
   
-  @Test(expectedExceptions = IllegalStateException.class)
+  @Test(expectedExceptions = SketchesStateException.class)
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
     EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();
@@ -314,7 +315,7 @@ public class IntersectTest {
     //assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
   
-  @Test(expectedExceptions = IllegalStateException.class)
+  @Test(expectedExceptions = SketchesStateException.class)
   public void checkAlgFinalInnerBagEmpty() throws IOException {
     EvalFunc<Tuple> interFuncFinal = new Intersect.IntermediateFinal();
     EvalFunc<Double> estFunc = new Estimate();

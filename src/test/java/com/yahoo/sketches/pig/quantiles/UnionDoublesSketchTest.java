@@ -15,57 +15,59 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
-public class DataToSketchTest {
+public class UnionDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
   private static final BagFactory bagFactory = BagFactory.getInstance();
 
   @Test
   public void execNullInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch();
+    EvalFunc<Tuple> func = new UnionDoublesSketch();
     Tuple resultTuple = func.exec(null);
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch();
+    EvalFunc<Tuple> func = new UnionDoublesSketch();
     Tuple resultTuple = func.exec(tupleFactory.newTuple());
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
   }
 
   @Test
   public void execEmptyBag() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch();
+    EvalFunc<Tuple> func = new UnionDoublesSketch();
     Tuple resultTuple = func.exec(tupleFactory.newTuple(bagFactory.newDefaultBag()));
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
   }
 
   @Test
   public void execNormalCase() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch();
+    EvalFunc<Tuple> func = new UnionDoublesSketch();
     DataBag bag = bagFactory.newDefaultBag();
-    bag.add(tupleFactory.newTuple(1.0));
+    DoublesSketch inputSketch = DoublesSketch.builder().build();
+    inputSketch.update(1.0);
+    bag.add(tupleFactory.newTuple(new DataByteArray(inputSketch.toByteArray())));
     Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
 
   @Test
   public void accumulator() throws Exception {
-    Accumulator<Tuple> func = new DataToSketch();
+    Accumulator<Tuple> func = new UnionDoublesSketch();
 
     // no input yet
     Tuple resultTuple = func.getValue();
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
 
     // null input tuple
@@ -88,7 +90,9 @@ public class DataToSketchTest {
 
     // normal case
     DataBag bag = bagFactory.newDefaultBag();
-    bag.add(tupleFactory.newTuple(1.0));
+    DoublesSketch inputSketch = DoublesSketch.builder().build();
+    inputSketch.update(1.0);
+    bag.add(tupleFactory.newTuple(new DataByteArray(inputSketch.toByteArray())));
     func.accumulate(tupleFactory.newTuple(bag));
     func.accumulate(tupleFactory.newTuple(bag));
     resultTuple = func.getValue();
@@ -105,7 +109,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch.Initial();
+    EvalFunc<Tuple> func = new UnionDoublesSketch.Initial();
     DataBag bag = bagFactory.newDefaultBag();
     bag.add(tupleFactory.newTuple());
     Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
@@ -117,46 +121,48 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateFinalNullInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal();
+    EvalFunc<Tuple> func = new UnionDoublesSketch.IntermediateFinal();
     Tuple resultTuple = func.exec(null);
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
   }
 
   @Test
   public void algebraicIntermediateFinalEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal();
+    EvalFunc<Tuple> func = new UnionDoublesSketch.IntermediateFinal();
     Tuple resultTuple = func.exec(tupleFactory.newTuple());
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertTrue(sketch.isEmpty());
   }
 
   @Test
   public void algebraicIntermediateFinalNormalCase() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal();
+    EvalFunc<Tuple> func = new UnionDoublesSketch.IntermediateFinal();
     DataBag bag = bagFactory.newDefaultBag();
 
     { // this is to simulate an output from Initial
       DataBag innerBag = bagFactory.newDefaultBag();
-      innerBag.add(tupleFactory.newTuple(1.0));
+      DoublesSketch qs = DoublesSketch.builder().build();
+      qs.update(1.0);
+      innerBag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
       bag.add(tupleFactory.newTuple(innerBag));
     }
 
     { // this is to simulate an output from a prior call of IntermediateFinal
-      QuantilesSketch qs = QuantilesSketch.builder().build();
+      DoublesSketch qs = DoublesSketch.builder().build();
       qs.update(2.0);
       bag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
     }
 
     Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
-    QuantilesSketch sketch = getSketch(resultTuple);
+    DoublesSketch sketch = getSketch(resultTuple);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void algebraicIntermediateFinalWrongType() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal();
+    EvalFunc<Tuple> func = new UnionDoublesSketch.IntermediateFinal();
     DataBag bag = bagFactory.newDefaultBag();
 
     // this bag must have tuples with either bags or data byte arrays
@@ -166,7 +172,7 @@ public class DataToSketchTest {
 
   @Test
   public void schema() throws Exception {
-    EvalFunc<Tuple> func = new DataToSketch();
+    EvalFunc<Tuple> func = new UnionDoublesSketch();
     Schema schema = func.outputSchema(new Schema());
     Assert.assertNotNull(schema);
     Assert.assertEquals(schema.size(), 1);
@@ -177,11 +183,11 @@ public class DataToSketchTest {
 
   // end of tests
 
-  private static QuantilesSketch getSketch(Tuple tuple) throws Exception {
+  private static DoublesSketch getSketch(Tuple tuple) throws Exception {
     Assert.assertNotNull(tuple);
     Assert.assertEquals(tuple.size(), 1);
     DataByteArray bytes = (DataByteArray) tuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    return QuantilesSketch.heapify(new NativeMemory(bytes.get()));
+    return DoublesSketch.heapify(new NativeMemory(bytes.get()));
   }
 }

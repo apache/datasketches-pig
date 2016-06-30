@@ -11,7 +11,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 
 /**
  * This UDF is to get a quantile value from a QuantilesSketch. A single value for a
@@ -20,7 +20,7 @@ import com.yahoo.sketches.quantiles.QuantilesSketch;
  * which is the median value of the distribution (the number separating the higher half
  * of the probability distribution from the lower half).
  */
-public class GetQuantile extends EvalFunc<Double> {
+public class GetQuantileFromDoublesSketch extends EvalFunc<Double> {
 
   @Override
   public Double exec(final Tuple input) throws IOException {
@@ -28,7 +28,7 @@ public class GetQuantile extends EvalFunc<Double> {
 
     if (!(input.get(0) instanceof DataByteArray)) throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " + input.get(0).getClass().getSimpleName());
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final QuantilesSketch sketch = QuantilesSketch.heapify(new NativeMemory(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
 
     if (!(input.get(1) instanceof Double)) throw new IllegalArgumentException("expected a double value as a fraction, got " + input.get(1).getClass().getSimpleName());
     final double fraction = (double) input.get(1);

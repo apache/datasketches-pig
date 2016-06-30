@@ -17,8 +17,8 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfStringsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 import com.yahoo.sketches.pig.tuple.PigUtil;
 
 public class FrequentStringsSketchToEstimatesTest {
@@ -39,8 +39,8 @@ public class FrequentStringsSketchToEstimatesTest {
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
-    FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
-    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe())));
+    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe())));
     DataBag bag = func.exec(inputTuple);
     Assert.assertNotNull(bag);
     Assert.assertEquals(bag.size(), 0);
@@ -49,11 +49,11 @@ public class FrequentStringsSketchToEstimatesTest {
   @Test
   public void exact() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
-    FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
     sketch.update("a");
     sketch.update("a");
     sketch.update("b");
-    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe())));
+    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe())));
     DataBag bag = func.exec(inputTuple);
     Assert.assertNotNull(bag);
     Assert.assertEquals(bag.size(), 2);
@@ -76,7 +76,7 @@ public class FrequentStringsSketchToEstimatesTest {
 
   @Test
   public void estimation() throws Exception {
-    FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
     sketch.update("1", 1000);
     sketch.update("2", 500);
     sketch.update("3", 200);
@@ -87,7 +87,7 @@ public class FrequentStringsSketchToEstimatesTest {
     sketch.update("8", 5);
     sketch.update("9", 2);
     sketch.update("10");
-    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe())));
+    Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe())));
 
     EvalFunc<DataBag> func1 = new FrequentStringsSketchToEstimates("NO_FALSE_POSITIVES");
     DataBag bag1 = func1.exec(inputTuple);

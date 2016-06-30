@@ -14,8 +14,8 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfStringsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.pig.tuple.PigUtil;
 
@@ -43,7 +43,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
 
@@ -89,7 +89,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 6);
@@ -120,7 +120,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 6);
@@ -132,7 +132,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch2 = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch2 = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch2.isEmpty());
     Assert.assertEquals(sketch2.getNumActiveItems(), 0);
   }
@@ -174,18 +174,18 @@ public class DataToFrequentStringsSketchTest {
     bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("a"))));
 
     // this is to simulate the output from a prior call of IntermediateFinal
-    FrequentItemsSketch<String> s = new FrequentItemsSketch<String>(8);
+    ItemsSketch<String> s = new ItemsSketch<String>(8);
     s.update("b", 1L);
     s.update("a", 2L);
     s.update("b", 3L);
-    bag.add(PigUtil.objectsToTuple(new DataByteArray(s.serializeToByteArray(new ArrayOfStringsSerDe()))));
+    bag.add(PigUtil.objectsToTuple(new DataByteArray(s.toByteArray(new ArrayOfStringsSerDe()))));
 
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 4);

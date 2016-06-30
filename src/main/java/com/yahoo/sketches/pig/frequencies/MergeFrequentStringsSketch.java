@@ -6,7 +6,7 @@ package com.yahoo.sketches.pig.frequencies;
 
 import org.apache.pig.Algebraic;
 
-import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
+import com.yahoo.sketches.ArrayOfStringsSerDe;
 
 /**
  * This is to merge FrequentItemsSketch&lt;String&gt;.

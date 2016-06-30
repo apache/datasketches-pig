@@ -9,23 +9,23 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.sketches.frequencies.ArrayOfItemsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 import com.yahoo.sketches.memory.NativeMemory;
 
 final class Util {
 
   static final TupleFactory tupleFactory = TupleFactory.getInstance();
 
-  static <T> Tuple serializeSketchToTuple(final FrequentItemsSketch<T> sketch, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
+  static <T> Tuple serializeSketchToTuple(final ItemsSketch<T> sketch, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
     Tuple outputTuple = Util.tupleFactory.newTuple(1);
-    outputTuple.set(0, new DataByteArray(sketch.serializeToByteArray(serDe)));
+    outputTuple.set(0, new DataByteArray(sketch.toByteArray(serDe)));
     return outputTuple;
   }
 
-  static <T> FrequentItemsSketch<T> deserializeSketchFromTuple(final Tuple tuple, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
+  static <T> ItemsSketch<T> deserializeSketchFromTuple(final Tuple tuple, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
     byte[] bytes = ((DataByteArray) tuple.get(0)).get();
-    return FrequentItemsSketch.getInstance(new NativeMemory(bytes), serDe);
+    return ItemsSketch.getInstance(new NativeMemory(bytes), serDe);
   }
 
 }

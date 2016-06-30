@@ -13,8 +13,8 @@ import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.frequencies.ArrayOfItemsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
  * This is a generic implementation to be specialized in concrete UDFs 
@@ -23,7 +23,7 @@ import com.yahoo.sketches.frequencies.FrequentItemsSketch;
 public abstract class MergeFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private final ArrayOfItemsSerDe<T> serDe_;
-  private FrequentItemsSketch<T> sketch_;
+  private ItemsSketch<T> sketch_;
   private boolean isFirstCall_ = true;
 
   public MergeFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
@@ -66,14 +66,14 @@ public abstract class MergeFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
     }
   
     if (sketch_ == null) {
-      sketch_ = new FrequentItemsSketch<T>(sketchSize_);
+      sketch_ = new ItemsSketch<T>(sketchSize_);
     }
     for (final Tuple innerTuple: bag) {
       final int sz = innerTuple.size();
       if ((sz != 1) || (innerTuple.get(0) == null)) {
         continue;
       }
-      final FrequentItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
+      final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
       sketch_.merge(incomingSketch);
     }
   }
@@ -82,7 +82,7 @@ public abstract class MergeFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
   public Tuple getValue() {
     if (sketch_ == null) { //return an empty sketch
       try {
-        return Util.serializeSketchToTuple(new FrequentItemsSketch<T>(sketchSize_), serDe_);
+        return Util.serializeSketchToTuple(new ItemsSketch<T>(sketchSize_), serDe_);
       } catch (ExecException ex) {
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }

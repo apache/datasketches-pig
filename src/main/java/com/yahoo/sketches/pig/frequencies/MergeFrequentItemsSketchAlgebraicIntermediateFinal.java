@@ -12,8 +12,8 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.frequencies.ArrayOfItemsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
  * This is to calculate the intermediate pass (combiner) or the final pass
@@ -45,7 +45,7 @@ public abstract class MergeFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
       Logger.getLogger(getClass()).info("algebraic is used");  // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
     }
-    final FrequentItemsSketch<T> sketch = new FrequentItemsSketch<T>(sketchSize_);
+    final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
@@ -55,13 +55,13 @@ public abstract class MergeFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
       if (item instanceof DataBag) {
         // this is from a prior call to the initial function, so there is a nested bag.
         for (final Tuple innerTuple: (DataBag) item) {
-          final FrequentItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
+          final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
           sketch.merge(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
         // Merge it with the current sketch.
-        final FrequentItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
+        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
         if (incomingSketch.isEmpty()) continue;
         sketch.merge(incomingSketch);
       } else {
