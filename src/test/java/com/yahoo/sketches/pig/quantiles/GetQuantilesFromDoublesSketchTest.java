@@ -4,7 +4,7 @@
  */
 package com.yahoo.sketches.pig.quantiles;
 
-import com.yahoo.sketches.quantiles.QuantilesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 
 import java.util.Arrays;
 
@@ -16,13 +16,13 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
-public class GetQuantilesTest {
+public class GetQuantilesFromDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
 
   @Test
   public void emptySketch() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantiles();
-    QuantilesSketch sketch = QuantilesSketch.builder().build();
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
@@ -31,8 +31,8 @@ public class GetQuantilesTest {
 
   @Test
   public void normalCase() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantiles();
-    QuantilesSketch sketch = QuantilesSketch.builder().build();
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
     for (int i = 1; i <= 10; i++) sketch.update(i);
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 0.5, 1.0)));
     Assert.assertNotNull(resultTuple);
@@ -44,20 +44,20 @@ public class GetQuantilesTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void wrongNumberOfInputs() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantiles();
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
     func.exec(tupleFactory.newTuple(1));
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void wrongTypeForSketch() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantiles();
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
     func.exec(tupleFactory.newTuple(Arrays.asList(1.0, 1.0)));
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void wrongTypeForFraction() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantiles();
-    QuantilesSketch sketch = QuantilesSketch.builder().build();
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
     func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 1)));
   }
 }

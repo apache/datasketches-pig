@@ -24,6 +24,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.yahoo.sketches.SketchesArgumentException;
 import com.yahoo.sketches.pig.theta.Estimate;
 import com.yahoo.sketches.pig.theta.Merge;
 
@@ -35,7 +36,7 @@ public class MergeTest {
 //  private long seed_ = Util.DEFAULT_UPDATE_SEED;
   
   @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expectedExceptions = SketchesArgumentException.class)
   public void checkConstructorExceptions1() {
     Merge test = new Merge("1023");
   }
@@ -47,7 +48,7 @@ public class MergeTest {
   }
   
   @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
     Merge test = new Merge("1024", "2.0");
   }

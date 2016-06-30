@@ -11,7 +11,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 
 /**
  * This UDF is to get an approximation to the Probability Mass Function (PMF) of the input stream 
@@ -21,7 +21,7 @@ import com.yahoo.sketches.quantiles.QuantilesSketch;
  * of the input stream values that fell into one of those intervals. Intervals are inclusive of
  * the left split point and exclusive of the right split point.
  */
-public class GetPMF extends EvalFunc<Tuple> {
+public class GetPmfFromDoublesSketch extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple input) throws IOException {
@@ -29,7 +29,7 @@ public class GetPMF extends EvalFunc<Tuple> {
 
     if (!(input.get(0) instanceof DataByteArray)) throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " + input.get(0).getClass().getSimpleName());
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final QuantilesSketch sketch = QuantilesSketch.heapify(new NativeMemory(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
 
     double[] splitPoints = new double[input.size() - 1];
     for (int i = 1; i < input.size(); i++) {

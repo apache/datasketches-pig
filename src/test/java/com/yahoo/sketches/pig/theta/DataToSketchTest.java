@@ -27,6 +27,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.yahoo.sketches.SketchesArgumentException;
 import com.yahoo.sketches.Util;
 import com.yahoo.sketches.pig.theta.DataToSketch;
 import com.yahoo.sketches.pig.theta.Estimate;
@@ -40,7 +41,7 @@ public class DataToSketchTest {
   private long seed_ = Util.DEFAULT_UPDATE_SEED;
   
   @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions1() {
     DataToSketch test = new DataToSketch("1023");
   }
@@ -52,7 +53,7 @@ public class DataToSketchTest {
   }
   
   @SuppressWarnings("unused")
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
     DataToSketch test = new DataToSketch("1024", "2.0");
   }

@@ -19,29 +19,29 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
-import com.yahoo.sketches.quantiles.Union;
-import com.yahoo.sketches.quantiles.UnionBuilder;
+import com.yahoo.sketches.quantiles.DoublesSketch;
+import com.yahoo.sketches.quantiles.DoublesUnion;
+import com.yahoo.sketches.quantiles.DoublesUnionBuilder;
 
 /**
  * This is a Pig UDF that merges Quantiles Sketches.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
  */
-public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
+public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
 
   private static final TupleFactory tupleFactory_ = TupleFactory.getInstance();
 
   // With the single exception of the Accumulator interface, UDFs are stateless.
   // All parameters kept at the class level must be final, except for the accumUnion.
-  private final UnionBuilder unionBuilder_;
-  private Union accumUnion_;
+  private final DoublesUnionBuilder unionBuilder_;
+  private DoublesUnion accumUnion_;
 
   //TOP LEVEL API
 
   /**
    * Default constructor. Assumes default k.
    */
-  public Merge() {
+  public UnionDoublesSketch() {
     this(0);
   }
 
@@ -50,7 +50,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * 
    * @param kStr string representation of k
    */
-  public Merge(final String kStr) {
+  public UnionDoublesSketch(final String kStr) {
     this(Integer.parseInt(kStr));
   }
 
@@ -59,9 +59,9 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * 
    * @param k parameter that determines the accuracy and size of the sketch.
    */
-  public Merge(final int k) {
+  public UnionDoublesSketch(final int k) {
     super();
-    unionBuilder_ = Union.builder();
+    unionBuilder_ = DoublesUnion.builder();
     if (k > 0) unionBuilder_.setK(k);
   }
 
@@ -118,10 +118,10 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
     if (inputTuple != null && inputTuple.size() > 0) {
-      final Union union = unionBuilder_.build();
+      final DoublesUnion union = unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
       updateUnion(bag, union);
-      final QuantilesSketch resultSketch = union.getResultAndReset();
+      final DoublesSketch resultSketch = union.getResultAndReset();
       if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
     }
     // return empty sketch
@@ -172,7 +172,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   @Override
   public Tuple getValue() {
     if (accumUnion_ != null) {
-      final QuantilesSketch resultSketch = accumUnion_.getResultAndReset();
+      final DoublesSketch resultSketch = accumUnion_.getResultAndReset();
       if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
     }
     // return empty sketch
@@ -214,7 +214,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * @param bag A bag of sketchTuples.
    * @param union The union to update
    */
-  private static void updateUnion(DataBag bag, Union union) throws ExecException {
+  private static void updateUnion(DataBag bag, DoublesUnion union) throws ExecException {
     for (Tuple innerTuple: bag) {
       final Object f0 = innerTuple.get(0);
       if (f0 == null) continue;
@@ -274,7 +274,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
     // The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
-    private final UnionBuilder unionBuilder_;
+    private final DoublesUnionBuilder unionBuilder_;
 
     /**
      * Default constructor. Assumes default k.
@@ -299,14 +299,14 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     public IntermediateFinal(final int k) {
-      unionBuilder_ = Union.builder();
+      unionBuilder_ = DoublesUnion.builder();
       if (k > 0) unionBuilder_.setK(k);
     }
 
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple != null && inputTuple.size() > 0) {
-        final Union union = unionBuilder_.build();
+        final DoublesUnion union = unionBuilder_.build();
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
@@ -330,7 +330,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
               + f0.getClass().getName());
           }
         }
-        final QuantilesSketch resultSketch = union.getResultAndReset();
+        final DoublesSketch resultSketch = union.getResultAndReset();
         if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
       }
       // return empty sketch

@@ -13,8 +13,8 @@ import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.frequencies.ArrayOfItemsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
  * This is a generic implementation to be specialized in concrete UDFs 
@@ -23,7 +23,7 @@ import com.yahoo.sketches.frequencies.FrequentItemsSketch;
 public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
 
   private final int sketchSize_;
-  private FrequentItemsSketch<T> accumSketch_;
+  private ItemsSketch<T> accumSketch_;
   private final ArrayOfItemsSerDe<T> serDe_;
   private boolean isFirstCall_ = true;
 
@@ -40,7 +40,7 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
       isFirstCall_ = false;
     }
     if (accumSketch_ == null) {
-      accumSketch_ = new FrequentItemsSketch<T>(sketchSize_);
+      accumSketch_ = new ItemsSketch<T>(sketchSize_);
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -55,7 +55,7 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
   @Override
   public Tuple getValue() {
     if (accumSketch_ == null) {
-      accumSketch_ = new FrequentItemsSketch<T>(sketchSize_);
+      accumSketch_ = new ItemsSketch<T>(sketchSize_);
     }
     final Tuple outputTuple;
     try {
@@ -81,7 +81,7 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
     return outputTuple;
   }
 
-  static <T> void updateSketch(final DataBag bag, final FrequentItemsSketch<T> sketch) throws ExecException {
+  static <T> void updateSketch(final DataBag bag, final ItemsSketch<T> sketch) throws ExecException {
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
     for (final Tuple tuple: bag) {
       if (tuple.size() != 1 && tuple.size() != 2) throw new IllegalArgumentException("Inner tuple of input bag must have 1 or 2 fields.");

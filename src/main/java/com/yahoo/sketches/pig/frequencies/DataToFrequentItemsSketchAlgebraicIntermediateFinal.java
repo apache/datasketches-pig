@@ -12,8 +12,8 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.frequencies.ArrayOfItemsSerDe;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
  * Class used to calculate the intermediate pass (combiner) or the final pass
@@ -45,7 +45,7 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
       Logger.getLogger(getClass()).info("algebraic was used"); // this is to see in the log which way was used by Pig
       isFirstCall_ = false;
     }
-    final FrequentItemsSketch<T> sketch = new FrequentItemsSketch<T>(sketchSize_);
+    final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
 
     DataBag bag = (DataBag) inputTuple.get(0);
     for (Tuple dataTuple: bag) {
@@ -58,7 +58,7 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
         // This is a sketch from a prior call to the 
         // Intermediate function. merge it with the 
         // current sketch.
-        FrequentItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
+        ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
         sketch.merge(incomingSketch);
       } else {
         // we should never get here.

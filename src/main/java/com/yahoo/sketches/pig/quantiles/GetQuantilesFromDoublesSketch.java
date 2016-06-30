@@ -11,7 +11,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 
 /**
  * This UDF is to get a list of quantile values from a QuantileSketch given a list of fractions.
@@ -20,7 +20,7 @@ import com.yahoo.sketches.quantiles.QuantilesSketch;
  * distribution (the number separating the higher half of the probability distribution
  * from the lower half).
  */
-public class GetQuantiles extends EvalFunc<Tuple> {
+public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple input) throws IOException {
@@ -28,7 +28,7 @@ public class GetQuantiles extends EvalFunc<Tuple> {
 
     if (!(input.get(0) instanceof DataByteArray)) throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " + input.get(0).getClass().getSimpleName());
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final QuantilesSketch sketch = QuantilesSketch.heapify(new NativeMemory(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
 
     double[] fractions = new double[input.size() - 1];
     for (int i = 1; i < input.size(); i++) {

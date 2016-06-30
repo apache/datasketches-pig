@@ -15,9 +15,9 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.sketches.frequencies.ArrayOfStringsSerDe;
+import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.frequencies.ErrorType;
-import com.yahoo.sketches.frequencies.FrequentItemsSketch;
+import com.yahoo.sketches.frequencies.ItemsSketch;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.pig.tuple.PigUtil;
 
@@ -41,23 +41,23 @@ public class MergeFrequentStringsSketchTest {
     EvalFunc<Tuple> func = new MergeFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("b");
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("b");
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 2);
     Assert.assertEquals(sketch.getEstimate("b"), 2);
@@ -72,7 +72,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -86,7 +86,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -100,7 +100,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -114,7 +114,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -128,7 +128,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -142,7 +142,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -152,8 +152,8 @@ public class MergeFrequentStringsSketchTest {
     Accumulator<Tuple> func = new MergeFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     func.accumulate(PigUtil.objectsToTuple(bag));
     Tuple resultTuple = func.getValue();
@@ -161,7 +161,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
@@ -171,19 +171,19 @@ public class MergeFrequentStringsSketchTest {
     Accumulator<Tuple> func = new MergeFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("b");
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     func.accumulate(PigUtil.objectsToTuple(bag));
 
     bag = BagFactory.getInstance().newDefaultBag();
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("b");
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     func.accumulate(PigUtil.objectsToTuple(bag));
 
@@ -192,7 +192,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 2);
@@ -221,19 +221,19 @@ public class MergeFrequentStringsSketchTest {
 
     // this is to simulate the output from Initial
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("b");
-      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
       bag.add(PigUtil.objectsToTuple(innerBag));
     }
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a", 2L);
       sketch.update("b", 3L);
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
 
     Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
@@ -241,7 +241,7 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
@@ -255,7 +255,7 @@ public class MergeFrequentStringsSketchTest {
 
     // this is to simulate the output from Initial
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a", 10);
       sketch.update("b");
       sketch.update("c");
@@ -264,13 +264,13 @@ public class MergeFrequentStringsSketchTest {
       sketch.update("f");
       sketch.update("g");
       sketch.update("g");
-      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
       bag.add(PigUtil.objectsToTuple(innerBag));
     }
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      FrequentItemsSketch<String> sketch = new FrequentItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
       sketch.update("a");
       sketch.update("a");
       sketch.update("g", 5);
@@ -279,7 +279,7 @@ public class MergeFrequentStringsSketchTest {
       sketch.update("j");
       sketch.update("k");
       sketch.update("l");
-      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.serializeToByteArray(new ArrayOfStringsSerDe()))));
+      bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
 
     Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
@@ -287,15 +287,15 @@ public class MergeFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    FrequentItemsSketch<String> sketch = FrequentItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getStreamLength(), 29);
 
-    FrequentItemsSketch<String>.Row[] items = sketch.getFrequentItems(ErrorType.NO_FALSE_POSITIVES);
+    ItemsSketch.Row<String>[] items = sketch.getFrequentItems(ErrorType.NO_FALSE_POSITIVES);
     Assert.assertEquals(items.length, 2);
     // only 2 items ("a" and "g") should have counts more than 1
     int count = 0;
-    for (FrequentItemsSketch<String>.Row item: items) {
+    for (ItemsSketch.Row<String> item: items) {
       if (item.getLowerBound() > 1) count++;
     }
     Assert.assertEquals(count, 2);

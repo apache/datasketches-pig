@@ -11,8 +11,8 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.quantiles.QuantilesSketch;
-import com.yahoo.sketches.quantiles.QuantilesSketchBuilder;
+import com.yahoo.sketches.quantiles.DoublesSketch;
+import com.yahoo.sketches.quantiles.DoublesSketchBuilder;
 import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
@@ -40,7 +40,7 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
     final double percentile = (double) input.get(1);
     if (percentile < 0 || percentile > 100) throw new IllegalArgumentException("percentile must be between 0 and 100");
 
-    final QuantilesSketch qs = new QuantilesSketchBuilder().build(QUANTILES_SKETCH_SIZE);
+    final DoublesSketch qs = new DoublesSketchBuilder().build(QUANTILES_SKETCH_SIZE);
     final SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
       qs.update(it.getSummary().getValue());

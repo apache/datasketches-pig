@@ -8,7 +8,7 @@ import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-public class Util {
+class Util {
 
   static Tuple doubleArrayToTuple(double[] array) throws ExecException {
     Tuple tuple = TupleFactory.getInstance().newTuple(array.length);
