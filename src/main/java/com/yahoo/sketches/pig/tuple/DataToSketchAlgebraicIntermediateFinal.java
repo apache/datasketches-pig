@@ -49,7 +49,6 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
     this.summaryFactory_ = summaryFactory;
   }
   
-  @SuppressWarnings("unchecked")
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {

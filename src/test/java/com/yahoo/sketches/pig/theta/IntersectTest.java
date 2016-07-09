@@ -360,7 +360,6 @@ public class IntersectTest {
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
   
-  @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new Intersect();

@@ -240,7 +240,6 @@ public class MurmurHash3Test {
    * Test the outputSchema method for MurmurHash3.
    * @throws IOException thrown by Pig
    */
-  @SuppressWarnings("null")
   @Test
   public void outputSchemaTestMurmurHash3Udf() throws IOException {
     EvalFunc<Tuple> hashUdf =

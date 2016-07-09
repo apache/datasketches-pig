@@ -79,7 +79,6 @@ public class AexcludeBTest {
     assertEquals(est, 128.0, 0.0);
   }
   
-  @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new AexcludeB("512");

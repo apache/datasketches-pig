@@ -107,8 +107,6 @@ public class ErrorBoundsTest {
     assertTrue(Math.abs((lb / (est - (epsilon2SD * est))) - 1) < .01);
   }
   
-  
-  @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new ErrorBounds();

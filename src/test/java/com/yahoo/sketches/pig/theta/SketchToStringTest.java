@@ -80,7 +80,6 @@ public class SketchToStringTest {
     assertTrue(result.contains("SKETCH DATA DETAIL"));
   }
   
-  @SuppressWarnings("null")
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<String> udf = new SketchToString();

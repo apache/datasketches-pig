@@ -387,8 +387,7 @@ public class MergeTest {
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
-  
-  @SuppressWarnings("null")
+
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new Merge("512");
