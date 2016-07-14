@@ -56,7 +56,7 @@ public class GetPmfFromDoublesSketchTest {
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void wrongTypeForFraction() throws Exception {
+  public void wrongTypeOfSplitPoint() throws Exception {
     EvalFunc<Tuple> func = new GetPmfFromDoublesSketch();
     DoublesSketch sketch = DoublesSketch.builder().build();
     func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 1)));
