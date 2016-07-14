@@ -48,6 +48,14 @@ public class DataToDoublesSketchTest {
     Assert.assertTrue(sketch.isEmpty());
   }
 
+  @Test(expectedExceptions = ClassCastException.class)
+  public void execWrongValueType() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoublesSketch();
+    DataBag bag = bagFactory.newDefaultBag();
+    bag.add(tupleFactory.newTuple("a"));
+    func.exec(tupleFactory.newTuple(bag));
+  }
+
   @Test
   public void execNormalCase() throws Exception {
     EvalFunc<Tuple> func = new DataToDoublesSketch();
