@@ -29,21 +29,8 @@ public class GetQuantilesFromDoublesSketchTest {
     Assert.assertEquals(((double) resultTuple.get(0)), Double.NaN);
   }
 
-  @Test
-  public void normalCase() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
-    DoublesSketch sketch = DoublesSketch.builder().build();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
-    Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 0.5, 1.0)));
-    Assert.assertNotNull(resultTuple);
-    Assert.assertEquals(resultTuple.size(), 3);
-    Assert.assertEquals(((double) resultTuple.get(0)), 1.0);
-    Assert.assertEquals(((double) resultTuple.get(1)), 6.0);
-    Assert.assertEquals(((double) resultTuple.get(2)), 10.0);
-  }
-
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void wrongNumberOfInputs() throws Exception {
+  public void tooFewInputs() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
     func.exec(tupleFactory.newTuple(1));
   }
@@ -55,9 +42,55 @@ public class GetQuantilesFromDoublesSketchTest {
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void wrongTypeForFraction() throws Exception {
+  public void wrongTypeForFractionOrNumberOfIntervals() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
     DoublesSketch sketch = DoublesSketch.builder().build();
-    func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 1)));
+    func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), "")));
   }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void wrongTypeAmongFractions() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
+    func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 1)));
+  }
+
+  @Test
+  public void oneFraction() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
+    for (int i = 1; i <= 10; i++) sketch.update(i);
+    Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    Assert.assertEquals(((double) resultTuple.get(0)), 6.0);
+  }
+
+  @Test
+  public void severalFractions() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
+    for (int i = 1; i <= 10; i++) sketch.update(i);
+    Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 0.5, 1.0)));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 3);
+    Assert.assertEquals(((double) resultTuple.get(0)), 1.0);
+    Assert.assertEquals(((double) resultTuple.get(1)), 6.0);
+    Assert.assertEquals(((double) resultTuple.get(2)), 10.0);
+  }
+
+  @Test
+  public void numberOfEvenlySpacedIntervals() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
+    DoublesSketch sketch = DoublesSketch.builder().build();
+    for (int i = 1; i <= 10; i++) sketch.update(i);
+    Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3)));
+    Assert.assertNotNull(resultTuple);
+    System.out.println(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 3);
+    Assert.assertEquals(((double) resultTuple.get(0)), 1.0);
+    Assert.assertEquals(((double) resultTuple.get(1)), 6.0);
+    Assert.assertEquals(((double) resultTuple.get(2)), 10.0);
+  }
+
 }
