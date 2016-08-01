@@ -18,9 +18,9 @@ import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
 /**
- * This UDF is to get a list of quantile values from an ItemsSketch&lt;String&gt;
- * given a list of fractions. The fractions represent normalized ranks and must be
- * from 0 to 1 inclusive. For example, the fraction of 0.5 corresponds to 50th percentile,
+ * This UDF is to get a list of quantile values from an ItemsSketch&lt;String&gt; given a list of
+ * fractions or a number of evenly spaced intervals. The fractions represent normalized ranks and
+ * must be from 0 to 1 inclusive. For example, the fraction of 0.5 corresponds to 50th percentile,
  * which is the median value of the distribution (the number separating the higher half
  * of the probability distribution from the lower half).
  */
@@ -40,14 +40,26 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
         new NativeMemory(dba.get()), Comparator.naturalOrder(), new ArrayOfStringsSerDe());
     if (sketch.isEmpty()) return null;
 
-    double[] fractions = new double[input.size() - 1];
-    for (int i = 1; i < input.size(); i++) {
-      if (!(input.get(i) instanceof Double)) {
-        throw new IllegalArgumentException("expected a double value as a fraction, got " + input.get(i).getClass().getSimpleName());
+    if (input.size() == 2) {
+      Object arg = input.get(1);
+      if (arg instanceof Integer) { // number of evenly spaced intervals
+        return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantiles((int) arg)));
+      } else if(arg instanceof Double) { // just one fraction
+        return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantile((double) arg)));
+      } else {
+        throw new IllegalArgumentException("expected a double value as a fraction or an integer value"
+            + " as a number of evenly spaced intervals, got " + arg.getClass().getSimpleName());
       }
-      fractions[i - 1] = (double) input.get(i);
+    } else { // more than one number - must be double fractions
+      double[] fractions = new double[input.size() - 1];
+      for (int i = 1; i < input.size(); i++) {
+        if (!(input.get(i) instanceof Double)) {
+          throw new IllegalArgumentException("expected a double value as a fraction, got " + input.get(i).getClass().getSimpleName());
+        }
+        fractions[i - 1] = (double) input.get(i);
+      }
+      return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantiles(fractions)));
     }
-    return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantiles(fractions)));
   }
 
 }

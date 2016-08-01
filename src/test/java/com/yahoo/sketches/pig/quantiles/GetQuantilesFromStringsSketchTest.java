@@ -34,21 +34,8 @@ public class GetQuantilesFromStringsSketchTest {
     Assert.assertNull(resultTuple);
   }
 
-  @Test
-  public void normalCase() throws Exception {
-    EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
-    ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
-    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
-    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.0, 0.5, 1.0)));
-    Assert.assertNotNull(resultTuple);
-    Assert.assertEquals(resultTuple.size(), 3);
-    Assert.assertEquals(((String) resultTuple.get(0)), "01");
-    Assert.assertEquals(((String) resultTuple.get(1)), "06");
-    Assert.assertEquals(((String) resultTuple.get(2)), "10");
-  }
-
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void wrongNumberOfInputs() throws Exception {
+  public void tooFewInputs() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
     func.exec(TUPLE_FACTORY.newTuple(1));
   }
@@ -60,11 +47,56 @@ public class GetQuantilesFromStringsSketchTest {
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void wrongTypeForFraction() throws Exception {
+  public void wrongTypeForFractionOrNumberOfIntervals() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
     sketch.update("a");
-    func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 1)));
+    func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), "")));
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void wrongTypeAmongFractions() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
+    sketch.update("a");
+    func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.0, 1)));
+  }
+
+  @Test
+  public void oneFraction() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
+    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.5)));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    Assert.assertEquals(((String) resultTuple.get(0)), "06");
+  }
+
+  @Test
+  public void severalFractions() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
+    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.0, 0.5, 1.0)));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 3);
+    Assert.assertEquals(((String) resultTuple.get(0)), "01");
+    Assert.assertEquals(((String) resultTuple.get(1)), "06");
+    Assert.assertEquals(((String) resultTuple.get(2)), "10");
+  }
+
+  @Test
+  public void numberOfEvenlySpacedIntervals() throws Exception {
+    EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
+    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 3)));
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 3);
+    Assert.assertEquals(((String) resultTuple.get(0)), "01");
+    Assert.assertEquals(((String) resultTuple.get(1)), "06");
+    Assert.assertEquals(((String) resultTuple.get(2)), "10");
   }
 
 }
