@@ -15,7 +15,7 @@ import com.yahoo.sketches.ArrayOfStringsSerDe;
 public class DataToFrequentStringsSketch extends DataToFrequentItemsSketch<String> implements Algebraic {
 
   /**
-   * Constructor with default mode (sum)
+   * Constructor
    * @param sketchSize String representation of sketch size
    */
   public DataToFrequentStringsSketch(final String sketchSize) {

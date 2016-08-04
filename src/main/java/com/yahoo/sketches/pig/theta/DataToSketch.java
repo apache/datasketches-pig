@@ -130,7 +130,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
    * <p>
-   * If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
+   * If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
    * <p>
