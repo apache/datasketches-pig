@@ -19,7 +19,7 @@ public class DataToStringsSketch extends DataToItemsSketch<String> {
   private static final ArrayOfItemsSerDe<String> SER_DE = new ArrayOfStringsSerDe();
 
   public DataToStringsSketch() {
-    super(0, Comparator.naturalOrder(), new ArrayOfStringsSerDe());
+    super(0, COMPARATOR, SER_DE);
   }
 
   public DataToStringsSketch(final String kStr) {
