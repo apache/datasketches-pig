@@ -86,7 +86,6 @@ public class GetQuantilesFromDoublesSketchTest {
     for (int i = 1; i <= 10; i++) sketch.update(i);
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3)));
     Assert.assertNotNull(resultTuple);
-    System.out.println(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);
     Assert.assertEquals(((double) resultTuple.get(0)), 1.0);
     Assert.assertEquals(((double) resultTuple.get(1)), 6.0);
