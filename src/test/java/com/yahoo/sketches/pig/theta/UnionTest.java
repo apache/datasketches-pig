@@ -26,36 +26,36 @@ import org.testng.annotations.Test;
 
 import com.yahoo.sketches.SketchesArgumentException;
 import com.yahoo.sketches.pig.theta.Estimate;
-import com.yahoo.sketches.pig.theta.Merge;
+import com.yahoo.sketches.pig.theta.Union;
 
 /**
  * @author Lee Rhodes
  */
-public class MergeTest {
+public class UnionTest {
 //  private String udfName = "com.yahoo.sketches.pig.theta.SketchUnions";
 //  private long seed_ = Util.DEFAULT_UPDATE_SEED;
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void checkConstructorExceptions1() {
-    Merge test = new Merge("1023");
+    Union test = new Union("1023");
   }
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkConstructorExceptions3() {
-    Merge test = new Merge("8");
+    Union test = new Union("8");
   }
   
   @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
-    Merge test = new Merge("1024", "2.0");
+    Union test = new Union("1024", "2.0");
   }
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkNotDBAExcep() throws IOException {
-    Merge inter = new Merge();
+    Union inter = new Union();
     //create inputTuple and a bag, add bag to inputTuple
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -66,7 +66,7 @@ public class MergeTest {
     inter.accumulate(inputTuple); //add empty tuple
     
     innerTuple.set(0, new Double(1.0));  //not a DBA
-    inter = new Merge();
+    inter = new Union();
     inter.accumulate(inputTuple); //add wrong type
   }
   
@@ -74,27 +74,27 @@ public class MergeTest {
   @Test
   public void checkConstructors() {
     
-    Merge inter = new Merge();
-    inter = new Merge("1024");
-    inter = new Merge("1024", "1.0");
-    inter = new Merge("1024", "1.0", "9001");
-    inter = new Merge(1024, (float) 1.0, 9001);
+    Union inter = new Union();
+    inter = new Union("1024");
+    inter = new Union("1024", "1.0");
+    inter = new Union("1024", "1.0", "9001");
+    inter = new Union(1024, (float) 1.0, 9001);
     
-    Merge.Initial initial = new Merge.Initial();
-    initial = new Merge.Initial("1024");
-    initial = new Merge.Initial("1024", "1.0");
-    initial = new Merge.Initial("1024", "1.0", "9001");
+    Union.Initial initial = new Union.Initial();
+    initial = new Union.Initial("1024");
+    initial = new Union.Initial("1024", "1.0");
+    initial = new Union.Initial("1024", "1.0", "9001");
     
-    Merge.IntermediateFinal interFin = new Merge.IntermediateFinal();
-    interFin = new Merge.IntermediateFinal("1024");
-    interFin = new Merge.IntermediateFinal("1024", "1.0");
-    interFin = new Merge.IntermediateFinal("1024", "1.0", "9001");
-    interFin = new Merge.IntermediateFinal(1024, (float) 1.0, 9001);
+    Union.IntermediateFinal interFin = new Union.IntermediateFinal();
+    interFin = new Union.IntermediateFinal("1024");
+    interFin = new Union.IntermediateFinal("1024", "1.0");
+    interFin = new Union.IntermediateFinal("1024", "1.0", "9001");
+    interFin = new Union.IntermediateFinal(1024, (float) 1.0, 9001);
   }
   
   @Test
   public void checkNullInput() throws IOException {
-    EvalFunc<Tuple> unionFunc = new Merge(); //default 4096
+    EvalFunc<Tuple> unionFunc = new Union(); //default 4096
     EvalFunc<Double> estFunc = new Estimate();
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     //null bag
@@ -109,7 +109,7 @@ public class MergeTest {
   
   @Test
   public void checkExactTopExec() throws IOException {
-    EvalFunc<Tuple> unionFunc = new Merge(); //default 4096
+    EvalFunc<Tuple> unionFunc = new Union(); //default 4096
     EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
@@ -135,7 +135,7 @@ public class MergeTest {
   
   @Test(expectedExceptions = ClassCastException.class)
   public void checkBadClassCast() throws IOException {
-    Accumulator<Tuple> unionFunc = new Merge("256");
+    Accumulator<Tuple> unionFunc = new Union("256");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //valid size, but null
     
     inputTuple.set(0, new Double(1.0)); //wrong type. Cannot Union datums.
@@ -144,7 +144,7 @@ public class MergeTest {
   
   @Test
   public void checkNullEmptyAccumulator() throws IOException {
-    Accumulator<Tuple> unionFunc = new Merge("256");
+    Accumulator<Tuple> unionFunc = new Union("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = null;
@@ -182,7 +182,7 @@ public class MergeTest {
   
   @Test
   public void checkEmptyGetValue() throws IOException {
-    Accumulator<Tuple> unionFunc = new Merge("256");
+    Accumulator<Tuple> unionFunc = new Union("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple resultTuple = unionFunc.getValue();
@@ -194,7 +194,7 @@ public class MergeTest {
   
   @Test
   public void checkExactAccumulator() throws IOException {
-    Accumulator<Tuple> unionFunc = new Merge("256");
+    Accumulator<Tuple> unionFunc = new Union("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     //create inputTuple and a bag, add bag to inputTuple
@@ -237,7 +237,7 @@ public class MergeTest {
   
   @Test
   public void checkExactAlgebraicInitial() throws IOException {
-    EvalFunc<Tuple> unionFuncInit = new Merge.Initial("256");
+    EvalFunc<Tuple> unionFuncInit = new Union.Initial("256");
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
@@ -256,7 +256,7 @@ public class MergeTest {
   
   @Test
   public void checkAlgFinalFromPriorIntermed() throws IOException {
-    EvalFunc<Tuple> unionFuncIFinal = new Merge.IntermediateFinal("256");
+    EvalFunc<Tuple> unionFuncIFinal = new Union.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -288,7 +288,7 @@ public class MergeTest {
   
   @Test
   public void checkAlgFinalFromPriorInitial() throws IOException {
-    EvalFunc<Tuple> unionFuncFinal = new Merge.IntermediateFinal("256");
+    EvalFunc<Tuple> unionFuncFinal = new Union.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -325,7 +325,7 @@ public class MergeTest {
   
   @Test
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Merge.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Union.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -345,7 +345,7 @@ public class MergeTest {
   
   @Test
   public void checkAlgFinalInnerBagEmpty() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Merge.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Union.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -368,7 +368,7 @@ public class MergeTest {
   
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkAlgFinalInnerNotDBA() throws IOException {
-    EvalFunc<Tuple> interFuncFinal = new Merge.IntermediateFinal("256");
+    EvalFunc<Tuple> interFuncFinal = new Union.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
     
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -390,7 +390,7 @@ public class MergeTest {
 
   @Test
   public void outputSchemaTest() throws IOException {
-    EvalFunc<Tuple> udf = new Merge("512");
+    EvalFunc<Tuple> udf = new Union("512");
     
     Schema inputSchema = null;
     

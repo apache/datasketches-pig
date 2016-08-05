@@ -32,8 +32,6 @@ import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
-import com.yahoo.sketches.theta.Union;
-
 
 /**
  * This is a Pig UDF that performs the Union Set Operation on Sketches. 
@@ -41,14 +39,14 @@ import com.yahoo.sketches.theta.Union;
  * 
  * @author Lee Rhodes
  */
-public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
+public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
   //All parameters kept at the class level must be final, except for the accumUpdateSketch.
   private final int nomEntries_;
   private final float p_;
   private final long seed_;
   private final Tuple emptyCompactOrderedSketchTuple_;
-  private Union accumUnion_;
+  private com.yahoo.sketches.theta.Union accumUnion_;
   
   //TOP LEVEL API
   
@@ -61,7 +59,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
    * </ul>
    */
-  public Merge() {
+  public Union() {
     this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
   }
   
@@ -75,7 +73,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * 
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
-  public Merge(String nomEntriesStr) {
+  public Union(String nomEntriesStr) {
     this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
   }
   
@@ -90,7 +88,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * Although this functionality is implemented for SketchUnions, it rarely makes sense to use it 
    * here. The proper use of upfront sampling is when building the sketches.
    */
-  public Merge(String nomEntriesStr, String pStr) {
+  public Union(String nomEntriesStr, String pStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), DEFAULT_UPDATE_SEED);
   }
   
@@ -103,7 +101,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * here. The proper use of upfront sampling is when building the sketches.
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Merge(String nomEntriesStr, String pStr, String seedStr) {
+  public Union(String nomEntriesStr, String pStr, String seedStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
   }
   
@@ -116,7 +114,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * here. The proper use of upfront sampling is when building the sketches.
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Merge(int nomEntries, float p, long seed) {
+  public Union(int nomEntries, float p, long seed) {
     super();
     this.nomEntries_ = nomEntries;
     this.p_ = p;
@@ -181,7 +179,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Union union = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
+    com.yahoo.sketches.theta.Union union = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
         buildUnion(nomEntries_);
     DataBag bag = extractBag(inputTuple);
     if (bag == null) {
@@ -283,7 +281,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   * @param bag A bag of sketchTuples.
   * @param union The union to update
   */
- private static void updateUnion(DataBag bag, Union union) {
+ private static void updateUnion(DataBag bag, com.yahoo.sketches.theta.Union union) {
    //Bag is not empty. process each innerTuple in the bag
    for (Tuple innerTuple : bag) {
      //validate the inner Tuples
@@ -462,7 +460,7 @@ public class Merge extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      Union union = SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF).
+      com.yahoo.sketches.theta.Union union = SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF).
           buildUnion(myNomEntries_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.

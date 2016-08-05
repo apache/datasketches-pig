@@ -24,7 +24,7 @@ import com.yahoo.sketches.frequencies.ItemsSketch;
  * 
  * @param <T> Type of item
  */
-public abstract class MergeFrequentItemsSketchAlgebraicIntermediateFinal<T> extends EvalFunc<Tuple> {
+public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> extends EvalFunc<Tuple> {
   private int sketchSize_;
   private ArrayOfItemsSerDe<T> serDe_;
   private boolean isFirstCall_ = true;
@@ -32,9 +32,9 @@ public abstract class MergeFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
   /**
    * Default constructor to make pig validation happy.
    */
-  public MergeFrequentItemsSketchAlgebraicIntermediateFinal() {}
+  public UnionFrequentItemsSketchAlgebraicIntermediateFinal() {}
 
-  public MergeFrequentItemsSketchAlgebraicIntermediateFinal(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
+  public UnionFrequentItemsSketchAlgebraicIntermediateFinal(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     sketchSize_ = sketchSize;
     serDe_ = serDe;
   }

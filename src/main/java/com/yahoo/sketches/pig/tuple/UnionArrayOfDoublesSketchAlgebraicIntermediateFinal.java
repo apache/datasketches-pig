@@ -24,14 +24,14 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
  * returned by either the Intermediate or the Initial stages, so
  * it needs to be able to differentiate between and interpret both types.
  */
-abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalFunc<Tuple> {
+abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalFunc<Tuple> {
   private int sketchSize_;
   private int numValues_;
   private boolean isFirstCall_ = true;
 
-  MergeArrayOfDoublesSketchAlgebraicIntermediateFinal() {}
+  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal() {}
 
-  MergeArrayOfDoublesSketchAlgebraicIntermediateFinal(int sketchSize, int numValues) {
+  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal(int sketchSize, int numValues) {
     sketchSize_ = sketchSize;
     numValues_ = numValues;
   }
@@ -57,7 +57,7 @@ abstract class MergeArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
-        // Merge it with the current sketch.
+        // Add it to the current union
         final DataByteArray dba = (DataByteArray) item;
         union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
       } else {

@@ -22,24 +22,24 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 import java.util.Random;
 
-public class MergeArrayOfDoublesSketchTest {
+public class UnionArrayOfDoublesSketchTest {
   @Test
   public void execNullInput() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     Tuple resultTuple = func.exec(null);
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void exec() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch("4096", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -67,7 +67,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNullInput() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(null);
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -80,7 +80,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyInputTuple() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(TupleFactory.getInstance().newTuple());
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -93,7 +93,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNotABag() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(PigUtil.objectsToTuple((Object) null));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -106,7 +106,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyBag() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag()));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -119,7 +119,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyInnerTuple() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(TupleFactory.getInstance().newTuple())));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -132,7 +132,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNullSketch() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple((Object) null))));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -145,7 +145,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptySketch() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("4096", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -163,7 +163,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void accumulator() throws Exception {
-    Accumulator<Tuple> func = new MergeArrayOfDoublesSketch("4096", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("4096", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -196,7 +196,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch.Initial(null, null);
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.Initial(null, null);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(null);
     bag.add(null);
@@ -211,7 +211,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntemediateFinalExact() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch.IntermediateFinal("4096", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("4096", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     // this is to simulate the output from Initial
@@ -245,7 +245,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntemediateFinalEstimation() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch.IntermediateFinal("16384", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("16384", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long value = 1;
@@ -278,7 +278,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntemediateFinalSingleCall() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch.IntermediateFinal("1024", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("1024", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long value = 1;
@@ -303,7 +303,7 @@ public class MergeArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntemediateFinalRandomized() throws Exception {
-    EvalFunc<Tuple> func = new MergeArrayOfDoublesSketch.IntermediateFinal("16384", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("16384", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long key = 1;
