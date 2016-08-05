@@ -24,24 +24,24 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 import java.util.Random;
 
-public class MergeDoubleSummarySketchTest {
+public class UnionDoubleSummarySketchTest {
   @Test
   public void execNullInput() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("32");
     Tuple resultTuple = func.exec(null);
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("32");
     Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void exec() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("4096");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
@@ -69,7 +69,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void execMaxMode() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch("4096", "Max");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("4096", "Max");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
@@ -97,7 +97,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorNullInput() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(null);
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -110,7 +110,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorEmptyInputTuple() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(TupleFactory.getInstance().newTuple());
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -123,7 +123,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorNotABag() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(PigUtil.objectsToTuple((Object) null));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -136,7 +136,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorEmptyBag() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag()));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -149,7 +149,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorEmptyInnerTuple() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(TupleFactory.getInstance().newTuple())));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -162,7 +162,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorNullSketch() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("32");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("32");
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple((Object) null))));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -175,7 +175,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulatorEmptySketch() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("4096");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
@@ -193,7 +193,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void accumulator() throws Exception {
-    Accumulator<Tuple> func = new MergeDoubleSummarySketch("4096");
+    Accumulator<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
@@ -226,7 +226,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.Initial(null);
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch.Initial(null);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(null);
     bag.add(null);
@@ -241,7 +241,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void algebraicIntemediateFinalExactMinMode() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("4096", "Min");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch.IntermediateFinal("4096", "Min");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     // this is to simulate the output from Initial
@@ -275,7 +275,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void algebraicIntemediateFinalEstimation() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("16384");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch.IntermediateFinal("16384");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long value = 1;
@@ -308,7 +308,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void algebraicIntemediateFinalSingleCall() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("1024");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch.IntermediateFinal("1024");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long value = 1;
@@ -333,7 +333,7 @@ public class MergeDoubleSummarySketchTest {
 
   @Test
   public void algebraicIntemediateFinalRandomized() throws Exception {
-    EvalFunc<Tuple> func = new MergeDoubleSummarySketch.IntermediateFinal("16384");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch.IntermediateFinal("16384");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     long key = 1;

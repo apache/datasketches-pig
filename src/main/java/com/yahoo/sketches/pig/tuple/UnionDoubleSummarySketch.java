@@ -10,16 +10,16 @@ import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 
 /**
- * This is to merge Sketch&lt;DoubleSummary&gt;.
+ * This is to union Sketch&lt;DoubleSummary&gt;.
  * It supports all three ways: exec(), Accumulator and Algebraic
  */
-public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> implements Algebraic {
+public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> implements Algebraic {
 
   /**
    * Constructor with default mode (sum)
    * @param sketchSize String representation of sketch size
    */
-  public MergeDoubleSummarySketch(final String sketchSize) {
+  public UnionDoubleSummarySketch(final String sketchSize) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
   }
 
@@ -28,7 +28,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
    * @param sketchSize String representation of sketch size
    * @param summaryMode String representation of mode (sum, min or max)
    */
-  public MergeDoubleSummarySketch(final String sketchSize, final String summaryMode) {
+  public UnionDoubleSummarySketch(final String sketchSize, final String summaryMode) {
     super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
   }
 
@@ -69,7 +69,7 @@ public class MergeDoubleSummarySketch extends MergeSketch<DoubleSummary> impleme
     public Initial(final String sketchSize, final String summaryMode) {}
   }
 
-  public static class IntermediateFinal extends MergeSketchAlgebraicIntermediateFinal<DoubleSummary> {
+  public static class IntermediateFinal extends UnionSketchAlgebraicIntermediateFinal<DoubleSummary> {
     /**
      * Default constructor to make pig validation happy.
      */

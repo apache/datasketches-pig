@@ -24,13 +24,13 @@ import com.yahoo.sketches.tuple.SummaryFactory;
  * This is a generic implementation to be specialized in concrete UDFs 
  * @param <S> Summary type
  */
-public abstract class MergeSketch<S extends Summary> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
+public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private final SummaryFactory<S> summaryFactory_;
   private Union<S> union_;
   private boolean isFirstCall_ = true;
 
-  public MergeSketch(final int sketchSize, final SummaryFactory<S> summaryFactory) {
+  public UnionSketch(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     super();
     this.sketchSize_ = sketchSize;
     this.summaryFactory_ = summaryFactory;

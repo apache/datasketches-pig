@@ -26,14 +26,14 @@ import com.yahoo.sketches.tuple.SummaryFactory;
  * 
  * @param <S> Type of Summary
  */
-public abstract class MergeSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
+public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
   private int sketchSize_;
   private SummaryFactory<S> summaryFactory_;
   private boolean isFirstCall_ = true;
 
-  public MergeSketchAlgebraicIntermediateFinal() {}
+  public UnionSketchAlgebraicIntermediateFinal() {}
 
-  public MergeSketchAlgebraicIntermediateFinal(final int sketchSize, final SummaryFactory<S> summaryFactory) {
+  public UnionSketchAlgebraicIntermediateFinal(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     this.sketchSize_ = sketchSize;
     this.summaryFactory_ = summaryFactory;
   }
@@ -59,7 +59,7 @@ public abstract class MergeSketchAlgebraicIntermediateFinal<S extends Summary> e
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function 
-        // Merge it with the current sketch.
+        // Add it to the current union.
         final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
         union.update(incomingSketch);
       } else {

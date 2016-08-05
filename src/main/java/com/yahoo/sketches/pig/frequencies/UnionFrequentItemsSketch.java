@@ -20,13 +20,13 @@ import com.yahoo.sketches.frequencies.ItemsSketch;
  * This is a generic implementation to be specialized in concrete UDFs 
  * @param <T> Type of item
  */
-public abstract class MergeFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
+public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private final ArrayOfItemsSerDe<T> serDe_;
   private ItemsSketch<T> sketch_;
   private boolean isFirstCall_ = true;
 
-  public MergeFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
+  public UnionFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     super();
     sketchSize_ = sketchSize;
     serDe_ = serDe;

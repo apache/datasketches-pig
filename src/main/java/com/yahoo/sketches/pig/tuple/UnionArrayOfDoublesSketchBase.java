@@ -20,13 +20,13 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 
-abstract class MergeArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
+abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
   private final int numValues_;
   private ArrayOfDoublesUnion accumUnion_;
   private boolean isFirstCall_ = true;
 
-  MergeArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
+  UnionArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
     super();
     sketchSize_ = sketchSize;
     numValues_ = numValues;
