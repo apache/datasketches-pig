@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import java.io.IOException;
@@ -11,12 +12,12 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
+import com.yahoo.sketches.ResizeFactor;
 import com.yahoo.sketches.memory.Memory;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.Sketch;
 import com.yahoo.sketches.theta.UpdateSketch;
-import com.yahoo.sketches.ResizeFactor;
 
 /**
  * Common methods for the pig classes.
@@ -43,7 +44,7 @@ class PigUtil {
       outputTuple.set(0, dba);
     } 
     catch (IOException e) {
-      throw new IllegalArgumentException("IOException thrown: "+e);
+      throw new IllegalArgumentException("IOException thrown: " + e);
     }
     return outputTuple;
   }

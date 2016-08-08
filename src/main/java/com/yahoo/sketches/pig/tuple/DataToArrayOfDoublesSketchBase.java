@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.tuple;
 
 import java.io.IOException;
@@ -43,7 +44,9 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
       isFirstCall_ = false;
     }
     if (accumSketch_ == null) {
-      accumSketch_ = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+      accumSketch_ = 
+          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
+            .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -58,7 +61,9 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
   @Override
   public Tuple getValue() {
     if (accumSketch_ == null) {
-      accumSketch_ = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+      accumSketch_ = 
+          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
+            .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
     }
     return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
   }
@@ -74,7 +79,9 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
 
-    final ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+    final ArrayOfDoublesUpdatableSketch sketch = 
+        new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
+          .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, sketch, numValues_);
     return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
@@ -84,7 +91,10 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
     final double[] values = new double[numValues];
     for (final Tuple tuple: bag) {
-      if (tuple.size() != numValues + 1) throw new IllegalArgumentException("Inner tuple of input bag must have " + (numValues + 1) + " fields.");
+      if (tuple.size() != numValues + 1) {
+        throw new IllegalArgumentException("Inner tuple of input bag must have " + (numValues + 1) 
+            + " fields.");
+      }
 
       final Object key = tuple.get(0);
       if (key == null) continue;

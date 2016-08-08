@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.tuple;
 
 import java.io.IOException;
@@ -12,10 +13,10 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
-import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
 import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
+import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
+import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
 
 /**
  * This is to calculate the intermediate pass (combiner) or the final pass
@@ -39,10 +40,13 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("algebraic is used");  // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final ArrayOfDoublesUnion union = new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_).setNumberOfValues(numValues_).buildUnion();
+    final ArrayOfDoublesUnion union = 
+        new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_)
+          .setNumberOfValues(numValues_).buildUnion();
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
@@ -62,7 +66,8 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
         union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
+        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " 
+            + item.getClass().getName());
       }
     }
     return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));

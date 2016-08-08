@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
@@ -81,17 +82,13 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
-   * <p>
-   * If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
+   * <p>If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
-   * <p>
-   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Intersection</b>. 
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Intersection</b>. 
    * The result is returned as a <b>Sketch Tuple</b>
    * 
-   * <p>
-   * 
-   * <b>Input Tuple</b>
+   * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
    *     <ul>
@@ -184,8 +181,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Tuple getValue() {
     if ((accumIntersection_ == null) || !accumIntersection_.hasResult()) {
       throw new IllegalStateException(""
-          + "The accumulate(Tuple) method must be called at least once with "+
-          "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
+          + "The accumulate(Tuple) method must be called at least once with " 
+          + "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
     }
     CompactSketch compactSketch = accumIntersection_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
@@ -246,7 +243,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      } 
      else {
        throw new IllegalArgumentException(
-           "Field type was not DataType.BYTEARRAY: "+type);
+           "Field type was not DataType.BYTEARRAY: " + type);
      }
    }
  }

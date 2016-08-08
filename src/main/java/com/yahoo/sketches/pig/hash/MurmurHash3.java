@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.hash;
 
 import static com.yahoo.sketches.hash.MurmurHash3.hash;
@@ -69,21 +70,21 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * @param input Hash Input Tuple. If null or empty exec returns null.
    */
   @Override
-  public Tuple exec(Tuple input) throws IOException {
+  public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
       return null;
     }
-    Tuple out = mTupleFactory.newTuple(3);
-    long[] hashOut = extractInputs(input);
+    final Tuple out = mTupleFactory.newTuple(3);
+    final long[] hashOut = extractInputs(input);
     if (hashOut == null) {
       return out; //contains 3 nulls
     }
-    long h0 = hashOut[0];
-    long h1 = hashOut[1];
-    int modResult = (divisor_ > 0L) ? modulo(h0, h1, divisor_) : -1;
-    out.set(0, new Long(h0));
-    out.set(1, new Long(h1));
-    out.set(2, new Integer(modResult));
+    final long h0 = hashOut[0];
+    final long h1 = hashOut[1];
+    final int modResult = (divisor_ > 0L) ? modulo(h0, h1, divisor_) : -1;
+    out.set(0, Long.valueOf(h0));
+    out.set(1, Long.valueOf(h1));
+    out.set(2, Integer.valueOf(modResult));
     return out;
   }
 

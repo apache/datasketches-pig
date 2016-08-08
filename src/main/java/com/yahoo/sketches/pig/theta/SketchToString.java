@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import static com.yahoo.sketches.pig.theta.PigUtil.tupleToSketch;
@@ -20,8 +21,9 @@ import com.yahoo.sketches.theta.Sketch;
  * This is a User Defined Function (UDF) for "pretty printing" the summary of a sketch 
  * from a Sketch Tuple.
  * 
+ * <p>
  * Refer to {@link DataToSketch#exec(Tuple)} for the definition of a Sketch Tuple.
- * 
+ * </p>
  * @author Lee Rhodes
  */
 public class SketchToString extends EvalFunc<String> {

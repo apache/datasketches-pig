@@ -2,6 +2,7 @@
  * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.quantiles;
 
 import java.io.IOException;
@@ -71,20 +72,15 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
-   * <p>
-   * If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
+   * <p>If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
-   * <p>
-   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
    * The result is returned as a <b>Sketch Tuple</b>
    * 
-   * <p>
-   * Types are in the form: Java data type: Pig DataType
+   * <p>Types are in the form: Java data type: Pig DataType
    * 
-   * <p>
-   * 
-   * <b>Input Tuple</b>
+   * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
    *     <ul>

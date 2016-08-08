@@ -2,18 +2,19 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
 import static com.yahoo.sketches.Util.checkIfPowerOf2;
 import static com.yahoo.sketches.Util.checkProbability;
+import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 import static com.yahoo.sketches.pig.theta.PigUtil.compactOrderedSketchToTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -118,8 +119,8 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
     if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
-      throw new IllegalArgumentException("NomEntries too small: "+nomEntries+
-          ", required: "+(1 << Util.MIN_LG_NOM_LONGS));
+      throw new IllegalArgumentException("NomEntries too small: " + nomEntries 
+          + ", required: " + (1 << Util.MIN_LG_NOM_LONGS));
     }
   }
   
@@ -129,17 +130,13 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Datum Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
-   * <p>
-   * If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
+   * <p>If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
-   * <p>
-   * Internally, this method presents the inner <b>Datum Tuples</b> to a new <b>Sketch</b>,
+   * <p>Internally, this method presents the inner <b>Datum Tuples</b> to a new <b>Sketch</b>,
    * which is returned as a <b>Sketch Tuple</b>
    * 
-   * <p>
-   * 
-   * <b>Input Tuple</b>
+   * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
    *     <ul>
@@ -293,8 +290,8 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @return a new empty HeapUnion
    */
   private static final Union newUnion(int nomEntries, float p, long seed) {
-    return SetOperation.builder().
-        setSeed(seed).setP(p).setResizeFactor(RF).buildUnion(nomEntries);
+    return SetOperation.builder()
+        .setSeed(seed).setP(p).setResizeFactor(RF).buildUnion(nomEntries);
   }
 
   /*************************************************************************************************

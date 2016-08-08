@@ -2,18 +2,19 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
 import static com.yahoo.sketches.Util.checkIfPowerOf2;
 import static com.yahoo.sketches.Util.checkProbability;
+import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 import static com.yahoo.sketches.pig.theta.PigUtil.compactOrderedSketchToTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.emptySketchTuple;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractBag;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
 import static com.yahoo.sketches.pig.theta.PigUtil.extractTypeAtIndex;
-import static com.yahoo.sketches.pig.theta.PigUtil.RF;
 
 import java.io.IOException;
 
@@ -124,8 +125,8 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
     if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
-      throw new IllegalArgumentException("NomEntries too small: "+nomEntries+
-          ", required: "+(1 << Util.MIN_LG_NOM_LONGS));
+      throw new IllegalArgumentException("NomEntries too small: " + nomEntries 
+          + ", required: " + (1 << Util.MIN_LG_NOM_LONGS));
     }
   }
   
@@ -135,17 +136,13 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
-   * <p>
-   * If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
+   * <p>If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
-   * <p>
-   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
    * The result is returned as a <b>Sketch Tuple</b>
    * 
-   * <p>
-   * 
-   * <b>Input Tuple</b>
+   * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
    *     <ul>
@@ -179,8 +176,8 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    com.yahoo.sketches.theta.Union union = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
-        buildUnion(nomEntries_);
+    com.yahoo.sketches.theta.Union union = 
+        SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).buildUnion(nomEntries_);
     DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
@@ -223,8 +220,8 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
     if (accumUnion_ == null) { 
-      accumUnion_ = SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).
-          buildUnion(nomEntries_);
+      accumUnion_ = 
+          SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).buildUnion(nomEntries_);
     }
     DataBag bag = extractBag(inputTuple);
     if (bag == null) return;
@@ -302,7 +299,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
      } 
      else {
        throw new IllegalArgumentException(
-           "Field type was not DataType.BYTEARRAY: "+type);
+           "Field type was not DataType.BYTEARRAY: " + type);
      }
    }
  }
@@ -460,8 +457,9 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       
-      com.yahoo.sketches.theta.Union union = SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF).
-          buildUnion(myNomEntries_);
+      com.yahoo.sketches.theta.Union union = 
+          SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF)
+          .buildUnion(myNomEntries_);
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;

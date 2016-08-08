@@ -2,6 +2,7 @@
  * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.quantiles;
 
 import java.io.IOException;
@@ -63,20 +64,15 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single <b>Sketch</b> as a <b>Sketch Tuple</b>.
    * 
-   * <p>
-   * If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
+   * <p>If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
    * 
-   * <p>
-   * Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
    * The result is returned as a <b>Sketch Tuple</b>
    * 
-   * <p>
-   * Types below are in the form: Java data type: Pig DataType
+   * <p>Types below are in the form: Java data type: Pig DataType
    * 
-   * <p>
-   * 
-   * <b>Input Tuple</b>
+   * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
    *     <ul>
@@ -191,7 +187,8 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    * @param bag A bag of sketchTuples.
    * @param union The union to update
    */
-  private static <T> void updateUnion(final DataBag bag, final ItemsUnion<T> union, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
+  private static <T> void updateUnion(final DataBag bag, final ItemsUnion<T> union, 
+        final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
     for (Tuple innerTuple: bag) {
       final Object f0 = innerTuple.get(0);
       if (f0 == null) continue;

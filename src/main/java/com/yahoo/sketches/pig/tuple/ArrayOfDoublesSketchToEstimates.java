@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.tuple;
 
 import java.io.IOException;
@@ -10,10 +11,10 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
+import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketchIterator;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
-import com.yahoo.sketches.memory.NativeMemory;
 
 /**
  * This UDF converts an ArrayOfDoubles sketch to estimates.

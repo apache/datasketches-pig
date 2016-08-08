@@ -2,6 +2,7 @@
  * Copyright 2015, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.tuple;
 
 import java.io.IOException;
@@ -12,10 +13,10 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.tuple.Union;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.Summary;
 import com.yahoo.sketches.tuple.SummaryFactory;
+import com.yahoo.sketches.tuple.Union;
 
 /**
  * This is to calculate the intermediate pass (combiner) or the final pass

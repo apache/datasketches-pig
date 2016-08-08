@@ -2,6 +2,7 @@
  * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.quantiles;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
       Object arg = input.get(1);
       if (arg instanceof Integer) { // number of evenly spaced intervals
         return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantiles((int) arg)));
-      } else if(arg instanceof Double) { // just one fraction
+      } else if (arg instanceof Double) { // just one fraction
         return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantile((double) arg)));
       } else {
         throw new IllegalArgumentException("expected a double value as a fraction or an integer value"
