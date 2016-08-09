@@ -28,6 +28,11 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
   private final ArrayOfItemsSerDe<T> serDe_;
   private boolean isFirstCall_ = true;
 
+  /**
+   * Constructs a function given a sketch size and serde
+   * @param sketchSize parameter controlling the size of the sketch and the accuracy
+   * @param serDe an instance of ArrayOfItemsSerDe to serialize and deserialize arrays of items
+   */
   public DataToFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     super();
     sketchSize_ = sketchSize;
