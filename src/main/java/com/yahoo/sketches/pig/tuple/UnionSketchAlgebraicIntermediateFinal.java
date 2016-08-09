@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -28,12 +30,25 @@ import com.yahoo.sketches.tuple.Union;
  * @param <S> Type of Summary
  */
 public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
-  private int sketchSize_;
-  private SummaryFactory<S> summaryFactory_;
+  private final int sketchSize_;
+  private final SummaryFactory<S> summaryFactory_;
   private boolean isFirstCall_ = true;
 
-  public UnionSketchAlgebraicIntermediateFinal() {}
+  /**
+   * Constructs a function given a summary factory and default sketch size
+   * @param summaryFactory an instance of SummaryFactory
+   */
+  public UnionSketchAlgebraicIntermediateFinal(final SummaryFactory<S> summaryFactory) {
+    this(DEFAULT_NOMINAL_ENTRIES, summaryFactory);
+  }
 
+  /**
+   * Constructs a function given a sketch size and summary factory
+   * @param sketchSize parameter controlling the size of the sketch and the accuracy.
+   * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
+   * greater than given value.
+   * @param summaryFactory an instance of SummaryFactory
+   */
   public UnionSketchAlgebraicIntermediateFinal(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     this.sketchSize_ = sketchSize;
     this.summaryFactory_ = summaryFactory;

@@ -23,21 +23,21 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 public class DataToArrayOfDoublesSketchTest {
   @Test
   public void execNullInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch();
     Tuple resultTuple = func.exec(null);
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch();
     Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyBag() throws Exception {
-    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("32", "1");
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("1");
     Tuple inputTuple = PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag());
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
@@ -156,7 +156,7 @@ public class DataToArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
-    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.Initial(null, null);
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.Initial(null);
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(PigUtil.objectsToTuple(null, null));
@@ -173,7 +173,7 @@ public class DataToArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntermediateFinal() throws Exception {
-    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.IntermediateFinal("32", "1");
+    EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch.IntermediateFinal("1");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);

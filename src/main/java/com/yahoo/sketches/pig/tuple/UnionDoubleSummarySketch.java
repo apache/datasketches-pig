@@ -17,6 +17,13 @@ import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> implements Algebraic {
 
   /**
+   * Constructor with default sketch size and default mode (sum)
+   */
+  public UnionDoubleSummarySketch() {
+    super(new DoubleSummaryFactory());
+  }
+
+  /**
    * Constructor with default mode (sum)
    * @param sketchSize String representation of sketch size
    */
@@ -50,7 +57,8 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
 
   public static class Initial extends AlgebraicInitial {
     /**
-     * Default constructor to make pig validation happy.
+     * Constructor for the initial pass of an Algebraic function.
+     * Default sketch size and default mode.
      */
     public Initial() {}
 
@@ -72,9 +80,12 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
 
   public static class IntermediateFinal extends UnionSketchAlgebraicIntermediateFinal<DoubleSummary> {
     /**
-     * Default constructor to make pig validation happy.
+     * Constructor for the intermediate and final passes of an Algebraic function.
+     * Default sketch size and default mode.
      */
-    public IntermediateFinal() {}
+    public IntermediateFinal() {
+      super(new DoubleSummaryFactory());
+    }
 
     /**
      * Constructor for the intermediate and final passes of an Algebraic function. This will be
@@ -95,4 +106,5 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
       super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
     }
   }
+
 }

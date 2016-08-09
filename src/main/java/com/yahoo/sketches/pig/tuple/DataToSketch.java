@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -28,14 +30,22 @@ import com.yahoo.sketches.tuple.UpdatableSummary;
  */
 public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> 
     implements Accumulator<Tuple> {
-  private final int sketchSize_;
-  private float samplingProbability_;
-  private SummaryFactory<S> summaryFactory_;
+
+  private final UpdatableSketchBuilder<U, S> sketchBuilder_;
   private UpdatableSketch<U, S> accumSketch_;
   private boolean isFirstCall_ = true;
 
   /**
-   * Constructs a function given the sketch size, summary factory and default
+   * Constructs a function given a summary factory, default sketch size and default
+   * sampling probability of 1.
+   * @param summaryFactory an instance of SummaryFactory
+   */
+  public DataToSketch(final SummaryFactory<S> summaryFactory) {
+    this(DEFAULT_NOMINAL_ENTRIES, 1f, summaryFactory);
+  }
+
+  /**
+   * Constructs a function given a sketch size, summary factory and default
    * sampling probability of 1.
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
@@ -47,7 +57,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   }
 
   /**
-   * Constructs a function given the sketch size, sampling probability and summary factory 
+   * Constructs a function given a sketch size, sampling probability and summary factory 
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
@@ -57,9 +67,8 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   public DataToSketch(final int sketchSize, final float samplingProbability, 
       final SummaryFactory<S> summaryFactory) {
     super();
-    this.sketchSize_ = sketchSize;
-    this.samplingProbability_ = samplingProbability; 
-    this.summaryFactory_ = summaryFactory;
+    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+        .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
 
   @Override
@@ -69,8 +78,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
       isFirstCall_ = false;
     }
     if (accumSketch_ == null) {
-      accumSketch_ = new UpdatableSketchBuilder<U, S>(summaryFactory_)
-          .setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
+      accumSketch_ = sketchBuilder_.build();
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -85,8 +93,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   @Override
   public Tuple getValue() {
     if (accumSketch_ == null) {
-      accumSketch_ = new UpdatableSketchBuilder<U, S>(summaryFactory_)
-          .setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
+      accumSketch_ = sketchBuilder_.build();
     }
     return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
   }
@@ -103,8 +110,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
     }
     if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
 
-    final UpdatableSketch<U, S> sketch = new UpdatableSketchBuilder<U, S>(summaryFactory_)
-        .setNominalEntries(sketchSize_).setSamplingProbability(samplingProbability_).build();
+    final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, sketch);
     return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
@@ -156,4 +162,5 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
       }
     }
   }
+
 }

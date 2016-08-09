@@ -27,14 +27,14 @@ import java.util.Random;
 public class UnionDoubleSummarySketchTest {
   @Test
   public void execNullInput() throws Exception {
-    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch();
     Tuple resultTuple = func.exec(null);
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new UnionDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new UnionDoubleSummarySketch();
     Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
     Assert.assertNull(resultTuple);
   }

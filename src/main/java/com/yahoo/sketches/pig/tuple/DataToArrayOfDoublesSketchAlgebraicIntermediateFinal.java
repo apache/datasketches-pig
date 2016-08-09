@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -28,15 +30,18 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
  * it needs to be able to differentiate between and interpret both types.
  */
 abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalFunc<Tuple> {
-  private int sketchSize_;
-  private float samplingProbability_;
-  private int numValues_;
+  private final int sketchSize_;
+  private final float samplingProbability_;
+  private final int numValues_;
   private boolean isFirstCall_ = true;
 
-  /**
-   * Default constructor to make pig validation happy.
-   */
-  DataToArrayOfDoublesSketchAlgebraicIntermediateFinal() {}
+  DataToArrayOfDoublesSketchAlgebraicIntermediateFinal() {
+    this(DEFAULT_NOMINAL_ENTRIES, 1);
+  }
+
+  DataToArrayOfDoublesSketchAlgebraicIntermediateFinal(final int numValues) {
+    this(DEFAULT_NOMINAL_ENTRIES, numValues);
+  }
 
   DataToArrayOfDoublesSketchAlgebraicIntermediateFinal(final int sketchSize, final int numValues) {
     this(sketchSize, 1f, numValues);

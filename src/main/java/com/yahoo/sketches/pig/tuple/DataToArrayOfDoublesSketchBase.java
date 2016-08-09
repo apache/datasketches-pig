@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -21,10 +23,18 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;
-  private float samplingProbability_;
-  private int numValues_;
+  private final float samplingProbability_;
+  private final int numValues_;
   private ArrayOfDoublesUpdatableSketch accumSketch_;
   private boolean isFirstCall_ = true;
+
+  DataToArrayOfDoublesSketchBase() {
+    this(DEFAULT_NOMINAL_ENTRIES, 1f, 1);
+  }
+
+  DataToArrayOfDoublesSketchBase(final int numValues) {
+    this(DEFAULT_NOMINAL_ENTRIES, 1f, numValues);
+  }
 
   DataToArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
     this(sketchSize, 1f, numValues);

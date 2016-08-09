@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -32,7 +34,15 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   private boolean isFirstCall_ = true;
 
   /**
-   * Constructs a function given the sketch size and summary factory
+   * Constructs a function given a summary factory and default sketch size
+   * @param summaryFactory an instance of SummaryFactory
+   */
+  public UnionSketch(final SummaryFactory<S> summaryFactory) {
+    this(DEFAULT_NOMINAL_ENTRIES, summaryFactory);
+  }
+
+  /**
+   * Constructs a function given a sketch size and summary factory
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
