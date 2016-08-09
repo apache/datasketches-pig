@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -27,6 +29,14 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   private ArrayOfDoublesUnion accumUnion_;
   private boolean isFirstCall_ = true;
 
+  UnionArrayOfDoublesSketchBase() {
+    this(DEFAULT_NOMINAL_ENTRIES, 1);
+  }
+
+  UnionArrayOfDoublesSketchBase(final int numValues) {
+    this(DEFAULT_NOMINAL_ENTRIES, numValues);
+  }
+
   UnionArrayOfDoublesSketchBase(final int sketchSize, final int numValues) {
     super();
     sketchSize_ = sketchSize;
@@ -34,7 +44,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   }
 
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec is used"); 

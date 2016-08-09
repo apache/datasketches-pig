@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -30,18 +32,22 @@ import com.yahoo.sketches.tuple.UpdatableSummary;
  * @param <S> Type of the summary
  */
 public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> {
-  private int sketchSize_;
-  private float samplingProbability_;
-  private SummaryFactory<S> summaryFactory_;
+  private final int sketchSize_;
+  private final SummaryFactory<S> summaryFactory_;
+  private final UpdatableSketchBuilder<U, S> sketchBuilder_;
   private boolean isFirstCall_ = true;
 
   /**
-   * Default constructor to make pig validation happy.
+   * Constructs a function given a summary factory, default sketch size and default
+   * sampling probability of 1.
+   * @param summaryFactory an instance of SummaryFactory
    */
-  public DataToSketchAlgebraicIntermediateFinal() {}
+  public DataToSketchAlgebraicIntermediateFinal(final SummaryFactory<S> summaryFactory) {
+    this(DEFAULT_NOMINAL_ENTRIES, 1f, summaryFactory);
+  }
 
   /**
-   * Constructs a function given the sketch size, summary factory and default
+   * Constructs a function given a sketch size, summary factory and default
    * sampling probability of 1.
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
@@ -53,7 +59,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
   }
 
   /**
-   * Constructs a function given the sketch size, sampling probability and summary factory 
+   * Constructs a function given a sketch size, sampling probability and summary factory 
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
@@ -62,9 +68,10 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
    */
   public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, 
       final float samplingProbability, final SummaryFactory<S> summaryFactory) {
-    this.sketchSize_ = sketchSize;
-    this.samplingProbability_ = samplingProbability;
-    this.summaryFactory_ = summaryFactory;
+    sketchSize_ = sketchSize;
+    summaryFactory_ = summaryFactory;
+    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+        .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
   
   @Override
@@ -85,9 +92,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
       if (item instanceof DataBag) {
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
-        UpdatableSketch<U, S> sketch = 
-            new UpdatableSketchBuilder<U, S>(summaryFactory_).setNominalEntries(sketchSize_)
-              .setSamplingProbability(samplingProbability_).build();
+        UpdatableSketch<U, S> sketch = sketchBuilder_.build();
         DataToSketch.updateSketch((DataBag) item, sketch);
         union.update(sketch);
       } else if (item instanceof DataByteArray) {

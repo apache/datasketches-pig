@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.tuple;
 
+import static com.yahoo.sketches.Util.DEFAULT_NOMINAL_ENTRIES;
+
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -26,13 +28,20 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
  * it needs to be able to differentiate between and interpret both types.
  */
 abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalFunc<Tuple> {
-  private int sketchSize_;
-  private int numValues_;
+  private final int sketchSize_;
+  private final int numValues_;
   private boolean isFirstCall_ = true;
 
-  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal() {}
+  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal() {
+    this(DEFAULT_NOMINAL_ENTRIES, 1);
+  }
 
-  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal(int sketchSize, int numValues) {
+  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal(final int numValues) {
+    this(DEFAULT_NOMINAL_ENTRIES, numValues);
+  }
+
+  UnionArrayOfDoublesSketchAlgebraicIntermediateFinal(final int sketchSize, final int numValues) {
+    super();
     sketchSize_ = sketchSize;
     numValues_ = numValues;
   }
