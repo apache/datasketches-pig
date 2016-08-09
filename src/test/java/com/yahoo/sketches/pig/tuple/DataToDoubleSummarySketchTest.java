@@ -25,21 +25,21 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 public class DataToDoubleSummarySketchTest {
   @Test
   public void execNullInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     Tuple resultTuple = func.exec(null);
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
     Assert.assertNull(resultTuple);
   }
 
   @Test
   public void execEmptyBag() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     Tuple inputTuple = PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag());
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
@@ -52,7 +52,7 @@ public class DataToDoubleSummarySketchTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void execWrongSizeOfInnerTuple() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(PigUtil.objectsToTuple(1));
     Tuple inputTuple = PigUtil.objectsToTuple(bag);
@@ -61,7 +61,7 @@ public class DataToDoubleSummarySketchTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void execWrongKeyType() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(PigUtil.objectsToTuple(new Object(), 1.0)); // Object in place of key is not supported
     Tuple inputTuple = PigUtil.objectsToTuple(bag);
@@ -70,7 +70,7 @@ public class DataToDoubleSummarySketchTest {
 
   @Test
   public void execAllInputTypes() throws Exception {
-    EvalFunc<Tuple> func = new DataToDoubleSummarySketch("32");
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch();
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(PigUtil.objectsToTuple("a", 1.0));
     bag.add(PigUtil.objectsToTuple("b", 1.0));
@@ -165,8 +165,25 @@ public class DataToDoubleSummarySketchTest {
   }
 
   @Test
-  public void algebraicInitial() throws Exception {
+  public void algebraicInitialOneParam() throws Exception {
     EvalFunc<Tuple> func = new DataToDoubleSummarySketch.Initial(null);
+    Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
+    DataBag bag = BagFactory.getInstance().newDefaultBag();
+    bag.add(PigUtil.objectsToTuple(null, null));
+    bag.add(PigUtil.objectsToTuple(null, null));
+    bag.add(PigUtil.objectsToTuple(null, null));
+    inputTuple.set(0, bag);
+
+    Tuple resultTuple = func.exec(inputTuple);
+    Assert.assertNotNull(resultTuple);
+    Assert.assertEquals(resultTuple.size(), 1);
+    DataBag resultBag = (DataBag) resultTuple.get(0);
+    Assert.assertEquals(resultBag.size(), 3);
+  }
+
+  @Test
+  public void algebraicInitialTwoParams() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoubleSummarySketch.Initial(null, null);
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(PigUtil.objectsToTuple(null, null));

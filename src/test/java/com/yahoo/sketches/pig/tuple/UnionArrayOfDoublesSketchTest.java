@@ -67,7 +67,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNullInput() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(null);
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -80,7 +80,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyInputTuple() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(TupleFactory.getInstance().newTuple());
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -93,7 +93,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNotABag() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(PigUtil.objectsToTuple((Object) null));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -106,7 +106,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyBag() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(PigUtil.objectsToTuple(BagFactory.getInstance().newDefaultBag()));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -119,7 +119,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptyInnerTuple() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(TupleFactory.getInstance().newTuple())));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -132,7 +132,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorNullSketch() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch();
     func.accumulate(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple((Object) null))));
     Tuple resultTuple = func.getValue();
     Assert.assertNotNull(resultTuple);
@@ -145,7 +145,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void accumulatorEmptySketch() throws Exception {
-    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("4096", "1");
+    Accumulator<Tuple> func = new UnionArrayOfDoublesSketch("1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -196,7 +196,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
-    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.Initial(null, null);
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.Initial(null);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     bag.add(null);
     bag.add(null);
@@ -211,7 +211,7 @@ public class UnionArrayOfDoublesSketchTest {
 
   @Test
   public void algebraicIntemediateFinalExact() throws Exception {
-    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("4096", "1");
+    EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch.IntermediateFinal("1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
 
     // this is to simulate the output from Initial
