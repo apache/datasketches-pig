@@ -31,6 +31,13 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   private Union<S> union_;
   private boolean isFirstCall_ = true;
 
+  /**
+   * Constructs a function given the sketch size and summary factory
+   * @param sketchSize parameter controlling the size of the sketch and the accuracy.
+   * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
+   * greater than given value.
+   * @param summaryFactory an instance of SummaryFactory
+   */
   public UnionSketch(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     super();
     this.sketchSize_ = sketchSize;

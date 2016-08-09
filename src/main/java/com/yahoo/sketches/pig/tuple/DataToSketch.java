@@ -34,10 +34,26 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   private UpdatableSketch<U, S> accumSketch_;
   private boolean isFirstCall_ = true;
 
+  /**
+   * Constructs a function given the sketch size, summary factory and default
+   * sampling probability of 1.
+   * @param sketchSize parameter controlling the size of the sketch and the accuracy.
+   * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
+   * greater than given value.
+   * @param summaryFactory an instance of SummaryFactory
+   */
   public DataToSketch(final int sketchSize, final SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
 
+  /**
+   * Constructs a function given the sketch size, sampling probability and summary factory 
+   * @param sketchSize parameter controlling the size of the sketch and the accuracy.
+   * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
+   * greater than given value.
+   * @param samplingProbability parameter from 0 to 1 inclusive
+   * @param summaryFactory an instance of SummaryFactory
+   */
   public DataToSketch(final int sketchSize, final float samplingProbability, 
       final SummaryFactory<S> summaryFactory) {
     super();
