@@ -203,7 +203,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.12</version>
+      <version>6.9.13.6</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -372,7 +372,7 @@
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.2.0</version>
+        <version>4.3.0</version>
         <configuration>
           <repoToken />
         </configuration>
