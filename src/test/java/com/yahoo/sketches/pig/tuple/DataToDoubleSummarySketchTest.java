@@ -4,8 +4,6 @@
  */
 package com.yahoo.sketches.pig.tuple;
 
-import org.testng.annotations.Test;
-import org.testng.Assert;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.BagFactory;
@@ -14,12 +12,15 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.sketches.memory.NativeMemory;
-import com.yahoo.sketches.tuple.Sketches;
-import com.yahoo.sketches.tuple.UpdatableSketch;
-import com.yahoo.sketches.tuple.Sketch;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
+import com.yahoo.sketches.tuple.Sketch;
+import com.yahoo.sketches.tuple.Sketches;
+import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 public class DataToDoubleSummarySketchTest {

@@ -4,21 +4,21 @@
  */
 package com.yahoo.sketches.pig.frequencies;
 
+import org.apache.pig.Accumulator;
+import org.apache.pig.EvalFunc;
+import org.apache.pig.data.BagFactory;
+import org.apache.pig.data.DataBag;
+import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.apache.pig.Accumulator;
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataBag;
-import org.apache.pig.data.BagFactory;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.DataByteArray;
-import org.apache.pig.data.TupleFactory;
-
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.frequencies.ErrorType;
 import com.yahoo.sketches.frequencies.ItemsSketch;
-import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.pig.tuple.PigUtil;
 
 public class UnionFrequentStringsSketchTest {

@@ -15,7 +15,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.ArrayOfStringsSerDe;
-import com.yahoo.sketches.memory.NativeMemory;
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
 /**
