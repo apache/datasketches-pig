@@ -11,7 +11,7 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.memory.NativeMemory;
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.DoublesSketchBuilder;
 import com.yahoo.sketches.tuple.DoubleSummary;

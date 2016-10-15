@@ -24,8 +24,8 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.sketches.memory.Memory;
-import com.yahoo.sketches.memory.NativeMemory;
+import com.yahoo.memory.Memory;
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.Intersection;
 import com.yahoo.sketches.theta.SetOperation;

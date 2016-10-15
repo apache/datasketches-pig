@@ -16,13 +16,14 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
-import com.yahoo.sketches.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
-import org.testng.annotations.Test;
-import org.testng.Assert;
 
 public class UnionStringsSketchTest {
 

@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.Util;
-import com.yahoo.sketches.memory.NativeMemory;
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
 import com.yahoo.sketches.theta.Union;

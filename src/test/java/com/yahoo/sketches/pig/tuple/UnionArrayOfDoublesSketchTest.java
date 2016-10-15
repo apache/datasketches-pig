@@ -4,23 +4,24 @@
  */
 package com.yahoo.sketches.pig.tuple;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import java.util.Random;
+
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataBag;
 import org.apache.pig.data.BagFactory;
-import org.apache.pig.data.Tuple;
+import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.sketches.memory.NativeMemory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
-
-import java.util.Random;
 
 public class UnionArrayOfDoublesSketchTest {
   @Test
