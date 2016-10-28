@@ -12,8 +12,8 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.memory.NativeMemory;
+import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
 /**
@@ -28,12 +28,12 @@ public class GetKFromStringsSketch extends EvalFunc<Integer> {
     if (input.size() != 1) throw new IllegalArgumentException("expected one input");
 
     if (!(input.get(0) instanceof DataByteArray)) {
-      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " 
+      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got "
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final ItemsSketch<String> sketch = 
-        ItemsSketch.getInstance(new NativeMemory(dba.get()), Comparator.naturalOrder(), 
+    final ItemsSketch<String> sketch =
+        ItemsSketch.getInstance(new NativeMemory(dba.get()), Comparator.naturalOrder(),
             new ArrayOfStringsSerDe());
 
     return sketch.getK();

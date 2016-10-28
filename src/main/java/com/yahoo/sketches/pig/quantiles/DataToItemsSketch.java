@@ -19,13 +19,13 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.memory.NativeMemory;
+import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 import com.yahoo.sketches.quantiles.ItemsUnion;
 
 /**
- * Builds ItemsSketch from data. 
+ * Builds ItemsSketch from data.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
  * @param <T> type of item
  */
@@ -44,7 +44,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
 
   /**
    * Base constructor.
-   * 
+   *
    * @param k parameter that determines the accuracy and size of the sketch.
    * The value of 0 means the default k, whatever it is in the sketches-core library
    * @param comparator for items of type T
@@ -62,15 +62,15 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    * Top-level exec function.
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Datum Tuples</b>
    * and returns a single <b>Sketch</b> as a <b>Sketch Tuple</b>.
-   * 
+   *
    * <p>If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
-   * 
+   *
    * <p>Internally, this method presents the inner <b>Datum Tuples</b> to a new <b>Union</b>,
    * which is returned as a <b>Sketch Tuple</b>
-   * 
+   *
    * <p>Types below are in the form: Java data type: Pig DataType
-   * 
+   *
    * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -85,7 +85,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Datum Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -94,7 +94,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -103,7 +103,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @return Sketch Tuple. If inputTuple is null or empty, returns empty sketch.
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"
@@ -148,7 +148,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    * accumulator is called with a bag of Datum Tuples. Unlike <i>exec()</i>, it doesn't serialize the
    * sketch at the end. Instead, it can be called multiple times, each time with another bag of
    * Datum Tuples to be input to the Union.
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @see #exec
    * @see "org.apache.pig.Accumulator.accumulate(org.apache.pig.data.Tuple)"
@@ -167,7 +167,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
 
   /**
    * Returns the result of the Union that has been built up by multiple calls to {@link #accumulate}.
-   * 
+   *
    * @return Sketch Tuple. (see {@link #exec} for return tuple format)
    * @see "org.apache.pig.Accumulator.getValue()"
    */
@@ -184,7 +184,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
 
   /**
    * Cleans up the UDF state after being called using the {@link Accumulator} interface.
-   * 
+   *
    * @see "org.apache.pig.Accumulator.cleanup()"
    */
   @Override
@@ -205,14 +205,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
   // STATIC Initial Class only called by Pig
 
   /**
-   * Class used to calculate the initial pass of an Algebraic sketch operation. 
-   * 
+   * Class used to calculate the initial pass of an Algebraic sketch operation.
+   *
    * <p>
    * The Initial class simply passes through all records unchanged so that they can be
    * processed by the intermediate processor instead.</p>
    */
   public static class DataToItemsSketchInitial extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors must mirror the main UDF class
     /**
      * Default constructor.
@@ -234,23 +234,23 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
   // STATIC IntermediateFinal Class only called by Pig
 
   /**
-   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> sketch 
-   * operation. This is called from the combiner, and may be called multiple times (from the mapper 
-   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i> 
-   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and 
+   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> sketch
+   * operation. This is called from the combiner, and may be called multiple times (from the mapper
+   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i>
+   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and
    * interpret both types.
    * @param <T> type of item
    */
   public static abstract class DataToItemsSketchIntermediateFinal<T> extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors of the concrete class must mirror the ones in the main UDF class
     private final int k_;
     private final Comparator<T> comparator_;
     private final ArrayOfItemsSerDe<T> serDe_;
 
     /**
-     * Constructor for the intermediate and final passes of an Algebraic function. 
-     * 
+     * Constructor for the intermediate and final passes of an Algebraic function.
+     *
      * @param k parameter that determines the accuracy and size of the sketch.
      * @param comparator for items of type T
      * @param serDe an instance of ArrayOfItemsSerDe for type T
@@ -261,7 +261,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
       comparator_ = comparator;
       serDe_ = serDe;
     }
-    
+
     /**
      * Override this if it takes more than a cast to convert from Pig type to type T
      * @param object Pig object, which needs to be converted to type T
@@ -285,7 +285,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
             if (innerBag.size() == 0) continue;
             // If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
             // will be passed into the union.
-            // It is due to system bagged outputs from multiple mapper Initial functions.  
+            // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             for (final Tuple innerTuple: innerBag) {
               union.update(extractValue(innerTuple.get(0)));
