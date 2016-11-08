@@ -231,6 +231,7 @@
               <artifactSet>
                 <includes>
                   <include>com.yahoo.datasketches:sketches-core</include>
+                  <include>com.yahoo.datasketches:memory</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -240,6 +241,10 @@
                   <excludes>
                     <exclude>com.yahoo.sketches.pig.**</exclude>
                   </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>com.yahoo.memory</pattern>
+                  <shadedPattern>shaded.com.yahoo.memory</shadedPattern>
                 </relocation>
               </relocations>
               <shadedArtifactAttached>true</shadedArtifactAttached>
