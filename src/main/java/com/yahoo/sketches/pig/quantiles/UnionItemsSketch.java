@@ -45,7 +45,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
 
   /**
    * Base constructor.
-   * 
+   *
    * @param k parameter that determines the accuracy and size of the sketch.
    * The value of 0 means the default k, whatever it is in the sketches-core library
    * @param comparator for items of type T
@@ -63,15 +63,15 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    * Top-level exec function.
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single <b>Sketch</b> as a <b>Sketch Tuple</b>.
-   * 
+   *
    * <p>If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
-   * 
-   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>. 
+   *
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Union</b>.
    * The result is returned as a <b>Sketch Tuple</b>
-   * 
+   *
    * <p>Types below are in the form: Java data type: Pig DataType
-   * 
+   *
    * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -86,7 +86,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -95,7 +95,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
    * @return Sketch Tuple. If inputTuple is null or empty, returns empty sketch.
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"
@@ -106,20 +106,26 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
     if (inputTuple != null && inputTuple.size() > 0) {
-      final ItemsUnion<T> union = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+      final ItemsUnion<T> union = k_ > 0
+          ? ItemsUnion.getInstance(k_, comparator_)
+          : ItemsUnion.getInstance(comparator_);
       final DataBag bag = (DataBag) inputTuple.get(0);
       updateUnion(bag, union, comparator_, serDe_);
       final ItemsSketch<T> resultSketch = union.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+    final ItemsSketch<T> sketch = k_ > 0
+        ? ItemsSketch.getInstance(k_, comparator_)
+        : ItemsSketch.getInstance(comparator_);
     return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
   }
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input == null) return null;
+    if (input == null) { return null; }
     try {
       final Schema tupleSchema = new Schema();
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
@@ -137,7 +143,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    * accumulator is called with a bag of Sketch Tuples. Unlike <i>exec()</i>, it doesn't serialize the
    * sketch at the end. Instead, it can be called multiple times, each time with another bag of
    * Sketch Tuples to be input to the Union.
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
    * @see #exec
    * @see "org.apache.pig.Accumulator.accumulate(org.apache.pig.data.Tuple)"
@@ -145,16 +151,18 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) return;
+    if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) return;
-    if (accumUnion_ == null) accumUnion_ = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+    if (bag == null) { return; }
+    if (accumUnion_ == null) {
+      accumUnion_ = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+    }
     updateUnion(bag, accumUnion_, comparator_, serDe_);
   }
 
   /**
    * Returns the result of the Union that has been built up by multiple calls to {@link #accumulate}.
-   * 
+   *
    * @return Sketch Tuple. (see {@link #exec} for return tuple format)
    * @see "org.apache.pig.Accumulator.getValue()"
    */
@@ -162,16 +170,20 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
   public Tuple getValue() {
     if (accumUnion_ != null) {
       final ItemsSketch<T> resultSketch = accumUnion_.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+    final ItemsSketch<T> sketch = k_ > 0
+        ? ItemsSketch.getInstance(k_, comparator_)
+        : ItemsSketch.getInstance(comparator_);
     return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
   }
 
   /**
    * Cleans up the UDF state after being called using the {@link Accumulator} interface.
-   * 
+   *
    * @see "org.apache.pig.Accumulator.cleanup()"
    */
   @Override
@@ -179,19 +191,19 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
     accumUnion_ = null;
   }
 
-  //TOP LEVEL PRIVATE STATIC METHODS  
-  
+  //TOP LEVEL PRIVATE STATIC METHODS
+
   /**
    * Updates a union given a bag of sketches
-   * 
+   *
    * @param bag A bag of sketchTuples.
    * @param union The union to update
    */
-  private static <T> void updateUnion(final DataBag bag, final ItemsUnion<T> union, 
+  private static <T> void updateUnion(final DataBag bag, final ItemsUnion<T> union,
         final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
     for (Tuple innerTuple: bag) {
       final Object f0 = innerTuple.get(0);
-      if (f0 == null) continue;
+      if (f0 == null) { continue; }
       if (f0 instanceof DataByteArray) {
         final DataByteArray dba = (DataByteArray) f0;
         if (dba.size() > 0) {
@@ -206,14 +218,14 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
   //STATIC Initial Class only called by Pig
 
   /**
-   * Class used to calculate the initial pass of an Algebraic sketch operation. 
-   * 
+   * Class used to calculate the initial pass of an Algebraic sketch operation.
+   *
    * <p>
    * The Initial class simply passes through all records unchanged so that they can be
    * processed by the intermediate processor instead.</p>
    */
   public static class UnionItemsSketchInitial extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors must mirror the main UDF class
     /**
      * Default constructor.
@@ -235,15 +247,15 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
   // STATIC IntermediateFinal Class only called by Pig
 
   /**
-   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> union 
-   * operation. This is called from the combiner, and may be called multiple times (from the mapper 
-   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i> 
-   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and 
+   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> union
+   * operation. This is called from the combiner, and may be called multiple times (from the mapper
+   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i>
+   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and
    * interpret both types.
    * @param <T> type of item
    */
   public static abstract class UnionItemsSketchIntermediateFinal<T> extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors of the concrete class must mirror the ones in the main UDF class
     private final int k_;
     private final Comparator<T> comparator_;
@@ -251,12 +263,13 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
 
     /**
      * Constructor for the intermediate and final passes of an Algebraic function.
-     * 
+     *
      * @param k parameter that determines the accuracy and size of the sketch.
      * @param comparator for items of type T
      * @param serDe an instance of ArrayOfItemsSerDe for type T
      */
-    public UnionItemsSketchIntermediateFinal(final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
+    public UnionItemsSketchIntermediateFinal(
+        final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
       super();
       k_ = k;
       comparator_ = comparator;
@@ -266,17 +279,19 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple != null && inputTuple.size() > 0) {
-        final ItemsUnion<T> union = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+        final ItemsUnion<T> union = k_ > 0
+            ? ItemsUnion.getInstance(k_, comparator_)
+            : ItemsUnion.getInstance(comparator_);
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
-          if (f0 == null) continue;
+          if (f0 == null) { continue; }
           if (f0 instanceof DataBag) {
             final DataBag innerBag = (DataBag) f0; //inputTuple.bag0.dataTupleN.f0:bag
-            if (innerBag.size() == 0) continue;
+            if (innerBag.size() == 0) { continue; }
             // If field 0 of a dataTuple is again a Bag all tuples of this inner bag
             // will be passed into the union.
-            // It is due to system bagged outputs from multiple mapper Initial functions.  
+            // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             updateUnion(innerBag, union, comparator_, serDe_);
           } else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
@@ -291,12 +306,16 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
           }
         }
         final ItemsSketch<T> resultSketch = union.getResultAndReset();
-        if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        if (resultSketch != null) {
+          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        }
       }
       // return empty sketch
-      final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+      final ItemsSketch<T> sketch = k_ > 0
+          ? ItemsSketch.getInstance(k_, comparator_)
+          : ItemsSketch.getInstance(comparator_);
       return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
     }
   } // end IntermediateFinal
-  
+
 }

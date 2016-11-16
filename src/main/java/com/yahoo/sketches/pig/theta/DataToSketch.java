@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -192,7 +192,9 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     // It can only call static functions.
     Union union = newUnion(nomEntries_, p_, seed_);
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
+    if (bag == null) {
+      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    }
 
     updateUnion(bag, union); //updates union with all elements of the bag
     CompactSketch compOrdSketch = union.getResult(true, null);
@@ -234,7 +236,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
       accumUnion_ = DataToSketch.newUnion(nomEntries_, p_, seed_);
     }
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) return;
+    if (bag == null) { return; }
 
     updateUnion(bag, accumUnion_);
   }
@@ -247,7 +249,9 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
+    if (accumUnion_ == null) {
+      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    }
     CompactSketch compOrdSketch = accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
@@ -516,7 +520,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
         //f0 is not null
         if (f0 instanceof DataBag) {
           DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
-          if (innerBag.size() == 0) continue;
+          if (innerBag.size() == 0) { continue; }
           //If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
           // will be passed into the union.
           //It is due to system bagged outputs from multiple mapper Initial functions.

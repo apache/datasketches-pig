@@ -25,17 +25,19 @@ public class GetQuantileFromDoublesSketch extends EvalFunc<Double> {
 
   @Override
   public Double exec(final Tuple input) throws IOException {
-    if (input.size() != 2) throw new IllegalArgumentException("expected two inputs: sketch and fraction");
+    if (input.size() != 2) {
+      throw new IllegalArgumentException("expected two inputs: sketch and fraction");
+    }
 
     if (!(input.get(0) instanceof DataByteArray)) {
-      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " 
+      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got "
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
     final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
 
     if (!(input.get(1) instanceof Double)) {
-      throw new IllegalArgumentException("expected a double value as a fraction, got " 
+      throw new IllegalArgumentException("expected a double value as a fraction, got "
           + input.get(1).getClass().getSimpleName());
     }
     final double fraction = (double) input.get(1);

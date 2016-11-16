@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -22,7 +22,7 @@ import com.yahoo.sketches.frequencies.ItemsSketch;
  * (from the mapper and from the reducer). It will receive a bag of values
  * returned by either the Intermediate or the Initial stages, so
  * it needs to be able to differentiate between and interpret both types.
- * 
+ *
  * @param <T> Type of item
  */
 public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> extends EvalFunc<Tuple> {
@@ -35,7 +35,8 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
    */
   public UnionFrequentItemsSketchAlgebraicIntermediateFinal() {}
 
-  public UnionFrequentItemsSketchAlgebraicIntermediateFinal(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
+  public UnionFrequentItemsSketchAlgebraicIntermediateFinal(
+      final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     sketchSize_ = sketchSize;
     serDe_ = serDe;
   }
@@ -43,13 +44,16 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("algebraic is used");  // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
     final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    if (bag == null) {
+      throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    }
 
     for (Tuple dataTuple: bag) {
       final Object item = dataTuple.get(0);
@@ -60,14 +64,15 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
           sketch.merge(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
-        // This is a sketch from a call to the Intermediate function 
+        // This is a sketch from a call to the Intermediate function
         // Merge it with the current sketch.
         final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
-        if (incomingSketch.isEmpty()) continue;
+        if (incomingSketch.isEmpty()) { continue; }
         sketch.merge(incomingSketch);
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
+        throw new IllegalArgumentException(
+            "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
     return Util.serializeSketchToTuple(sketch, serDe_);

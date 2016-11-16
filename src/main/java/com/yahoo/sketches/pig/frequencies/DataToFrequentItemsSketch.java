@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -18,7 +18,7 @@ import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
- * This is a generic implementation to be specialized in concrete UDFs 
+ * This is a generic implementation to be specialized in concrete UDFs
  * @param <T> type of item
  */
 public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
@@ -42,13 +42,16 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("accumulate was used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("accumulate was used");
       isFirstCall_ = false;
     }
     if (accumSketch_ == null) {
       accumSketch_ = new ItemsSketch<T>(sketchSize_);
     }
-    if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
+    if (inputTuple.size() != 1) {
+      throw new IllegalArgumentException("Input tuple must have 1 bag");
+    }
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, accumSketch_);
   }
@@ -75,7 +78,8 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("exec was used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("exec was used");
       isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
@@ -88,12 +92,16 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
   }
 
   static <T> void updateSketch(final DataBag bag, final ItemsSketch<T> sketch) throws ExecException {
-    if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    if (bag == null) {
+      throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    }
     for (final Tuple tuple: bag) {
-      if (tuple.size() != 1 && tuple.size() != 2) throw new IllegalArgumentException("Inner tuple of input bag must have 1 or 2 fields.");
+      if (tuple.size() != 1 && tuple.size() != 2) {
+        throw new IllegalArgumentException("Inner tuple of input bag must have 1 or 2 fields.");
+      }
       @SuppressWarnings("unchecked")
       final T key = (T) tuple.get(0);
-      if (key == null) continue;
+      if (key == null) { continue; }
       final long value = tuple.size() == 2 ? (long) tuple.get(1) : 1;
       sketch.update(key, value);
     }

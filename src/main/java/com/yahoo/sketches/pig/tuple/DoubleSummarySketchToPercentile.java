@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -33,13 +33,17 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
 
   @Override
   public Double exec(final Tuple input) throws IOException {
-    if (input.size() != 2) throw new IllegalArgumentException("expected two inputs: sketch and pecentile");
+    if (input.size() != 2) {
+      throw new IllegalArgumentException("expected two inputs: sketch and pecentile");
+    }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
     final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
 
     final double percentile = (double) input.get(1);
-    if (percentile < 0 || percentile > 100) throw new IllegalArgumentException("percentile must be between 0 and 100");
+    if (percentile < 0 || percentile > 100) {
+      throw new IllegalArgumentException("percentile must be between 0 and 100");
+    }
 
     final DoublesSketch qs = new DoublesSketchBuilder().build(QUANTILES_SKETCH_SIZE);
     final SketchIterator<DoubleSummary> it = sketch.iterator();

@@ -32,9 +32,9 @@ import com.yahoo.sketches.theta.SetOperation;
 import com.yahoo.sketches.theta.Sketch;
 
 /**
- * This is a Pig UDF that performs the Intersection Set Operation on Sketches. 
+ * This is a Pig UDF that performs the Intersection Set Operation on Sketches.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
- * 
+ *
  * @author Lee Rhodes
  */
 public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
@@ -43,9 +43,9 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   private final long seed_;
   private final Tuple emptyCompactOrderedSketchTuple_;
   private Intersection accumIntersection_;
-  
+
   //TOP LEVEL API
-  
+
   /**
    * Default constructor to make pig validation happy.  Assumes:
    * <ul>
@@ -55,19 +55,19 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Intersect() {
     this(DEFAULT_UPDATE_SEED);
   }
-  
+
   /**
    * Full string constructor.
-   * 
+   *
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
   public Intersect(String seedStr) {
     this(Long.parseLong(seedStr));
   }
-  
+
   /**
    * Base constructor.
-   * 
+   *
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
   public Intersect(long seed) {
@@ -75,19 +75,19 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     this.seed_ = seed;
     this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
   }
-  
+
   //@formatter:off
   /************************************************************************************************
    * Top-level exec function.
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Sketch Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
-   * 
+   *
    * <p>If a large number of calls are anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
-   * 
-   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Intersection</b>. 
+   *
+   * <p>Internally, this method presents the inner <b>Sketch Tuples</b> to a new <b>Intersection</b>.
    * The result is returned as a <b>Sketch Tuple</b>
-   * 
+   *
    * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -102,7 +102,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -111,26 +111,28 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
    * @return Sketch Tuple. If inputTuple is null or empty, returns empty sketch (8 bytes).
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"
    */
   //@formatter:on
-  
+
   @Override //TOP LEVEL EXEC
   public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
     Intersection intersection = SetOperation.builder().setSeed(seed_).buildIntersection();
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
-    
+    if (bag == null) {
+      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    }
+
     updateIntersection(bag, intersection, seed_);
     CompactSketch compactSketch = intersection.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
-  
+
   @Override
   public Schema outputSchema(Schema input) {
     if (input != null) {
@@ -139,22 +141,22 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
         tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-      } 
+      }
       catch (FrontendException e) {
         // fall through
       }
     }
     return null;
   }
-  
+
   //ACCUMULATOR INTERFACE
-  
+
   /*************************************************************************************************
    * An <i>Accumulator</i> version of the standard <i>exec()</i> method. Like <i>exec()</i>,
    * accumulator is called with a bag of Sketch Tuples. Unlike <i>exec()</i>, it doesn't serialize the
    * sketch at the end. Instead, it can be called multiple times, each time with another bag of
    * Sketch Tuples to be input to the Intersection.
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
    * @see #exec
    * @see "org.apache.pig.Accumulator.accumulate(org.apache.pig.data.Tuple)"
@@ -162,18 +164,20 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   @Override
   public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
-    if (accumIntersection_ == null) { 
+    if (accumIntersection_ == null) {
       accumIntersection_ = SetOperation.builder().setSeed(seed_).buildIntersection();
     }
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) return;
-    
+    if (bag == null) {
+      return;
+    }
+
     updateIntersection(bag, accumIntersection_, seed_);
   }
 
   /**
    * Returns the sketch that has been built up by multiple calls to {@link #accumulate}.
-   * 
+   *
    * @return Sketch Tuple. (see {@link #exec} for return tuple format)
    * @see "org.apache.pig.Accumulator.getValue()"
    */
@@ -181,7 +185,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Tuple getValue() {
     if ((accumIntersection_ == null) || !accumIntersection_.hasResult()) {
       throw new IllegalStateException(""
-          + "The accumulate(Tuple) method must be called at least once with " 
+          + "The accumulate(Tuple) method must be called at least once with "
           + "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
     }
     CompactSketch compactSketch = accumIntersection_.getResult(true, null);
@@ -190,16 +194,16 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
 
   /**
    * Cleans up the UDF state after being called using the {@link Accumulator} interface.
-   * 
+   *
    * @see "org.apache.pig.Accumulator.cleanup()"
    */
   @Override
   public void cleanup() {
     accumIntersection_ = null;
   }
-  
+
   //ALGEBRAIC INTERFACE
-  
+
   /*************************************************************************************************/
   @Override
   public String getInitial() {
@@ -215,50 +219,50 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public String getFinal() {
     return IntermediateFinal.class.getName();
   }
-  
-  //TOP LEVEL PRIVATE STATIC METHODS  
-  
+
+  //TOP LEVEL PRIVATE STATIC METHODS
+
   /*************************************************************************************************
-  * Updates an intersection from a bag of sketches
-  * 
-  * @param bag A bag of sketchTuples.
-  * @param intersection The intersection to update
-  * @param seed to check against incoming sketches
-  */
- private static void updateIntersection(DataBag bag, Intersection intersection, long seed) {
-   //Bag is not empty. process each innerTuple in the bag
-   for (Tuple innerTuple : bag) {
-     //validate the inner Tuples
-     Object f0 = extractFieldAtIndex(innerTuple, 0);
-     if (f0 == null) {
-       continue;
-     }
-     Byte type = extractTypeAtIndex(innerTuple, 0);
-     // add only the first field of the innerTuple to the intersection
-     if (type == DataType.BYTEARRAY) {
-       DataByteArray dba = (DataByteArray) f0;
-       Memory srcMem = new NativeMemory(dba.get());
-       Sketch sketch = Sketch.wrap(srcMem, seed);
-       intersection.update(sketch);
-     } 
-     else {
-       throw new IllegalArgumentException(
-           "Field type was not DataType.BYTEARRAY: " + type);
-     }
-   }
- }
-  
+   * Updates an intersection from a bag of sketches
+   *
+   * @param bag A bag of sketchTuples.
+   * @param intersection The intersection to update
+   * @param seed to check against incoming sketches
+   */
+  private static void updateIntersection(DataBag bag, Intersection intersection, long seed) {
+    //Bag is not empty. process each innerTuple in the bag
+    for (Tuple innerTuple : bag) {
+      //validate the inner Tuples
+      Object f0 = extractFieldAtIndex(innerTuple, 0);
+      if (f0 == null) {
+      continue;
+    }
+    Byte type = extractTypeAtIndex(innerTuple, 0);
+    // add only the first field of the innerTuple to the intersection
+    if (type == DataType.BYTEARRAY) {
+      DataByteArray dba = (DataByteArray) f0;
+      Memory srcMem = new NativeMemory(dba.get());
+      Sketch sketch = Sketch.wrap(srcMem, seed);
+      intersection.update(sketch);
+    }
+    else {
+      throw new IllegalArgumentException(
+          "Field type was not DataType.BYTEARRAY: " + type);
+      }
+    }
+  }
+
   //STATIC Initial Class only called by Pig
-  
+
   /*************************************************************************************************
-   * Class used to calculate the initial pass of an Algebraic sketch operation. 
-   * 
+   * Class used to calculate the initial pass of an Algebraic sketch operation.
+   *
    * <p>
    * The Initial class simply passes through all records unchanged so that they can be
    * processed by the intermediate processor instead.</p>
    */
   public static class Initial extends EvalFunc<Tuple> {
-    //The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    //The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     //The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
     /**
@@ -266,38 +270,38 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      */
     public Initial() {
       this(Long.toString(DEFAULT_UPDATE_SEED));
-    }    
-    
+    }
+
     /**
-     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the 
+     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the
      * same constructor arguments as the original UDF. In this case the arguments are ignored.
-     * 
+     *
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public Initial(String seedStr) {}
-    
+
     @Override  //Initial exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
       return inputTuple;
     }
   }
-  
+
   // STATIC IntermediateFinal Class only called by Pig
-  
+
   /*************************************************************************************************
-   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> intersection 
-   * operation. This is called from the combiner, and may be called multiple times (from the mapper 
-   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i> 
-   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and 
+   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> intersection
+   * operation. This is called from the combiner, and may be called multiple times (from the mapper
+   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i>
+   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and
    * interpret both types.
    */
   public static class IntermediateFinal extends EvalFunc<Tuple> {
-    //The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    //The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     //The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
     private final long mySeed_;
     private final Tuple myEmptyCompactOrderedSketchTuple_;
-    
+
     /**
      * Default constructor to make pig validation happy.  Assumes:
      * <ul>
@@ -307,11 +311,11 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     public IntermediateFinal() {
       this(DEFAULT_UPDATE_SEED);
     }
-    
+
     /**
-     * Constructor with strings for the intermediate and final passes of an Algebraic function. 
+     * Constructor with strings for the intermediate and final passes of an Algebraic function.
      * Pig will call this and pass the same constructor arguments as the original UDF.
-     * 
+     *
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(String seedStr) {
@@ -319,26 +323,26 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     }
 
     /**
-     * Constructor with primitives for the intermediate and final passes of an Algebraic function. 
+     * Constructor with primitives for the intermediate and final passes of an Algebraic function.
      * Pig will call this and pass the same constructor arguments as the Top Level UDF.
-     * 
+     *
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(long seed) {
       this.mySeed_ = seed;
       this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
-    
+
     @Override //IntermediateFinal exec
     public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
-      
+
       Intersection intersection = SetOperation.builder().setSeed(mySeed_).buildIntersection();
       DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
       }
       //Bag is not empty.
-      
+
       for (Tuple dataTuple : outerBag) {
         Object f0 = extractFieldAtIndex(dataTuple, 0); //inputTuple.bag0.dataTupleN.f0
         //must have non-null field zero
@@ -353,11 +357,11 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           }
           //If field 0 of a dataTuple is again a Bag all tuples of this inner bag
           // will be passed into the union.
-          //It is due to system bagged outputs from multiple mapper Initial functions.  
+          //It is due to system bagged outputs from multiple mapper Initial functions.
           //The Intermediate stage was bypassed.
           updateIntersection(innerBag, intersection, mySeed_); //process all tuples of innerBag
-          
-        } 
+
+        }
         else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
           //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch from a prior call
           //It is due to system bagged outputs from multiple mapper Intermediate functions.
@@ -366,17 +370,17 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           Memory srcMem = new NativeMemory(dba.get());
           Sketch sketch = Sketch.wrap(srcMem, mySeed_);
           intersection.update(sketch);
-        } 
+        }
         else { // we should never get here.
           throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "
               + f0.getClass().getName());
         }
       }
-      
+
       CompactSketch compactSketch = intersection.getResult(true, null);
       return compactOrderedSketchToTuple(compactSketch);
     }
-    
+
   } //End IntermediateFinal
-  
+
 }

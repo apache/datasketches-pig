@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -53,12 +53,14 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
       Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final ArrayOfDoublesUnion union = 
+    final ArrayOfDoublesUnion union =
         new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_)
           .setNumberOfValues(numValues_).buildUnion();
 
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    if (bag == null) {
+      throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    }
 
     for (final Tuple dataTuple: bag) {
       final Object item = dataTuple.get(0);
@@ -69,13 +71,13 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
           union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
         }
       } else if (item instanceof DataByteArray) {
-        // This is a sketch from a call to the Intermediate function 
+        // This is a sketch from a call to the Intermediate function
         // Add it to the current union
         final DataByteArray dba = (DataByteArray) item;
         union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " 
+        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: "
             + item.getClass().getName());
       }
     }

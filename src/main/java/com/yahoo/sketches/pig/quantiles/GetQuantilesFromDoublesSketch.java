@@ -27,10 +27,12 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple input) throws IOException {
-    if (input.size() < 2) throw new IllegalArgumentException("expected two or more inputs: sketch and list of fractions");
+    if (input.size() < 2) {
+      throw new IllegalArgumentException("expected two or more inputs: sketch and list of fractions");
+    }
 
     if (!(input.get(0) instanceof DataByteArray)) {
-      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " 
+      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got "
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
@@ -50,7 +52,7 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
       double[] fractions = new double[input.size() - 1];
       for (int i = 1; i < input.size(); i++) {
         if (!(input.get(i) instanceof Double)) {
-          throw new IllegalArgumentException("expected a double value as a fraction, got " 
+          throw new IllegalArgumentException("expected a double value as a fraction, got "
               + input.get(i).getClass().getSimpleName());
         }
         fractions[i - 1] = (double) input.get(i);

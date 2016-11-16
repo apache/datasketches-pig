@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -44,8 +44,10 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
    * @param samplingProbability probability from 0 to 1
    * @param numValues Number of double values to keep for each key
    */
-  public DataToArrayOfDoublesSketch(final String sketchSize, final String samplingProbability, final String numValues) {
-    super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability), Integer.parseInt(numValues));
+  public DataToArrayOfDoublesSketch(
+      final String sketchSize, final String samplingProbability, final String numValues) {
+    super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability),
+        Integer.parseInt(numValues));
   }
 
   @Override
@@ -131,8 +133,10 @@ public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase i
      * @param samplingProbability probability from 0 to 1
      * @param numValues Number of double values to keep for each key
      */
-    public IntermediateFinal(final String sketchSize, final String samplingProbability, final String numValues) {
-      super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability), Integer.parseInt(numValues));
+    public IntermediateFinal(
+        final String sketchSize, final String samplingProbability, final String numValues) {
+      super(Integer.parseInt(sketchSize), Float.parseFloat(samplingProbability),
+          Integer.parseInt(numValues));
     }
 
   }

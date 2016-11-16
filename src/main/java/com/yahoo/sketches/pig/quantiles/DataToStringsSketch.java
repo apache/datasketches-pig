@@ -44,7 +44,8 @@ public class DataToStringsSketch extends DataToItemsSketch<String> {
     return DataToStringsSketchIntermediateFinal.class.getName();
   }
 
-  public static class DataToStringsSketchIntermediateFinal extends DataToItemsSketchIntermediateFinal<String> {
+  public static class DataToStringsSketchIntermediateFinal
+      extends DataToItemsSketchIntermediateFinal<String> {
 
     public DataToStringsSketchIntermediateFinal() {
       super(0, COMPARATOR, SER_DE);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -78,7 +78,8 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
 
   }
 
-  public static class IntermediateFinal extends DataToSketchAlgebraicIntermediateFinal<Double, DoubleSummary> {
+  public static class IntermediateFinal
+      extends DataToSketchAlgebraicIntermediateFinal<Double, DoubleSummary> {
 
     /**
      * Constructor for the intermediate and final passes of an Algebraic function.

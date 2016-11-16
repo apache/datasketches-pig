@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -18,7 +18,7 @@ import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.frequencies.ItemsSketch;
 
 /**
- * This is a generic implementation to be specialized in concrete UDFs 
+ * This is a generic implementation to be specialized in concrete UDFs
  * @param <T> Type of item
  */
 public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple> {
@@ -41,7 +41,8 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("exec is used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("exec is used");
       isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
@@ -56,7 +57,8 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("accumulator is used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("accumulator is used");
       isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() != 1)) {
@@ -70,7 +72,7 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
     if (bag.size() == 0) {
       return;
     }
-  
+
     if (sketch_ == null) {
       sketch_ = new ItemsSketch<T>(sketchSize_);
     }
@@ -93,7 +95,7 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }
     }
-  
+
     try {
       return Util.serializeSketchToTuple(sketch_, serDe_);
     } catch (ExecException ex) {
@@ -103,7 +105,9 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
 
   @Override
   public void cleanup() {
-    if (sketch_ != null) sketch_.reset();
+    if (sketch_ != null) {
+      sketch_.reset();
+    }
   }
 
 }

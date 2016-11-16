@@ -25,7 +25,9 @@ public class GetKFromStringsSketch extends EvalFunc<Integer> {
 
   @Override
   public Integer exec(final Tuple input) throws IOException {
-    if (input.size() != 1) throw new IllegalArgumentException("expected one input");
+    if (input.size() != 1) {
+      throw new IllegalArgumentException("expected one input");
+    }
 
     if (!(input.get(0) instanceof DataByteArray)) {
       throw new IllegalArgumentException("expected a DataByteArray as a sketch, got "

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -78,7 +78,7 @@ class PigUtil {
     DataBag bag = null;
     try {
       bag = (DataBag) tuple.get(0);
-      if (bag.size() == 0) return null;
+      if (bag.size() == 0) { return null; }
     }
     catch (IOException | NullPointerException | IndexOutOfBoundsException e ) {
       return null; //as a signal

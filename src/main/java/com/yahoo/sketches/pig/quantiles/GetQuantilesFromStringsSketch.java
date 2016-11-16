@@ -34,12 +34,13 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
     }
 
     if (!(input.get(0) instanceof DataByteArray)) {
-      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " + input.get(0).getClass().getSimpleName());
+      throw new IllegalArgumentException(
+          "expected a DataByteArray as a sketch, got " + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
     final ItemsSketch<String> sketch = ItemsSketch.getInstance(
         new NativeMemory(dba.get()), Comparator.naturalOrder(), new ArrayOfStringsSerDe());
-    if (sketch.isEmpty()) return null;
+    if (sketch.isEmpty()) { return null; }
 
     if (input.size() == 2) {
       Object arg = input.get(1);
@@ -55,7 +56,8 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
       double[] fractions = new double[input.size() - 1];
       for (int i = 1; i < input.size(); i++) {
         if (!(input.get(i) instanceof Double)) {
-          throw new IllegalArgumentException("expected a double value as a fraction, got " + input.get(i).getClass().getSimpleName());
+          throw new IllegalArgumentException(
+              "expected a double value as a fraction, got " + input.get(i).getClass().getSimpleName());
         }
         fractions[i - 1] = (double) input.get(i);
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -27,7 +27,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
  * parameter can be a positive Integer modulus divisor. If the divisor is provided, the Integer
  * modulus remainder is computed on the entire 128-bit hash output treated as if it were a 128-bit
  * positive value.
- * 
+ *
  * @author Lee Rhodes
  */
 public class MurmurHash3 extends EvalFunc<Tuple> {
@@ -39,7 +39,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * <p>
    * This method accepts an object to be hashed and returns a <i>Hash Result Tuple</i>.
    * </p>
-   * 
+   *
    * <b>Hash Input Tuple</b>
    * <ul>
    * <li>Tuple: TUPLE (Must contain 1 field and may contain 2 or 3): <br>
@@ -51,11 +51,11 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * </ul>
    * </li>
    * </ul>
-   * 
+   *
    * <p>
    * Any other input tuple will throw an exception!
    * </p>
-   * 
+   *
    * <b>Hash Result Tuple</b>
    * <ul>
    * <li>Tuple: TUPLE (Contains 3 fields)
@@ -66,7 +66,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * </ul>
    * </li>
    * </ul>
-   * 
+   *
    * @param input Hash Input Tuple. If null or empty exec returns null.
    */
   @Override
@@ -99,7 +99,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
         if (obj != null) {
           if (obj instanceof Integer) {
             divisor_ = (Integer) obj;
-          } 
+          }
           else {
             throw new IllegalArgumentException("Modulus divisor must be an Integer.");
           }
@@ -116,10 +116,10 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
         if (obj != null) {
           if (obj instanceof Long) {
             seed = (Long) obj;
-          } 
+          }
           else if (obj instanceof Integer) {
             seed = (Integer) obj;
-          } 
+          }
           else {
             throw new IllegalArgumentException("Seed must be an Integer or Long");
           }
@@ -190,7 +190,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
         tupleSchema.add(new Schema.FieldSchema("ModuloResult", DataType.INTEGER));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-      } 
+      }
       catch (FrontendException e) {
         //fall through
       }

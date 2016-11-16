@@ -23,10 +23,12 @@ public class GetKFromDoublesSketch extends EvalFunc<Integer> {
 
   @Override
   public Integer exec(final Tuple input) throws IOException {
-    if (input.size() != 1) throw new IllegalArgumentException("expected one input");
+    if (input.size() != 1) {
+      throw new IllegalArgumentException("expected one input");
+    }
 
     if (!(input.get(0) instanceof DataByteArray)) {
-      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got " 
+      throw new IllegalArgumentException("expected a DataByteArray as a sketch, got "
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);

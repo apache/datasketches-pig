@@ -24,7 +24,7 @@ import com.yahoo.sketches.quantiles.DoublesUnion;
 import com.yahoo.sketches.quantiles.DoublesUnionBuilder;
 
 /**
- * This is a Pig UDF that builds Sketches from data. 
+ * This is a Pig UDF that builds Sketches from data.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
  */
 public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
@@ -47,7 +47,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
 
   /**
    * String constructor.
-   * 
+   *
    * @param kStr string representation of k
    */
   public DataToDoublesSketch(final String kStr) {
@@ -56,13 +56,15 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
 
   /**
    * Base constructor.
-   * 
+   *
    * @param k parameter that determines the accuracy and size of the sketch.
    */
   public DataToDoublesSketch(final int k) {
     super();
     unionBuilder_ = DoublesUnion.builder();
-    if (k > 0) unionBuilder_.setK(k);
+    if (k > 0) {
+      unionBuilder_.setK(k);
+    }
   }
 
   //@formatter:off
@@ -70,15 +72,15 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    * Top-level exec function.
    * This method accepts an input Tuple containing a Bag of one or more inner <b>Datum Tuples</b>
    * and returns a single updated <b>Sketch</b> as a <b>Sketch Tuple</b>.
-   * 
+   *
    * <p>If a large number of calls is anticipated, leveraging either the <i>Algebraic</i> or
    * <i>Accumulator</i> interfaces is recommended. Pig normally handles this automatically.
-   * 
+   *
    * <p>Internally, this method presents the inner <b>Datum Tuples</b> to a new <b>Union</b>,
    * which is returned as a <b>Sketch Tuple</b>
-   * 
+   *
    * <p>Types are in the form: Java data type: Pig DataType
-   * 
+   *
    * <p><b>Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -93,7 +95,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Datum Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain only one field)
@@ -102,7 +104,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -111,7 +113,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @return Sketch Tuple. If inputTuple is null or empty, returns empty sketch.
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"
@@ -125,9 +127,13 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     if (inputTuple != null && inputTuple.size() > 0) {
       final DoublesUnion union = unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
-      for (final Tuple innerTuple: bag) union.update((Double) innerTuple.get(0));
+      for (final Tuple innerTuple: bag) {
+        union.update((Double) innerTuple.get(0));
+      }
       final DoublesSketch resultSketch = union.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+      }
     }
     // return empty sketch
     return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
@@ -135,7 +141,9 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input == null) return null;
+    if (input == null) {
+      return null;
+    }
     try {
       final Schema tupleSchema = new Schema();
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
@@ -153,7 +161,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    * accumulator is called with a bag of Datum Tuples. Unlike <i>exec()</i>, it doesn't serialize the
    * sketch at the end. Instead, it can be called multiple times, each time with another bag of
    * Datum Tuples to be input to the Union.
-   * 
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @see #exec
    * @see "org.apache.pig.Accumulator.accumulate(org.apache.pig.data.Tuple)"
@@ -161,16 +169,20 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) return;
+    if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) return;
-    if (accumUnion_ == null) accumUnion_ = unionBuilder_.build();
-    for (final Tuple innerTuple: bag) accumUnion_.update((Double) innerTuple.get(0));
+    if (bag == null) { return; }
+    if (accumUnion_ == null) {
+      accumUnion_ = unionBuilder_.build();
+    }
+    for (final Tuple innerTuple: bag) {
+      accumUnion_.update((Double) innerTuple.get(0));
+    }
   }
 
   /**
    * Returns the result of the Union that has been built up by multiple calls to {@link #accumulate}.
-   * 
+   *
    * @return Sketch Tuple. (see {@link #exec} for return tuple format)
    * @see "org.apache.pig.Accumulator.getValue()"
    */
@@ -178,7 +190,9 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
   public Tuple getValue() {
     if (accumUnion_ != null) {
       final DoublesSketch resultSketch = accumUnion_.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+      }
     }
     // return empty sketch
     return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
@@ -186,7 +200,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
 
   /**
    * Cleans up the UDF state after being called using the {@link Accumulator} interface.
-   * 
+   *
    * @see "org.apache.pig.Accumulator.cleanup()"
    */
   @Override
@@ -214,14 +228,14 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
   // STATIC Initial Class only called by Pig
 
   /**
-   * Class used to calculate the initial pass of an Algebraic sketch operation. 
-   * 
+   * Class used to calculate the initial pass of an Algebraic sketch operation.
+   *
    * <p>
    * The Initial class simply passes through all records unchanged so that they can be
    * processed by the intermediate processor instead.</p>
    */
   public static class Initial extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
     /**
@@ -230,9 +244,9 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     public Initial() {}
 
     /**
-     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the 
+     * Constructor for the initial pass of an Algebraic function. Pig will call this and pass the
      * same constructor arguments as the base UDF. In this case the arguments are ignored.
-     * 
+     *
      * @param kStr string representation of k
      */
     public Initial(final String kStr) {}
@@ -246,14 +260,14 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
   // STATIC IntermediateFinal Class only called by Pig
 
   /**
-   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> sketch 
-   * operation. This is called from the combiner, and may be called multiple times (from the mapper 
-   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i> 
-   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and 
+   * Class used to calculate the intermediate or final combiner pass of an <i>Algebraic</i> sketch
+   * operation. This is called from the combiner, and may be called multiple times (from the mapper
+   * and from the reducer). It will receive a bag of values returned by either the <i>Intermediate</i>
+   * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and
    * interpret both types.
    */
   public static class IntermediateFinal extends EvalFunc<Tuple> {
-    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless. 
+    // The Algebraic worker classes (Initial, IntermediateFinal) are static and stateless.
     // The constructors and final parameters must mirror the parent class as there is no linkage
     // between them.
     private final DoublesUnionBuilder unionBuilder_;
@@ -266,7 +280,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     }
 
     /**
-     * Constructor for the intermediate and final passes of an Algebraic function. Pig will call 
+     * Constructor for the intermediate and final passes of an Algebraic function. Pig will call
      * this and pass the same constructor arguments as the base UDF.
      *
      * @param kStr string representation of k
@@ -276,13 +290,15 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     }
 
     /**
-     * Constructor with primitives for the intermediate and final passes of an Algebraic function. 
-     * 
+     * Constructor with primitives for the intermediate and final passes of an Algebraic function.
+     *
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     public IntermediateFinal(final int k) {
       unionBuilder_ = DoublesUnion.builder();
-      if (k > 0) unionBuilder_.setK(k);
+      if (k > 0) {
+        unionBuilder_.setK(k);
+      }
     }
 
     @Override // IntermediateFinal exec
@@ -292,15 +308,17 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
-          if (f0 == null) continue;
+          if (f0 == null) { continue; }
           if (f0 instanceof DataBag) {
             final DataBag innerBag = (DataBag) f0; // inputTuple.bag0.dataTupleN.f0:bag
-            if (innerBag.size() == 0) continue;
+            if (innerBag.size() == 0) { continue; }
             // If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
             // will be passed into the union.
-            // It is due to system bagged outputs from multiple mapper Initial functions.  
+            // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
-            for (final Tuple innerTuple: innerBag) union.update((Double) innerTuple.get(0));
+            for (final Tuple innerTuple: innerBag) {
+              union.update((Double) innerTuple.get(0));
+            }
           } else if (f0 instanceof DataByteArray) { // inputTuple.bag0.dataTupleN.f0:DBA
             // If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
             // due to system bagged outputs from multiple mapper Intermediate functions.
@@ -313,7 +331,9 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
           }
         }
         final DoublesSketch resultSketch = union.getResultAndReset();
-        if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+        if (resultSketch != null) {
+          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+        }
       }
       // return empty sketch
       return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));

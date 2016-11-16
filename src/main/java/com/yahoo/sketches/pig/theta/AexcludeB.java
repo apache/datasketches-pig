@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -29,15 +29,15 @@ import com.yahoo.sketches.theta.Sketch;
 /**
  * This is a Pig UDF that performs the A-NOT-B Set Operation on two given Sketches. Because this
  * operation is fundamentally asymetric, it is structured as a single stateless operation rather
- * than stateful as are Union and Intersection UDFs, which can be iterative.  
+ * than stateful as are Union and Intersection UDFs, which can be iterative.
  * The requirement to perform iterative A\B\C\... is rare. If needed, it can be rendered easily by
  * the caller.
- * 
+ *
  * @author Lee Rhodes
  */
 public class AexcludeB extends EvalFunc<Tuple> {
   private final long seed_;
-  
+
   //TOP LEVEL API
   /**
    * Default constructor to make pig validation happy.  Assumes:
@@ -48,34 +48,34 @@ public class AexcludeB extends EvalFunc<Tuple> {
   public AexcludeB() {
     this(DEFAULT_UPDATE_SEED);
   }
-  
+
   /**
    * String constructor.
-   * 
+   *
    * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>
    */
   public AexcludeB(String seedStr) {
     this(Long.parseLong(seedStr));
   }
-  
+
   /**
    * Base constructor.
-   * 
+   *
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
   public AexcludeB(long seed) {
     super();
     this.seed_ = seed;
   }
-  
+
   // @formatter:off
   /**
    * Top Level Exec Function.
    * <p>
-   * This method accepts a <b>Sketch AnotB Input Tuple</b> and returns a 
+   * This method accepts a <b>Sketch AnotB Input Tuple</b> and returns a
    * <b>Sketch Tuple</b>.
    * </p>
-   * 
+   *
    * <b>Sketch AnotB Input Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Must contain 2 fields): <br>
@@ -86,11 +86,11 @@ public class AexcludeB extends EvalFunc<Tuple> {
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * <p>
    * Any other input tuple will throw an exception!
    * </p>
-   * 
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -99,11 +99,11 @@ public class AexcludeB extends EvalFunc<Tuple> {
    *     </ul>
    *   </li>
    * </ul>
-   * 
+   *
    * @throws ExecException from Pig.
    */
   // @formatter:on
-  
+
   @Override //TOP LEVEL EXEC
   public Tuple exec(Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
@@ -122,13 +122,13 @@ public class AexcludeB extends EvalFunc<Tuple> {
       Memory srcMem = new NativeMemory(dbaB.get());
       sketchB = Sketch.wrap(srcMem, seed_);
     }
-    
+
     AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
     aNOTb.update(sketchA, sketchB);
     CompactSketch compactSketch = aNOTb.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
-  
+
   @Override
   public Schema outputSchema(Schema input) {
     if (input != null) {
@@ -137,12 +137,12 @@ public class AexcludeB extends EvalFunc<Tuple> {
         tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-      } 
+      }
       catch (FrontendException e) {
         // fall through
       }
     }
     return null;
   }
-  
+
 }

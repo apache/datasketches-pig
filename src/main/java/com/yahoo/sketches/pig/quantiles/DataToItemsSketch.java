@@ -115,22 +115,28 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
     if (inputTuple != null && inputTuple.size() > 0) {
-      final ItemsUnion<T> union = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+      final ItemsUnion<T> union = k_ > 0
+          ? ItemsUnion.getInstance(k_, comparator_)
+          : ItemsUnion.getInstance(comparator_);
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
         union.update(extractValue(innerTuple.get(0)));
       }
       final ItemsSketch<T> resultSketch = union.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+    final ItemsSketch<T> sketch = k_ > 0
+        ? ItemsSketch.getInstance(k_, comparator_)
+        : ItemsSketch.getInstance(comparator_);
     return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
   }
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input == null) return null;
+    if (input == null) { return null; }
     try {
       final Schema tupleSchema = new Schema();
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
@@ -156,10 +162,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) return;
+    if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) return;
-    if (accumUnion_ == null) accumUnion_ = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+    if (bag == null) { return; }
+    if (accumUnion_ == null) {
+      accumUnion_ = k_ > 0
+        ? ItemsUnion.getInstance(k_, comparator_)
+        : ItemsUnion.getInstance(comparator_);
+    }
     for (final Tuple innerTuple: bag) {
       accumUnion_.update(extractValue(innerTuple.get(0)));
     }
@@ -175,10 +185,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
   public Tuple getValue() {
     if (accumUnion_ != null) {
       final ItemsSketch<T> resultSketch = accumUnion_.getResultAndReset();
-      if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      if (resultSketch != null) {
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+      }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+    final ItemsSketch<T> sketch = k_ > 0
+        ? ItemsSketch.getInstance(k_, comparator_)
+        : ItemsSketch.getInstance(comparator_);
     return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
   }
 
@@ -255,7 +269,8 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
      * @param comparator for items of type T
      * @param serDe an instance of ArrayOfItemsSerDe for type T
      */
-    public DataToItemsSketchIntermediateFinal(final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
+    public DataToItemsSketchIntermediateFinal(
+        final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
       super();
       k_ = k;
       comparator_ = comparator;
@@ -275,14 +290,16 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       if (inputTuple != null && inputTuple.size() > 0) {
-        final ItemsUnion<T> union = k_ > 0 ? ItemsUnion.getInstance(k_, comparator_) : ItemsUnion.getInstance(comparator_);
+        final ItemsUnion<T> union = k_ > 0
+            ? ItemsUnion.getInstance(k_, comparator_)
+            : ItemsUnion.getInstance(comparator_);
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
-          if (f0 == null) continue;
+          if (f0 == null) { continue; }
           if (f0 instanceof DataBag) {
             final DataBag innerBag = (DataBag) f0; // inputTuple.bag0.dataTupleN.f0:bag
-            if (innerBag.size() == 0) continue;
+            if (innerBag.size() == 0) { continue; }
             // If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
             // will be passed into the union.
             // It is due to system bagged outputs from multiple mapper Initial functions.
@@ -302,10 +319,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple> implements Ac
           }
         }
         final ItemsSketch<T> resultSketch = union.getResultAndReset();
-        if (resultSketch != null) return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        if (resultSketch != null) {
+          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        }
       }
       // return empty sketch
-      final ItemsSketch<T> sketch = k_ > 0 ? ItemsSketch.getInstance(k_, comparator_) : ItemsSketch.getInstance(comparator_);
+      final ItemsSketch<T> sketch = k_ > 0
+          ? ItemsSketch.getInstance(k_, comparator_)
+          : ItemsSketch.getInstance(comparator_);
       return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
     }
   } // end IntermediateFinal

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -26,7 +26,7 @@ import com.yahoo.sketches.tuple.Union;
  * (from the mapper and from the reducer). It will receive a bag of values
  * returned by either the Intermediate or the Initial stages, so
  * it needs to be able to differentiate between and interpret both types.
- * 
+ *
  * @param <S> Type of Summary
  */
 public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> extends EvalFunc<Tuple> {
@@ -57,13 +57,16 @@ public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> e
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("algebraic is used");  // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
     final Union<S> union = new Union<S>(sketchSize_, summaryFactory_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
-    if (bag == null) throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    if (bag == null) {
+      throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
+    }
 
     for (final Tuple dataTuple: bag) {
       final Object item = dataTuple.get(0);
@@ -74,13 +77,14 @@ public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> e
           union.update(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
-        // This is a sketch from a call to the Intermediate function 
+        // This is a sketch from a call to the Intermediate function
         // Add it to the current union.
         final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
         union.update(incomingSketch);
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
+        throw new IllegalArgumentException(
+            "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
     return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));

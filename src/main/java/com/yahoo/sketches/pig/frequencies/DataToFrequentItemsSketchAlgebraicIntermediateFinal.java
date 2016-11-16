@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -34,16 +34,18 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
    * Default constructor to make pig validation happy.
    */
   public DataToFrequentItemsSketchAlgebraicIntermediateFinal() {}
-  
-  public DataToFrequentItemsSketchAlgebraicIntermediateFinal(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
+
+  public DataToFrequentItemsSketchAlgebraicIntermediateFinal(
+      final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     sketchSize_ = sketchSize;
     serDe_ = serDe;
   }
-  
+
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("algebraic was used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("algebraic was used");
       isFirstCall_ = false;
     }
     final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
@@ -56,14 +58,15 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
         // just insert each item of the tuple into the sketch
         DataToFrequentItemsSketch.updateSketch((DataBag)item, sketch);
       } else if (item instanceof DataByteArray) {
-        // This is a sketch from a prior call to the 
-        // Intermediate function. merge it with the 
+        // This is a sketch from a prior call to the
+        // Intermediate function. merge it with the
         // current sketch.
         ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
         sketch.merge(incomingSketch);
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
+        throw new IllegalArgumentException(
+            "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
     return Util.serializeSketchToTuple(sketch, serDe_);

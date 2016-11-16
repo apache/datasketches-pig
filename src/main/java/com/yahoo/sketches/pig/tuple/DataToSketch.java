@@ -24,11 +24,11 @@ import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 import com.yahoo.sketches.tuple.UpdatableSummary;
 
 /**
- * This is a generic implementation to be specialized in concrete UDFs 
+ * This is a generic implementation to be specialized in concrete UDFs
  * @param <U> Update type
  * @param <S> Summary type
  */
-public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> 
+public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple>
     implements Accumulator<Tuple> {
 
   private final UpdatableSketchBuilder<U, S> sketchBuilder_;
@@ -57,14 +57,14 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   }
 
   /**
-   * Constructs a function given a sketch size, sampling probability and summary factory 
+   * Constructs a function given a sketch size, sampling probability and summary factory
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
    * @param samplingProbability parameter from 0 to 1 inclusive
    * @param summaryFactory an instance of SummaryFactory
    */
-  public DataToSketch(final int sketchSize, final float samplingProbability, 
+  public DataToSketch(final int sketchSize, final float samplingProbability,
       final SummaryFactory<S> summaryFactory) {
     super();
     sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
@@ -74,13 +74,16 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("accumulate is used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("accumulate is used");
       isFirstCall_ = false;
     }
     if (accumSketch_ == null) {
       accumSketch_ = sketchBuilder_.build();
     }
-    if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
+    if (inputTuple.size() != 1) {
+      throw new IllegalArgumentException("Input tuple must have 1 bag");
+    }
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, accumSketch_);
   }
@@ -108,7 +111,9 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
     }
-    if (inputTuple.size() != 1) throw new IllegalArgumentException("Input tuple must have 1 bag");
+    if (inputTuple.size() != 1) {
+      throw new IllegalArgumentException("Input tuple must have 1 bag");
+    }
 
     final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -116,7 +121,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
     return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
   }
 
-  static <U, S extends UpdatableSummary<U>> void updateSketch(final DataBag bag, 
+  static <U, S extends UpdatableSummary<U>> void updateSketch(final DataBag bag,
         final UpdatableSketch<U, S> sketch) throws ExecException {
     if (bag == null) {
       throw new IllegalArgumentException("InputTuple.Field0: Bag may not be null");
@@ -127,7 +132,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
       }
 
       final Object key = tuple.get(0);
-      if (key == null) continue;
+      if (key == null) { continue; }
       @SuppressWarnings("unchecked")
       final U value = (U) tuple.get(1);
 
@@ -149,11 +154,15 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
         break;
       case DataType.BYTEARRAY:
         final DataByteArray dba = (DataByteArray) key;
-        if (dba.size() != 0) sketch.update(dba.get(), value);
+        if (dba.size() != 0) {
+          sketch.update(dba.get(), value);
+        }
         break;
       case DataType.CHARARRAY:
         final String s = key.toString();
-        if (!s.isEmpty()) sketch.update(s, value);
+        if (!s.isEmpty()) {
+          sketch.update(s, value);
+        }
         break;
       default:
         throw new IllegalArgumentException("Field 0 must be one of "

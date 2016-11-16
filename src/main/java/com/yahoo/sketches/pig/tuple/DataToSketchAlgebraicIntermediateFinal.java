@@ -31,7 +31,8 @@ import com.yahoo.sketches.tuple.UpdatableSummary;
  * @param <U> Type of the update value
  * @param <S> Type of the summary
  */
-public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>> extends EvalFunc<Tuple> {
+public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>>
+    extends EvalFunc<Tuple> {
   private final int sketchSize_;
   private final SummaryFactory<S> summaryFactory_;
   private final UpdatableSketchBuilder<U, S> sketchBuilder_;
@@ -54,30 +55,32 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
    * greater than given value.
    * @param summaryFactory an instance of SummaryFactory
    */
-  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, final SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize,
+      final SummaryFactory<S> summaryFactory) {
     this(sketchSize, 1f, summaryFactory);
   }
 
   /**
-   * Constructs a function given a sketch size, sampling probability and summary factory 
+   * Constructs a function given a sketch size, sampling probability and summary factory
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
    * @param samplingProbability parameter from 0 to 1 inclusive
    * @param summaryFactory an instance of SummaryFactory
    */
-  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, 
+  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize,
       final float samplingProbability, final SummaryFactory<S> summaryFactory) {
     sketchSize_ = sketchSize;
     summaryFactory_ = summaryFactory;
     sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
-  
+
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
     if (isFirstCall_) {
-      Logger.getLogger(getClass()).info("algebraic is used"); // this is to see in the log which way was used by Pig
+      // this is to see in the log which way was used by Pig
+      Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
     final Union<S> union = new Union<S>(sketchSize_, summaryFactory_);
@@ -96,14 +99,15 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
         DataToSketch.updateSketch((DataBag) item, sketch);
         union.update(sketch);
       } else if (item instanceof DataByteArray) {
-        // This is a sketch from a prior call to the 
-        // Intermediate function. merge it with the 
+        // This is a sketch from a prior call to the
+        // Intermediate function. merge it with the
         // current sketch.
         final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
         union.update(incomingSketch);
       } else {
         // we should never get here.
-        throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
+        throw new IllegalArgumentException(
+            "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
     return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));

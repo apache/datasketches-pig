@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -224,7 +224,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).buildUnion(nomEntries_);
     }
     DataBag bag = extractBag(inputTuple);
-    if (bag == null) return;
+    if (bag == null) { return; }
 
     updateUnion(bag, accumUnion_);
   }
@@ -237,7 +237,9 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ == null) return emptyCompactOrderedSketchTuple_; //Configured with parent
+    if (accumUnion_ == null) {
+      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    }
     CompactSketch compactSketch = accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
@@ -273,36 +275,34 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   //TOP LEVEL PRIVATE STATIC METHODS
 
   /*************************************************************************************************
-  * Updates a union from a bag of sketches
-  *
-  * @param bag A bag of sketchTuples.
-  * @param union The union to update
-  */
- private static void updateUnion(DataBag bag, com.yahoo.sketches.theta.Union union) {
-   //Bag is not empty. process each innerTuple in the bag
-   for (Tuple innerTuple : bag) {
-     //validate the inner Tuples
-     Object f0 = extractFieldAtIndex(innerTuple, 0);
-     if (f0 == null) {
-       continue;
-     }
-     Byte type = extractTypeAtIndex(innerTuple, 0);
-     if (type == null) {
-       continue;
-     }
-     // add only the first field of the innerTuple to the union
-     if (type == DataType.BYTEARRAY) {
-       DataByteArray dba = (DataByteArray) f0;
-       if (dba.size() > 0) {
-         union.update(new NativeMemory(dba.get()));
-       }
-     }
-     else {
-       throw new IllegalArgumentException(
-           "Field type was not DataType.BYTEARRAY: " + type);
-     }
-   }
- }
+   * Updates a union from a bag of sketches
+   *
+   * @param bag A bag of sketchTuples.
+   * @param union The union to update
+   */
+  private static void updateUnion(DataBag bag, com.yahoo.sketches.theta.Union union) {
+    // Bag is not empty. process each innerTuple in the bag
+    for (Tuple innerTuple : bag) {
+      // validate the inner Tuples
+      Object f0 = extractFieldAtIndex(innerTuple, 0);
+      if (f0 == null) {
+        continue;
+      }
+      Byte type = extractTypeAtIndex(innerTuple, 0);
+      if (type == null) {
+        continue;
+      }
+      // add only the first field of the innerTuple to the union
+      if (type == DataType.BYTEARRAY) {
+        DataByteArray dba = (DataByteArray) f0;
+        if (dba.size() > 0) {
+          union.update(new NativeMemory(dba.get()));
+        }
+      } else {
+        throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);
+      }
+    }
+  }
 
   //STATIC Initial Class only called by Pig
 

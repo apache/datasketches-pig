@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -23,7 +23,7 @@ import com.yahoo.sketches.theta.Sketch;
 /**
  * This is a User Defined Function (UDF) for returning the Double value result along with a lower and
  * upper bound. Refer to {@link DataToSketch#exec(Tuple)} for the definition of a Sketch Tuple.
- * 
+ *
  * <p>
  * <b>Sketch Result Tuple</b>
  * </p>
@@ -36,21 +36,21 @@ import com.yahoo.sketches.theta.Sketch;
  *     </ul>
  *   </li>
  * </ul>
- * 
+ *
  * @author Lee Rhodes
  */
 //@formatter:on
 public class ErrorBounds extends EvalFunc<Tuple> {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
   private final long seed_;
-  
+
   /**
    * Constructs with the DEFAULT_UPDATE_SEED used when deserializing the sketch.
    */
   public ErrorBounds() {
     this(Util.DEFAULT_UPDATE_SEED);
   }
-  
+
   /**
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
@@ -58,7 +58,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
   public ErrorBounds(String seedStr) {
     this(Long.parseLong(seedStr));
   }
-  
+
   /**
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
@@ -67,7 +67,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
     super();
     seed_ = seed;
   }
-  
+
   @Override
   public Tuple exec(Tuple sketchTuple) throws IOException { //throws is in API
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
@@ -94,12 +94,12 @@ public class ErrorBounds extends EvalFunc<Tuple> {
         tupleSchema.add(new Schema.FieldSchema("LowerBound", DataType.DOUBLE));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-      } 
+      }
       catch (FrontendException e) {
         // fall through
       }
     }
     return null;
   }
-  
+
 }

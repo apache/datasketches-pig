@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -17,19 +17,19 @@ import com.yahoo.sketches.theta.Sketch;
 
 /**
  * Returns the unique count estimate of a sketch as a Double.
- * 
- * @author LeeRhodes 
+ *
+ * @author LeeRhodes
  */
 public class Estimate extends EvalFunc<Double> {
   private final long seed_;
-  
+
   /**
-   * Constructs with the DEFAULT_UPDATE_SEED used when deserializing the sketch. 
+   * Constructs with the DEFAULT_UPDATE_SEED used when deserializing the sketch.
    */
   public Estimate() {
     this(Util.DEFAULT_UPDATE_SEED);
   }
-  
+
   /**
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
@@ -37,7 +37,7 @@ public class Estimate extends EvalFunc<Double> {
   public Estimate(String seedStr) {
     this(Long.parseLong(seedStr));
   }
-  
+
   /**
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
@@ -46,7 +46,7 @@ public class Estimate extends EvalFunc<Double> {
     super();
     seed_ = seed;
   }
-  
+
   @Override
   public Double exec(Tuple sketchTuple) throws IOException { //throws is in API
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {

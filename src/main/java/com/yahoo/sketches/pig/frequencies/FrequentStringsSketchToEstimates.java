@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, Yahoo! Inc.
+ * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 
@@ -52,7 +52,8 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
     }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(dba.get()), new ArrayOfStringsSerDe());
+    final ItemsSketch<String> sketch =
+        ItemsSketch.getInstance(new NativeMemory(dba.get()), new ArrayOfStringsSerDe());
     final ItemsSketch.Row<String>[] result = sketch.getFrequentItems(errorType);
 
     final DataBag bag = BagFactory.getInstance().newDefaultBag();
