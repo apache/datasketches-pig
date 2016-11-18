@@ -33,10 +33,15 @@ import com.yahoo.sketches.tuple.UpdatableSummary;
  */
 public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>>
     extends EvalFunc<Tuple> {
-  private final int sketchSize_;
-  private final SummaryFactory<S> summaryFactory_;
-  private final UpdatableSketchBuilder<U, S> sketchBuilder_;
+  private int sketchSize_;
+  private SummaryFactory<S> summaryFactory_;
+  private UpdatableSketchBuilder<U, S> sketchBuilder_;
   private boolean isFirstCall_ = true;
+
+  /**
+   * Default constructor required for pig to initialize UDF
+   */
+  public DataToSketchAlgebraicIntermediateFinal() {}
 
   /**
    * Constructs a function given a summary factory, default sketch size and default
