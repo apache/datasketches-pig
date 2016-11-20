@@ -128,7 +128,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     return null;
   }
 
-  private Tuple createResultTuple(long n, int k, DataBag samples) {
+  private static Tuple createResultTuple(long n, int k, DataBag samples) {
     final Tuple output = TupleFactory.getInstance().newTuple(3);
 
     try {
@@ -266,7 +266,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
       return output;
     }
 
-    private ArrayList<Tuple> dataBagToArrayList(final DataBag bag) {
+    private static ArrayList<Tuple> dataBagToArrayList(final DataBag bag) {
       final int arrayLength = (int) bag.size();
       final ArrayList<Tuple> output = new ArrayList<>(arrayLength);
 

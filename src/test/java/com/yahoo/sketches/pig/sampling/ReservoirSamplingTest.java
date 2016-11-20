@@ -18,12 +18,12 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
 import org.testng.annotations.Test;
 
 
 public class ReservoirSamplingTest {
 
+  @SuppressWarnings("unused")
   @Test
   public void invalidKTest() {
     try {
@@ -332,7 +332,7 @@ public class ReservoirSamplingTest {
     assertNull(output);
   }
 
-  private DataBag generateDataBag(final int numItems, final int startIdx) {
+  private static DataBag generateDataBag(final int numItems, final int startIdx) {
     DataBag output = BagFactory.getInstance().newDefaultBag();
 
     try {
