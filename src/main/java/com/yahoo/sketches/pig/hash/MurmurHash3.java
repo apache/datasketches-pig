@@ -88,8 +88,8 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
     return out;
   }
 
-  private long[] extractInputs(Tuple input) throws IOException { //may return null
-    int sw = min(input.size(), 3);
+  private long[] extractInputs(final Tuple input) throws IOException { //may return null
+    final int sw = min(input.size(), 3);
     long seed = 0L;
     Object obj = null;
     long[] hashOut = null;
@@ -128,18 +128,18 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
       //$FALL-THROUGH$
       case 1: {
         obj = input.get(0);
-        int type = input.getType(0);
+        final int type = input.getType(0);
         switch (type) {
           case 1: { //Null type, returns null
             break;
           }
           case 10: { //Integer
-            long[] data = { (Integer) obj };
+            final long[] data = { (Integer) obj };
             hashOut = hash(data, seed);
             break;
           }
           case 15: { //Long
-            long[] data = { (Long) obj };
+            final long[] data = { (Long) obj };
             hashOut = hash(data, seed);
             break;
           }
@@ -152,7 +152,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
             break;
           }
           case 50: { //BYTEARRAY = DataByteArray
-            DataByteArray dba = (DataByteArray) obj;
+            final DataByteArray dba = (DataByteArray) obj;
             if (dba.size() == 0) {
               break; //Empty return null
             }
@@ -160,7 +160,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
             break;
           }
           case 55: { //CHARARRAY = String
-            String datum = (String) obj;
+            final String datum = (String) obj;
             if (datum.isEmpty()) {
               break; //Empty return null
             }
@@ -181,17 +181,17 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * specified.
    */
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("Hash0", DataType.LONG));
         tupleSchema.add(new Schema.FieldSchema("Hash1", DataType.LONG));
         tupleSchema.add(new Schema.FieldSchema("ModuloResult", DataType.INTEGER));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         //fall through
       }
     }

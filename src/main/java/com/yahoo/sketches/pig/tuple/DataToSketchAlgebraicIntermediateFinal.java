@@ -95,7 +95,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
       if (item instanceof DataBag) {
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
-        UpdatableSketch<U, S> sketch = sketchBuilder_.build();
+        final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
         DataToSketch.updateSketch((DataBag) item, sketch);
         union.update(sketch);
       } else if (item instanceof DataByteArray) {

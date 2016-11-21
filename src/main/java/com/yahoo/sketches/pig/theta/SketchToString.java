@@ -43,7 +43,7 @@ public class SketchToString extends EvalFunc<String> {
    * @param outputDetailStr If the first character is a "T" or "t" the output will include the bucket
    * detail. Otherwise only the sketch summary will be output.
    */
-  public SketchToString(String outputDetailStr) {
+  public SketchToString(final String outputDetailStr) {
     this( outputDetailStr.substring(0, 1).equalsIgnoreCase("T"), Util.DEFAULT_UPDATE_SEED);
   }
 
@@ -54,7 +54,7 @@ public class SketchToString extends EvalFunc<String> {
    * detail. Otherwise only the sketch summary will be output.
    * @param seedStr the seed string
    */
-  public SketchToString(String outputDetailStr, String seedStr) {
+  public SketchToString(final String outputDetailStr, final String seedStr) {
     this( outputDetailStr.substring(0, 1).equalsIgnoreCase("T"), Long.parseLong(seedStr));
   }
 
@@ -65,18 +65,18 @@ public class SketchToString extends EvalFunc<String> {
    * detail. Otherwise only the sketch summary will be output.
    * @param seed the seed string
    */
-  public SketchToString(boolean outputDetail, long seed) {
+  public SketchToString(final boolean outputDetail, final long seed) {
     super();
     detailOut = outputDetail;
     seed_ = seed;
   }
 
   @Override
-  public String exec(Tuple sketchTuple) throws IOException { //throws is in API
+  public String exec(final Tuple sketchTuple) throws IOException { //throws is in API
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    Sketch sketch = tupleToSketch(sketchTuple, seed_);
+    final Sketch sketch = tupleToSketch(sketchTuple, seed_);
     return sketch.toString(true, detailOut, 8, true);
   }
 
@@ -84,15 +84,15 @@ public class SketchToString extends EvalFunc<String> {
    * The output is a String Tuple.
    */
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("PrettyString", DataType.CHARARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (Exception e) {
+      catch (final Exception e) {
         // fall through
       }
     }

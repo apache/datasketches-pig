@@ -61,7 +61,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    *
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Intersect(String seedStr) {
+  public Intersect(final String seedStr) {
     this(Long.parseLong(seedStr));
   }
 
@@ -70,7 +70,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    *
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public Intersect(long seed) {
+  public Intersect(final long seed) {
     super();
     this.seed_ = seed;
     this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
@@ -119,30 +119,30 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   //@formatter:on
 
   @Override //TOP LEVEL EXEC
-  public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
+  public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Intersection intersection = SetOperation.builder().setSeed(seed_).buildIntersection();
-    DataBag bag = extractBag(inputTuple);
+    final Intersection intersection = SetOperation.builder().setSeed(seed_).buildIntersection();
+    final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
     }
 
     updateIntersection(bag, intersection, seed_);
-    CompactSketch compactSketch = intersection.getResult(true, null);
+    final CompactSketch compactSketch = intersection.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         // fall through
       }
     }
@@ -163,11 +163,11 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    * @throws IOException by Pig
    */
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
+  public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
     if (accumIntersection_ == null) {
       accumIntersection_ = SetOperation.builder().setSeed(seed_).buildIntersection();
     }
-    DataBag bag = extractBag(inputTuple);
+    final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return;
     }
@@ -188,7 +188,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           + "The accumulate(Tuple) method must be called at least once with "
           + "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
     }
-    CompactSketch compactSketch = accumIntersection_.getResult(true, null);
+    final CompactSketch compactSketch = accumIntersection_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
@@ -229,20 +229,21 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    * @param intersection The intersection to update
    * @param seed to check against incoming sketches
    */
-  private static void updateIntersection(DataBag bag, Intersection intersection, long seed) {
+  private static void updateIntersection(final DataBag bag, final Intersection intersection,
+      final long seed) {
     //Bag is not empty. process each innerTuple in the bag
     for (Tuple innerTuple : bag) {
       //validate the inner Tuples
-      Object f0 = extractFieldAtIndex(innerTuple, 0);
+      final Object f0 = extractFieldAtIndex(innerTuple, 0);
       if (f0 == null) {
       continue;
     }
-    Byte type = extractTypeAtIndex(innerTuple, 0);
+      final Byte type = extractTypeAtIndex(innerTuple, 0);
     // add only the first field of the innerTuple to the intersection
     if (type == DataType.BYTEARRAY) {
-      DataByteArray dba = (DataByteArray) f0;
-      Memory srcMem = new NativeMemory(dba.get());
-      Sketch sketch = Sketch.wrap(srcMem, seed);
+      final DataByteArray dba = (DataByteArray) f0;
+      final Memory srcMem = new NativeMemory(dba.get());
+      final Sketch sketch = Sketch.wrap(srcMem, seed);
       intersection.update(sketch);
     }
     else {
@@ -278,10 +279,10 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      *
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public Initial(String seedStr) {}
+    public Initial(final String seedStr) {}
 
     @Override  //Initial exec
-    public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
+    public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       return inputTuple;
     }
   }
@@ -318,7 +319,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      *
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(String seedStr) {
+    public IntermediateFinal(final String seedStr) {
       this(Long.parseLong(seedStr));
     }
 
@@ -328,30 +329,30 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      *
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(long seed) {
+    public IntermediateFinal(final long seed) {
       this.mySeed_ = seed;
       this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
     @Override //IntermediateFinal exec
-    public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
+    public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
 
-      Intersection intersection = SetOperation.builder().setSeed(mySeed_).buildIntersection();
-      DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
+      final Intersection intersection = SetOperation.builder().setSeed(mySeed_).buildIntersection();
+      final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
       }
       //Bag is not empty.
 
       for (Tuple dataTuple : outerBag) {
-        Object f0 = extractFieldAtIndex(dataTuple, 0); //inputTuple.bag0.dataTupleN.f0
+        final Object f0 = extractFieldAtIndex(dataTuple, 0); //inputTuple.bag0.dataTupleN.f0
         //must have non-null field zero
         if (f0 == null) {
           continue; //go to next dataTuple if there is one.  If none, exception is thrown.
         }
         //f0 is not null
         if (f0 instanceof DataBag) {
-          DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
+          final DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
           if (innerBag.size() == 0) {
             continue; //go to next dataTuple if there is one.  If none, exception is thrown.
           }
@@ -366,9 +367,9 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch from a prior call
           //It is due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
-          DataByteArray dba = (DataByteArray) f0;
-          Memory srcMem = new NativeMemory(dba.get());
-          Sketch sketch = Sketch.wrap(srcMem, mySeed_);
+          final DataByteArray dba = (DataByteArray) f0;
+          final Memory srcMem = new NativeMemory(dba.get());
+          final Sketch sketch = Sketch.wrap(srcMem, mySeed_);
           intersection.update(sketch);
         }
         else { // we should never get here.
@@ -377,7 +378,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
         }
       }
 
-      CompactSketch compactSketch = intersection.getResult(true, null);
+      final CompactSketch compactSketch = intersection.getResult(true, null);
       return compactOrderedSketchToTuple(compactSketch);
     }
 

@@ -55,7 +55,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
    */
-  public ErrorBounds(String seedStr) {
+  public ErrorBounds(final String seedStr) {
     this(Long.parseLong(seedStr));
   }
 
@@ -63,18 +63,18 @@ public class ErrorBounds extends EvalFunc<Tuple> {
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
    */
-  public ErrorBounds(long seed) {
+  public ErrorBounds(final long seed) {
     super();
     seed_ = seed;
   }
 
   @Override
-  public Tuple exec(Tuple sketchTuple) throws IOException { //throws is in API
+  public Tuple exec(final Tuple sketchTuple) throws IOException { //throws is in API
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    Sketch sketch = tupleToSketch(sketchTuple, seed_);
-    Tuple outputTuple = tupleFactory.newTuple(3);
+    final Sketch sketch = tupleToSketch(sketchTuple, seed_);
+    final Tuple outputTuple = tupleFactory.newTuple(3);
     outputTuple.set(0, Double.valueOf(sketch.getEstimate()));
     outputTuple.set(1, Double.valueOf(sketch.getUpperBound(2)));
     outputTuple.set(2, Double.valueOf(sketch.getLowerBound(2)));
@@ -85,17 +85,17 @@ public class ErrorBounds extends EvalFunc<Tuple> {
    * The output is a Sketch Result Tuple Schema.
    */
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("Estimate", DataType.DOUBLE));
         tupleSchema.add(new Schema.FieldSchema("UpperBound", DataType.DOUBLE));
         tupleSchema.add(new Schema.FieldSchema("LowerBound", DataType.DOUBLE));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         // fall through
       }
     }

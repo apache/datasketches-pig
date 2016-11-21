@@ -74,7 +74,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    *
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
-  public DataToSketch(String nomEntriesStr) {
+  public DataToSketch(final String nomEntriesStr) {
     this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
   }
 
@@ -87,7 +87,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>
    */
-  public DataToSketch(String nomEntriesStr, String pStr) {
+  public DataToSketch(final String nomEntriesStr, final String pStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), DEFAULT_UPDATE_SEED);
   }
 
@@ -98,7 +98,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
    * @param seedStr  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public DataToSketch(String nomEntriesStr, String pStr, String seedStr) {
+  public DataToSketch(final String nomEntriesStr, final String pStr, final String seedStr) {
     this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
   }
 
@@ -109,7 +109,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public DataToSketch(int nomEntries, float p, long seed) {
+  public DataToSketch(final int nomEntries, final float p, final long seed) {
     super();
     this.nomEntries_ = nomEntries;
     this.p_ = p;
@@ -187,30 +187,30 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
   // @formatter:on
 
   @Override //TOP LEVEL EXEC
-  public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
+  public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Union union = newUnion(nomEntries_, p_, seed_);
-    DataBag bag = extractBag(inputTuple);
+    final Union union = newUnion(nomEntries_, p_, seed_);
+    final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
     }
 
     updateUnion(bag, union); //updates union with all elements of the bag
-    CompactSketch compOrdSketch = union.getResult(true, null);
+    final CompactSketch compOrdSketch = union.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         // fall through
       }
     }
@@ -231,11 +231,11 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @throws IOException by Pig
    */
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException { //throws is in API
+  public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
     if (accumUnion_ == null) {
       accumUnion_ = DataToSketch.newUnion(nomEntries_, p_, seed_);
     }
-    DataBag bag = extractBag(inputTuple);
+    final DataBag bag = extractBag(inputTuple);
     if (bag == null) { return; }
 
     updateUnion(bag, accumUnion_);
@@ -252,7 +252,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     if (accumUnion_ == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
     }
-    CompactSketch compOrdSketch = accumUnion_.getResult(true, null);
+    final CompactSketch compOrdSketch = accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 
@@ -293,7 +293,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param seed the given seed
    * @return a new empty HeapUnion
    */
-  private static final Union newUnion(int nomEntries, float p, long seed) {
+  private static final Union newUnion(final int nomEntries, final float p, final long seed) {
     return SetOperation.builder()
         .setSeed(seed).setP(p).setResizeFactor(RF).buildUnion(nomEntries);
   }
@@ -304,14 +304,14 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param bag A bag of tuples to insert.
    * @param union the union to update
    */
-  private static void updateUnion(DataBag bag, Union union) {
+  private static void updateUnion(final DataBag bag, final Union union) {
     //Bag is not empty. process each innerTuple in the bag
     for (Tuple innerTuple : bag) {
-      Object f0 = extractFieldAtIndex(innerTuple, 0); //consider only field 0
+      final Object f0 = extractFieldAtIndex(innerTuple, 0); //consider only field 0
       if (f0 == null) {
         continue;
       }
-      Byte type = extractTypeAtIndex(innerTuple, 0);
+      final Byte type = extractTypeAtIndex(innerTuple, 0);
       if (type == null) {
         continue;
       }
@@ -335,7 +335,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           union.update((double) f0);
           break;
         case DataType.BYTEARRAY: {
-          DataByteArray dba = (DataByteArray) f0;
+          final DataByteArray dba = (DataByteArray) f0;
           union.update(dba.get()); //checks null, empty
           break;
         }
@@ -379,7 +379,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      *
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      */
-    public Initial(String nomEntriesStr) {
+    public Initial(final String nomEntriesStr) {
       this(nomEntriesStr, "1.0", Long.toString(Util.DEFAULT_UPDATE_SEED));
     }
 
@@ -392,7 +392,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      *
      *
      */
-    public Initial(String nomEntriesStr, String pStr) {
+    public Initial(final String nomEntriesStr, final String pStr) {
       this(nomEntriesStr, pStr, Long.toString(Util.DEFAULT_UPDATE_SEED));
     }
 
@@ -406,10 +406,10 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      *
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public Initial(String nomEntriesStr, String pStr, String seedStr) {}
+    public Initial(final String nomEntriesStr, final String pStr, final String seedStr) {}
 
     @Override  //Initial exec
-    public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
+    public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       return inputTuple;
     }
   }
@@ -457,7 +457,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      *
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      */
-    public IntermediateFinal(String nomEntriesStr) {
+    public IntermediateFinal(final String nomEntriesStr) {
       this(nomEntriesStr, "1.0", Long.toString(Util.DEFAULT_UPDATE_SEED));
     }
 
@@ -471,7 +471,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>.
      * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
      */
-    public IntermediateFinal(String nomEntriesStr, String pStr) {
+    public IntermediateFinal(final String nomEntriesStr, final String pStr) {
       this(nomEntriesStr, pStr, Long.toString(Util.DEFAULT_UPDATE_SEED));
     }
 
@@ -483,7 +483,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      * @param pStr <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
      * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(String nomEntriesStr, String pStr, String seedStr) {
+    public IntermediateFinal(final String nomEntriesStr, final String pStr, final String seedStr) {
       this(Integer.parseInt(nomEntriesStr), Float.parseFloat(pStr), Long.parseLong(seedStr));
     }
 
@@ -495,7 +495,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      * @param p <a href="{@docRoot}/resources/dictionary.html#p">See Sampling Probability, <i>p</i></a>.
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
-    public IntermediateFinal(int nomEntries, float p, long seed) {
+    public IntermediateFinal(final int nomEntries, final float p, final long seed) {
       this.myNomEntries_ = nomEntries;
       this.myP_ = p;
       this.mySeed_ = seed;
@@ -503,23 +503,23 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     }
 
     @Override //IntermediateFinal exec
-    public Tuple exec(Tuple inputTuple) throws IOException { //throws is in API
-      Union union = newUnion(myNomEntries_, myP_, mySeed_);
-      DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
+    public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
+      final Union union = newUnion(myNomEntries_, myP_, mySeed_);
+      final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) { //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_; //abort & return empty sketch
       }
       //Bag is not empty.
 
       for (Tuple dataTuple : outerBag) {
-        Object f0 = extractFieldAtIndex(dataTuple, 0); //inputTuple.bag0.dataTupleN.f0
+        final Object f0 = extractFieldAtIndex(dataTuple, 0); //inputTuple.bag0.dataTupleN.f0
         //must have non-null field zero
         if (f0 == null) {
           continue; //go to next dataTuple if there is one
         }
         //f0 is not null
         if (f0 instanceof DataBag) {
-          DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
+          final DataBag innerBag = (DataBag)f0; //inputTuple.bag0.dataTupleN.f0:bag
           if (innerBag.size() == 0) { continue; }
           //If field 0 of a dataTuple is a Bag all innerTuples of this inner bag
           // will be passed into the union.
@@ -532,7 +532,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
           // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
-          DataByteArray dba = ((DataByteArray) f0);
+          final DataByteArray dba = ((DataByteArray) f0);
           union.update(new NativeMemory(dba.get()));
 
         }
@@ -541,7 +541,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
               + f0.getClass().getName());
         }
       } //End for
-      CompactSketch compactSketch = union.getResult(true, null);
+      final CompactSketch compactSketch = union.getResult(true, null);
       return compactOrderedSketchToTuple(compactSketch);
     }
 

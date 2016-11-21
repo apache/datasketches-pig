@@ -11,8 +11,8 @@ import org.apache.pig.data.TupleFactory;
 
 class Util {
 
-  static Tuple doubleArrayToTuple(double[] array) throws ExecException {
-    Tuple tuple = TupleFactory.getInstance().newTuple(array.length);
+  static Tuple doubleArrayToTuple(final double[] array) throws ExecException {
+    final Tuple tuple = TupleFactory.getInstance().newTuple(array.length);
     for (int i = 0; i < array.length; i++) {
       tuple.set(i, array[i]);
     }

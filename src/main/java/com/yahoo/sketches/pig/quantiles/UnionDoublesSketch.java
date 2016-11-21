@@ -136,7 +136,7 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
       return new Schema(new Schema.FieldSchema(getSchemaName(
           this.getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-    } catch (FrontendException e) {
+    } catch (final FrontendException e) {
       throw new RuntimeException(e);
     }
   }
@@ -218,7 +218,7 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
    * @param bag A bag of sketchTuples.
    * @param union The union to update
    */
-  private static void updateUnion(DataBag bag, DoublesUnion union) throws ExecException {
+  private static void updateUnion(final DataBag bag, final DoublesUnion union) throws ExecException {
     for (Tuple innerTuple: bag) {
       final Object f0 = innerTuple.get(0);
       if (f0 == null) { continue; }

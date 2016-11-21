@@ -43,7 +43,7 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
     if (sketch.isEmpty()) { return null; }
 
     if (input.size() == 2) {
-      Object arg = input.get(1);
+      final Object arg = input.get(1);
       if (arg instanceof Integer) { // number of evenly spaced intervals
         return TupleFactory.getInstance().newTuple(Arrays.asList(sketch.getQuantiles((int) arg)));
       } else if (arg instanceof Double) { // just one fraction
@@ -53,7 +53,7 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
             + " as a number of evenly spaced intervals, got " + arg.getClass().getSimpleName());
       }
     } else { // more than one number - must be double fractions
-      double[] fractions = new double[input.size() - 1];
+      final double[] fractions = new double[input.size() - 1];
       for (int i = 1; i < input.size(); i++) {
         if (!(input.get(i) instanceof Double)) {
           throw new IllegalArgumentException(

@@ -91,14 +91,14 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
     if (sketch_ == null) { //return an empty sketch
       try {
         return Util.serializeSketchToTuple(new ItemsSketch<T>(sketchSize_), serDe_);
-      } catch (ExecException ex) {
+      } catch (final ExecException ex) {
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }
     }
 
     try {
       return Util.serializeSketchToTuple(sketch_, serDe_);
-    } catch (ExecException ex) {
+    } catch (final ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }
   }

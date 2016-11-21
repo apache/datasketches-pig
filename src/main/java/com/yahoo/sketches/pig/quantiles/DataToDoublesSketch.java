@@ -149,7 +149,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
       return new Schema(new Schema.FieldSchema(getSchemaName(
           this.getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-    } catch (FrontendException e) {
+    } catch (final FrontendException e) {
       throw new RuntimeException(e);
     }
   }

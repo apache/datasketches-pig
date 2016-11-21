@@ -41,7 +41,7 @@ public class GetPmfFromStringsSketch extends EvalFunc<Tuple> {
         ItemsSketch.getInstance(new NativeMemory(dba.get()), Comparator.naturalOrder(),
             new ArrayOfStringsSerDe());
 
-    String[] splitPoints = new String[input.size() - 1];
+    final String[] splitPoints = new String[input.size() - 1];
     for (int i = 1; i < input.size(); i++) {
       if (!(input.get(i) instanceof String)) {
         throw new IllegalArgumentException("expected a string value as a split point, got "

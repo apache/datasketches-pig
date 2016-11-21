@@ -54,7 +54,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
    *
    * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>
    */
-  public AexcludeB(String seedStr) {
+  public AexcludeB(final String seedStr) {
     this(Long.parseLong(seedStr));
   }
 
@@ -63,7 +63,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
    *
    * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
    */
-  public AexcludeB(long seed) {
+  public AexcludeB(final long seed) {
     super();
     this.seed_ = seed;
   }
@@ -105,40 +105,40 @@ public class AexcludeB extends EvalFunc<Tuple> {
   // @formatter:on
 
   @Override //TOP LEVEL EXEC
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    Object objA = extractFieldAtIndex(inputTuple, 0);
+    final Object objA = extractFieldAtIndex(inputTuple, 0);
     Sketch sketchA = null;
     if (objA != null) {
-      DataByteArray dbaA = (DataByteArray)objA;
-      Memory srcMem = new NativeMemory(dbaA.get());
+      final DataByteArray dbaA = (DataByteArray)objA;
+      final Memory srcMem = new NativeMemory(dbaA.get());
       sketchA = Sketch.wrap(srcMem, seed_);
     }
-    Object objB = extractFieldAtIndex(inputTuple, 1);
+    final Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
-      DataByteArray dbaB = (DataByteArray)objB;
-      Memory srcMem = new NativeMemory(dbaB.get());
+      final DataByteArray dbaB = (DataByteArray)objB;
+      final Memory srcMem = new NativeMemory(dbaB.get());
       sketchB = Sketch.wrap(srcMem, seed_);
     }
 
-    AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
+    final AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
     aNOTb.update(sketchA, sketchB);
-    CompactSketch compactSketch = aNOTb.getResult(true, null);
+    final CompactSketch compactSketch = aNOTb.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null) {
       try {
-        Schema tupleSchema = new Schema();
+        final Schema tupleSchema = new Schema();
         tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
         return new Schema(new Schema.FieldSchema(getSchemaName(this
             .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         // fall through
       }
     }

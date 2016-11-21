@@ -50,9 +50,9 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
     }
     final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
 
-    DataBag bag = (DataBag) inputTuple.get(0);
+    final DataBag bag = (DataBag) inputTuple.get(0);
     for (Tuple dataTuple: bag) {
-      Object item = dataTuple.get(0);
+      final Object item = dataTuple.get(0);
       if (item instanceof DataBag) {
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
@@ -61,7 +61,7 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
-        ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
+        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
         sketch.merge(incomingSketch);
       } else {
         // we should never get here.

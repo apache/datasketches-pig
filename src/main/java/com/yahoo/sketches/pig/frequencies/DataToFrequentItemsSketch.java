@@ -69,7 +69,7 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
     final Tuple outputTuple;
     try {
       outputTuple = Util.serializeSketchToTuple(accumSketch_, serDe_);
-    } catch (ExecException ex) {
+    } catch (final ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }
     return outputTuple;
@@ -86,7 +86,7 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
       return null;
     }
     accumulate(inputTuple);
-    Tuple outputTuple = getValue();
+    final Tuple outputTuple = getValue();
     cleanup();
     return outputTuple;
   }

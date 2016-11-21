@@ -33,17 +33,17 @@ class PigUtil {
    * @param sketch The compact ordered sketch to serialize
    * @return Sketch Tuple.
    */
-  static final Tuple compactOrderedSketchToTuple(CompactSketch sketch) {
-    Tuple outputTuple = TupleFactory.getInstance().newTuple(1);
-    byte[] bytes = sketch.toByteArray();
-    DataByteArray dba = new DataByteArray(bytes);
+  static final Tuple compactOrderedSketchToTuple(final CompactSketch sketch) {
+    final Tuple outputTuple = TupleFactory.getInstance().newTuple(1);
+    final byte[] bytes = sketch.toByteArray();
+    final DataByteArray dba = new DataByteArray(bytes);
     if (!sketch.isOrdered()) {
       throw new IllegalArgumentException("Given sketch must be ordered.");
     }
     try {
       outputTuple.set(0, dba);
     }
-    catch (IOException e) {
+    catch (final IOException e) {
       throw new IllegalArgumentException("IOException thrown: " + e);
     }
     return outputTuple;
@@ -57,11 +57,11 @@ class PigUtil {
    * @param seed to check against other sketches.
    * @return A sketch
    */
-  static final Sketch tupleToSketch(Tuple tuple, long seed) {
+  static final Sketch tupleToSketch(final Tuple tuple, final long seed) {
     DataByteArray sketchDBA = null;
     sketchDBA = (DataByteArray) extractFieldAtIndex(tuple, 0);
-    Memory srcMem = new NativeMemory(sketchDBA.get());
-    Sketch sketch = Sketch.wrap(srcMem, seed);
+    final Memory srcMem = new NativeMemory(sketchDBA.get());
+    final Sketch sketch = Sketch.wrap(srcMem, seed);
     return sketch;
   }
 
@@ -74,13 +74,13 @@ class PigUtil {
    * @param tuple the given tuple.
    * @return a DataBag or null.
    */
-  static final DataBag extractBag(Tuple tuple) {
+  static final DataBag extractBag(final Tuple tuple) {
     DataBag bag = null;
     try {
       bag = (DataBag) tuple.get(0);
       if (bag.size() == 0) { return null; }
     }
-    catch (IOException | NullPointerException | IndexOutOfBoundsException e ) {
+    catch (final IOException | NullPointerException | IndexOutOfBoundsException e ) {
       return null; //as a signal
     }
     return bag;
@@ -96,13 +96,13 @@ class PigUtil {
    * @param index the 0-based index of the desired field
    * @return a non-null Object or null.
    */
-  static final Object extractFieldAtIndex(Tuple tuple, int index) {
+  static final Object extractFieldAtIndex(final Tuple tuple, final int index) {
     Object fi = null;
     try {
       fi = tuple.get(index);
       fi.hashCode(); //cannot be null
     }
-    catch (IOException | NullPointerException | IndexOutOfBoundsException e) {
+    catch (final IOException | NullPointerException | IndexOutOfBoundsException e) {
       return null; //as a signal
     }
     return fi;
@@ -116,12 +116,12 @@ class PigUtil {
    * @param index the 0-based index of the desired field
    * @return a Byte of Pig DataType or null.
    */
-  static final Byte extractTypeAtIndex(Tuple tuple, int index) {
+  static final Byte extractTypeAtIndex(final Tuple tuple, final int index) {
     Byte type = null;
     try {
       type = tuple.getType(index);
     }
-    catch (IOException | NullPointerException | IndexOutOfBoundsException e) {
+    catch (final IOException | NullPointerException | IndexOutOfBoundsException e) {
       return null;
     }
     return type;
@@ -132,9 +132,9 @@ class PigUtil {
    * @param seed the given seed
    * @return an empty compact ordered sketch tuple
    */
-  static final Tuple emptySketchTuple(long seed) {
-    UpdateSketch sketch = UpdateSketch.builder().setSeed(seed).setResizeFactor(RF).build(16);
-    CompactSketch compOrdSketch = sketch.compact(true, null);
+  static final Tuple emptySketchTuple(final long seed) {
+    final UpdateSketch sketch = UpdateSketch.builder().setSeed(seed).setResizeFactor(RF).build(16);
+    final CompactSketch compOrdSketch = sketch.compact(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 

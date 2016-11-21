@@ -30,7 +30,8 @@ import com.yahoo.sketches.quantiles.ItemsUnion;
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
  * @param <T> type of item
  */
-public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
+public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple>
+    implements Accumulator<Tuple>, Algebraic {
 
   private static final TupleFactory tupleFactory_ = TupleFactory.getInstance();
 
@@ -51,7 +52,8 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
    * @param comparator for items of type T
    * @param serDe an instance of ArrayOfItemsSerDe for type T
    */
-  public UnionItemsSketch(final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
+  public UnionItemsSketch(final int k, final Comparator<T> comparator,
+      final ArrayOfItemsSerDe<T> serDe) {
     super();
     k_ = k;
     comparator_ = comparator;
@@ -131,7 +133,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple> implements Acc
       tupleSchema.add(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
       return new Schema(new Schema.FieldSchema(getSchemaName(
           this.getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-    } catch (FrontendException e) {
+    } catch (final FrontendException e) {
       throw new RuntimeException(e);
     }
   }

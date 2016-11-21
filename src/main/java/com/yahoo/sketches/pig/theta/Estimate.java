@@ -34,7 +34,7 @@ public class Estimate extends EvalFunc<Double> {
    * Constructs with the given seed.
    * @param seedStr the string seed used when deserializing the sketch.
    */
-  public Estimate(String seedStr) {
+  public Estimate(final String seedStr) {
     this(Long.parseLong(seedStr));
   }
 
@@ -42,17 +42,17 @@ public class Estimate extends EvalFunc<Double> {
    * Constructs with the given seed.
    * @param seed used when deserializing the sketch.
    */
-  public Estimate(long seed) {
+  public Estimate(final long seed) {
     super();
     seed_ = seed;
   }
 
   @Override
-  public Double exec(Tuple sketchTuple) throws IOException { //throws is in API
+  public Double exec(final Tuple sketchTuple) throws IOException { //throws is in API
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    Sketch sketch =  tupleToSketch(sketchTuple, seed_);
+    final Sketch sketch =  tupleToSketch(sketchTuple, seed_);
     return sketch.getEstimate();
   }
 }

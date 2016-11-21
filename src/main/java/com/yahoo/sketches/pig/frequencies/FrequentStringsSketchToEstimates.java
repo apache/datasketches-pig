@@ -78,7 +78,7 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
     try {
       final Schema bagSchema = new Schema(new Schema.FieldSchema("item_tuple", tupleSchema, DataType.TUPLE));
       return new Schema(new Schema.FieldSchema("bag_of_item_tuples", bagSchema, DataType.BAG));
-    } catch (FrontendException e) {
+    } catch (final FrontendException e) {
       throw new RuntimeException(e);
     }
   }

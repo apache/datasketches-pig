@@ -39,7 +39,7 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
     final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
 
     if (input.size() == 2) {
-      Object arg = input.get(1);
+      final Object arg = input.get(1);
       if (arg instanceof Integer) { // number of evenly spaced intervals
         return Util.doubleArrayToTuple(sketch.getQuantiles((int) arg));
       } else if (arg instanceof Double) { // just one fraction
@@ -49,7 +49,7 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
             + " as a number of evenly spaced intervals, got " + arg.getClass().getSimpleName());
       }
     } else { // more than one number - must be double fractions
-      double[] fractions = new double[input.size() - 1];
+      final double[] fractions = new double[input.size() - 1];
       for (int i = 1; i < input.size(); i++) {
         if (!(input.get(i) instanceof Double)) {
           throw new IllegalArgumentException("expected a double value as a fraction, got "

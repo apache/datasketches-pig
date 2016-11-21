@@ -46,8 +46,8 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
    * Reservoir sampling constructor.
    * @param kStr String indicating the maximum number of desired entries in the reservoir.
    */
-  public ReservoirSampling(String kStr) {
-    int rawK = Integer.parseInt(kStr);
+  public ReservoirSampling(final String kStr) {
+    final int rawK = Integer.parseInt(kStr);
     targetK_ = ReservoirSize.decodeValue(ReservoirSize.computeSize(rawK));
 
     if (targetK_ < 2) {
@@ -59,7 +59,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
   ReservoirSampling() { targetK_ = DEFAULT_TARGET_K; }
 
   @Override
-  public Tuple exec(Tuple inputTuple) throws IOException {
+  public Tuple exec(final Tuple inputTuple) throws IOException {
     if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
       return null;
     }
@@ -75,7 +75,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
   }
 
   @Override
-  public void accumulate(Tuple inputTuple) throws IOException {
+  public void accumulate(final Tuple inputTuple) throws IOException {
     if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
       return;
     }
@@ -109,7 +109,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
   }
 
   @Override
-  public Schema outputSchema(Schema input) {
+  public Schema outputSchema(final Schema input) {
     if (input != null && input.size() > 0) {
       try {
         final Schema tupleSchema = new Schema();
@@ -121,21 +121,21 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
         return new Schema(new Schema.FieldSchema(getSchemaName(this
                 .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
       }
-      catch (FrontendException e) {
+      catch (final FrontendException e) {
         // fall through
       }
     }
     return null;
   }
 
-  private static Tuple createResultTuple(long n, int k, DataBag samples) {
+  private static Tuple createResultTuple(final long n, final int k, final DataBag samples) {
     final Tuple output = TupleFactory.getInstance().newTuple(3);
 
     try {
       output.set(0, n);
       output.set(1, k);
       output.set(2, samples);
-    } catch (ExecException e) {
+    } catch (final ExecException e) {
       throw new RuntimeException("Pig error: " + e.getMessage(), e);
     }
 
@@ -169,7 +169,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
      * Map-side constructor for reservoir sampling UDF
      * @param kStr String indicating the maximum number of desired entries in the reservoir.
      * */
-    public Initial(String kStr) {
+    public Initial(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
 
       if (targetK_ < 2) {
@@ -179,15 +179,15 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     }
 
     @Override
-    public Tuple exec(Tuple inputTuple) throws IOException {
+    public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
         return null;
       }
 
       final DataBag records = (DataBag) inputTuple.get(0);
 
-      ReservoirItemsSketch<Tuple> reservoir;
-      DataBag outputBag;
+      final ReservoirItemsSketch<Tuple> reservoir;
+      final DataBag outputBag;
       int k = targetK_;
       if (records.size() <= targetK_) {
         outputBag = records;
@@ -197,7 +197,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
           reservoir.update(t);
         }
         // newDefaultBag(List<Tuple>) does *not* copy values
-        List<Tuple> data = reservoir.getRawSamplesAsList();
+        final List<Tuple> data = reservoir.getRawSamplesAsList();
         outputBag = BagFactory.getInstance().newDefaultBag(data);
         k = reservoir.getK();
       }
@@ -222,7 +222,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
      * Combiner and reducer side constructor for reservoir sampling UDF
      * @param kStr String indicating the maximum number of desired entries in the reservoir.
      * */
-    public IntermediateFinal(String kStr) {
+    public IntermediateFinal(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
 
       if (targetK_ < 2) {
@@ -232,7 +232,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     }
 
     @Override
-    public Tuple exec(Tuple inputTuple) throws IOException {
+    public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
         return null;
       }
@@ -241,15 +241,15 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
       final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (Tuple reservoir : outerBag) {
-        long n = (long) reservoir.get(0);
-        int k  = (int) reservoir.get(1);
+        final long n = (long) reservoir.get(0);
+        final int k  = (int) reservoir.get(1);
 
         if (n <= k && k <= targetK_) {
           for (Tuple t : (DataBag) reservoir.get(2)) {
             union.update(t);
           }
         } else {
-          ArrayList<Tuple> samples = dataBagToArrayList((DataBag) reservoir.get(2));
+          final ArrayList<Tuple> samples = dataBagToArrayList((DataBag) reservoir.get(2));
           union.update(n, k, samples);
         }
       }
