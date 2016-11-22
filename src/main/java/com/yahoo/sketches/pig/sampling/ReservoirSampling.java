@@ -23,7 +23,6 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.sampling.ReservoirItemsSketch;
 import com.yahoo.sketches.sampling.ReservoirItemsUnion;
-import com.yahoo.sketches.sampling.ReservoirSize;
 
 /**
  * This is a Pg UDF that builds applies reservoir sampling to input tuples. It implements both
@@ -47,8 +46,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
    * @param kStr String indicating the maximum number of desired entries in the reservoir.
    */
   public ReservoirSampling(final String kStr) {
-    final int rawK = Integer.parseInt(kStr);
-    targetK_ = ReservoirSize.decodeValue(ReservoirSize.computeSize(rawK));
+    targetK_ = Integer.parseInt(kStr);
 
     if (targetK_ < 2) {
       throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 2: "
