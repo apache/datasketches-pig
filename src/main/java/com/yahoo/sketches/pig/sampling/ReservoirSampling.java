@@ -26,7 +26,7 @@ import com.yahoo.sketches.sampling.ReservoirItemsUnion;
 import com.yahoo.sketches.sampling.ReservoirSize;
 
 /**
- * This is a Pg UDF that builds applies reservoir sampling to input tuples. It implements both
+ * This is a Pig UDF that applies reservoir sampling to input tuples. It implements both
  * the <tt>Accumulator</tt> and <tt>Algebraic</tt> interfaces for efficient performance.
  *
  * @author Jon Malkin
@@ -112,14 +112,24 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
   public Schema outputSchema(final Schema input) {
     if (input != null && input.size() > 0) {
       try {
-        final Schema tupleSchema = new Schema();
-        tupleSchema.add(new Schema.FieldSchema(N_ALIAS, DataType.LONG));
-        tupleSchema.add(new Schema.FieldSchema(K_ALIAS, DataType.INTEGER));
+        Schema source = input;
+
+        // if we have a bag, grab one level down to get a tuple
+        if (source.size() == 1 && source.getField(0).type == DataType.BAG) {
+          source = source.getField(0).schema;
+        }
+
+        final Schema recordSchema = new Schema();
+        recordSchema.add(new Schema.FieldSchema(N_ALIAS, DataType.LONG));
+        recordSchema.add(new Schema.FieldSchema(K_ALIAS, DataType.INTEGER));
+
+        //final Schema tupleSchema = new Schema();
+        //tupleSchema.add(new Schema.FieldSchema(SAMPLES_ALIAS))
         // this should add a bag to the output
-        tupleSchema.add(new Schema.FieldSchema(SAMPLES_ALIAS, input, DataType.BAG));
+        recordSchema.add(new Schema.FieldSchema(SAMPLES_ALIAS, source, DataType.BAG));
 
         return new Schema(new Schema.FieldSchema(getSchemaName(this
-                .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
+                .getClass().getName().toLowerCase(), source), recordSchema, DataType.TUPLE));
       }
       catch (final FrontendException e) {
         // fall through
@@ -128,7 +138,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     return null;
   }
 
-  private static Tuple createResultTuple(final long n, final int k, final DataBag samples) {
+  static Tuple createResultTuple(final long n, final int k, final DataBag samples) {
     final Tuple output = TupleFactory.getInstance().newTuple(3);
 
     try {
@@ -265,16 +275,16 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
       return output;
     }
+  }
 
-    private static ArrayList<Tuple> dataBagToArrayList(final DataBag bag) {
-      final int arrayLength = (int) bag.size();
-      final ArrayList<Tuple> output = new ArrayList<>(arrayLength);
+  static ArrayList<Tuple> dataBagToArrayList(final DataBag bag) {
+    final int arrayLength = (int) bag.size();
+    final ArrayList<Tuple> output = new ArrayList<>(arrayLength);
 
-      for (Tuple t : bag) {
-        output.add(t);
-      }
-
-      return output;
+    for (Tuple t : bag) {
+      output.add(t);
     }
+
+    return output;
   }
 }

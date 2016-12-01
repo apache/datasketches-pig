@@ -5,6 +5,7 @@ import static com.yahoo.sketches.pig.sampling.ReservoirSampling.N_ALIAS;
 import static com.yahoo.sketches.pig.sampling.ReservoirSampling.SAMPLES_ALIAS;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.annotations.Test;
 
-
 public class ReservoirSamplingTest {
 
   @SuppressWarnings("unused")
@@ -29,21 +29,21 @@ public class ReservoirSamplingTest {
     try {
       new ReservoirSampling("1");
       fail();
-    } catch (IllegalArgumentException e) {
+    } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new ReservoirSampling.Initial("1");
       fail();
-    } catch (IllegalArgumentException e) {
+    } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new ReservoirSampling.IntermediateFinal("1");
       fail();
-    } catch (IllegalArgumentException e) {
+    } catch (final IllegalArgumentException e) {
       // expected
     }
   }
@@ -52,20 +52,20 @@ public class ReservoirSamplingTest {
   public void accumulateTest() throws IOException {
     // exec() is automatically composed by calling accumulate(), getValue(), and cleanup(), in order
     // since AccumulateEvalFunc, but includes a fast-return route so still need to test separately
-    int k = 32;
-    long n = 24;
-    DataBag inputBag = BagFactory.getInstance().newDefaultBag();
+    final int k = 32;
+    final long n = 24;
+    final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
 
-    TupleFactory tf = TupleFactory.getInstance();
+    final TupleFactory tf = TupleFactory.getInstance();
     for (long i = 0; i < n; ++i) {
-      Tuple t = tf.newTuple(2);
+      final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
       inputBag.add(t);
     }
 
-    Tuple input = tf.newTuple(inputBag);
-    ReservoirSampling rs = new ReservoirSampling(Integer.toString(k));
+    final Tuple input = tf.newTuple(inputBag);
+    final ReservoirSampling rs = new ReservoirSampling(Integer.toString(k));
     rs.accumulate(input);
     Tuple result = rs.getValue();
 
@@ -90,20 +90,20 @@ public class ReservoirSamplingTest {
   @Test
   public void execTest() throws IOException {
     // copies tests for accumulate() since that handles both data paths
-    int k = 32;
-    long n = 24;
-    DataBag inputBag = BagFactory.getInstance().newDefaultBag();
+    final int k = 32;
+    final long n = 24;
+    final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
 
-    TupleFactory tf = TupleFactory.getInstance();
+    final TupleFactory tf = TupleFactory.getInstance();
     for (long i = 0; i < n; ++i) {
-      Tuple t = tf.newTuple(2);
+      final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
       inputBag.add(t);
     }
 
-    Tuple input = tf.newTuple(inputBag);
-    ReservoirSampling rs = new ReservoirSampling(Integer.toString(k));
+    final Tuple input = tf.newTuple(inputBag);
+    final ReservoirSampling rs = new ReservoirSampling(Integer.toString(k));
     Tuple result = rs.exec(input);
 
     assertEquals(result.size(), 3, "Incorrect output size");
@@ -113,7 +113,7 @@ public class ReservoirSamplingTest {
 
     // add another n to the bag and repeat
     for (long i = n; i < 2 * n; ++i) {
-      Tuple t = tf.newTuple(2);
+      final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
       inputBag.add(t);
@@ -126,24 +126,24 @@ public class ReservoirSamplingTest {
 
   @Test
   public void initialExec() throws IOException {
-    int k = 32;
-    long n1 = 16;
-    long n2 = 64;
+    final int k = 32;
+    final long n1 = 16;
+    final long n2 = 64;
 
-    ReservoirSampling.Initial rs = new ReservoirSampling.Initial(Integer.toString(k));
+    final ReservoirSampling.Initial rs = new ReservoirSampling.Initial(Integer.toString(k));
 
     // 2 cases: n <= k and n > k
-    DataBag inputBag = BagFactory.getInstance().newDefaultBag();
+    final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
 
-    TupleFactory tf = TupleFactory.getInstance();
+    final TupleFactory tf = TupleFactory.getInstance();
     for (long i = 0; i < n1; ++i) {
-      Tuple t = tf.newTuple(2);
+      final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
       inputBag.add(t);
     }
 
-    Tuple input = tf.newTuple(inputBag);
+    final Tuple input = tf.newTuple(inputBag);
     Tuple result = rs.exec(input);
 
     assertEquals(result.size(), 3,  "Incorrect output size");
@@ -153,7 +153,7 @@ public class ReservoirSamplingTest {
 
     // add so bag has n2 values
     for (long i = n1; i < n2; ++i) {
-      Tuple t = tf.newTuple(2);
+      final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
       inputBag.add(t);
@@ -170,15 +170,15 @@ public class ReservoirSamplingTest {
 
   @Test
   public void intermediateFinalExec() throws IOException {
-    int maxK = 128;
+    final int maxK = 128;
 
-    EvalFunc<Tuple> rs = new ReservoirSampling.IntermediateFinal(Integer.toString(maxK));
+    final EvalFunc<Tuple> rs = new ReservoirSampling.IntermediateFinal(Integer.toString(maxK));
 
     // need at least 3 conditions:
     // 1. n <= k <= maxK
     // 2. n <= k, k > maxK
     // 3. n > k
-    DataBag bagOfReservoirs = BagFactory.getInstance().newDefaultBag();
+    final DataBag bagOfReservoirs = BagFactory.getInstance().newDefaultBag();
 
     Tuple t = TupleFactory.getInstance().newTuple(3);
     t.set(0, 32L);
@@ -198,12 +198,12 @@ public class ReservoirSamplingTest {
     t.set(2, generateDataBag(maxK, 96));
     bagOfReservoirs.add(t);
 
-    Tuple input = TupleFactory.getInstance().newTuple(1);
+    final Tuple input = TupleFactory.getInstance().newTuple(1);
     input.set(0, bagOfReservoirs);
 
-    Tuple result = rs.exec(input);
-    long tgtN = 32 + 64 + 256;
-    int tgtMaxVal = 32 + 64 + maxK; // only added maxK to last bag
+    final Tuple result = rs.exec(input);
+    final long tgtN = 32 + 64 + 256;
+    final int tgtMaxVal = 32 + 64 + maxK; // only added maxK to last bag
     assertEquals(result.size(), 3,  "Incorrect output size");
     assertEquals(result.get(0), tgtN, "Incorrect number of samples seen");
     assertEquals(result.get(1), maxK,  "Incorrect value of k");
@@ -211,7 +211,7 @@ public class ReservoirSamplingTest {
 
     // check that they're all in the target range
     for (Tuple sample : ((DataBag) result.get(2))) {
-      int val = (int) sample.get(0);
+      final int val = (int) sample.get(0);
       if (val < 0 || val >= tgtMaxVal) {
         fail("Found value (" + val + ") outside target range [0, " + tgtMaxVal + "]");
       }
@@ -220,19 +220,21 @@ public class ReservoirSamplingTest {
 
   @Test
   public void outputSchemaTest() throws IOException {
-    ReservoirSampling rs = new ReservoirSampling("5");
+    final ReservoirSampling rs = new ReservoirSampling("5");
 
-    Schema tupleSchema = new Schema();
-    tupleSchema.add(new Schema.FieldSchema("field1", DataType.CHARARRAY));
-    tupleSchema.add(new Schema.FieldSchema("field2", DataType.INTEGER));
-    Schema bagSchema = new Schema();
-    bagSchema.add(new Schema.FieldSchema("item_tuple", tupleSchema, DataType.BAG));
-    Schema inputSchema = new Schema(bagSchema);
+    final Schema recordSchema = new Schema();
+    recordSchema.add(new Schema.FieldSchema("field1", DataType.CHARARRAY));
+    recordSchema.add(new Schema.FieldSchema("field2", DataType.INTEGER));
+    final Schema tupleSchema = new Schema();
+    tupleSchema.add(new Schema.FieldSchema("record", recordSchema, DataType.TUPLE));
 
-    Schema output = rs.outputSchema(inputSchema);
+    final Schema inputSchema = new Schema();
+    inputSchema.add(new Schema.FieldSchema("data", tupleSchema, DataType.BAG));
+
+    final Schema output = rs.outputSchema(inputSchema);
     assertEquals(output.size(), 1);
 
-    List<Schema.FieldSchema> outputFields = output.getField(0).schema.getFields();
+    final List<Schema.FieldSchema> outputFields = output.getField(0).schema.getFields();
     assertEquals(outputFields.size(), 3);
 
     // check high-level structure
@@ -244,13 +246,13 @@ public class ReservoirSamplingTest {
     assertEquals(outputFields.get(2).type, DataType.BAG);
 
     // validate sample bag
-    Schema sampleSchema = outputFields.get(2).schema;
-    assertEquals(sampleSchema.toString(), bagSchema.toString());
+    final Schema sampleSchema = outputFields.get(2).schema;
+    assertTrue(sampleSchema.equals(tupleSchema));
   }
 
   @Test
   public void degenerateAccumulateInput() {
-    ReservoirSampling rs = new ReservoirSampling("256");
+    final ReservoirSampling rs = new ReservoirSampling("256");
 
     // all these tests should do nothing
     try {
@@ -262,14 +264,14 @@ public class ReservoirSamplingTest {
       input = TupleFactory.getInstance().newTuple(1);
       input.set(0, null);
       rs.accumulate(input);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       fail("Unexpected IOException: " + e.getMessage());
     }
   }
 
   @Test
   public void degenerateExecInput() {
-    ReservoirSampling rs = new ReservoirSampling("256");
+    final ReservoirSampling rs = new ReservoirSampling("256");
 
     // all these tests should do nothing
     try {
@@ -281,7 +283,7 @@ public class ReservoirSamplingTest {
       input = TupleFactory.getInstance().newTuple(1);
       input.set(0, null);
       rs.exec(input);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       fail("Unexpected IOException: " + e.getMessage());
     }
   }
@@ -289,7 +291,7 @@ public class ReservoirSamplingTest {
   @Test
   public void degenerateInitialInput() {
     try {
-      ReservoirSampling.Initial rs = new ReservoirSampling.Initial("256");
+      final ReservoirSampling.Initial rs = new ReservoirSampling.Initial("256");
 
       rs.exec(null);
 
@@ -299,7 +301,7 @@ public class ReservoirSamplingTest {
       input = TupleFactory.getInstance().newTuple(1);
       input.set(0, null);
       rs.exec(input);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       fail("Unexpected IOException: " + e.getMessage());
     }
   }
@@ -307,7 +309,7 @@ public class ReservoirSamplingTest {
   @Test
   public void degenerateIntermediateFinalInput() {
     try {
-      EvalFunc<Tuple> rs = new ReservoirSampling.IntermediateFinal("256");
+      final EvalFunc<Tuple> rs = new ReservoirSampling.IntermediateFinal("256");
 
       rs.exec(null);
 
@@ -317,14 +319,14 @@ public class ReservoirSamplingTest {
       input = TupleFactory.getInstance().newTuple(1);
       input.set(0, null);
       rs.exec(input);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       fail("Unexpected IOException: " + e.getMessage());
     }
   }
 
   @Test
   public void degenerateSchemaTest() {
-    ReservoirSampling rs = new ReservoirSampling("5");
+    final ReservoirSampling rs = new ReservoirSampling("5");
     Schema output = rs.outputSchema(null);
     assertNull(output);
 
@@ -332,18 +334,18 @@ public class ReservoirSamplingTest {
     assertNull(output);
   }
 
-  private static DataBag generateDataBag(final int numItems, final int startIdx) {
-    DataBag output = BagFactory.getInstance().newDefaultBag();
+  static DataBag generateDataBag(final long numItems, final int startIdx) {
+    final DataBag output = BagFactory.getInstance().newDefaultBag();
 
     try {
       for (int i = 0; i < numItems; ++i) {
-        Tuple t = TupleFactory.getInstance().newTuple(2);
-        int val = startIdx + i;
+        final Tuple t = TupleFactory.getInstance().newTuple(2);
+        final int val = startIdx + i;
         t.set(0, val);
         t.set(1, Integer.toString(-val));
         output.add(t);
       }
-    } catch (ExecException e) {
+    } catch (final ExecException e) {
       fail(e.getMessage());
     }
 
