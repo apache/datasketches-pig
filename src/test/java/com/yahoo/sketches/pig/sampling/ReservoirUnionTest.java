@@ -91,6 +91,42 @@ public class ReservoirUnionTest {
   }
 
   @Test
+  public void checkMaxKLimit() {
+    try {
+      final int k = 64;
+      final int maxK = 32;
+
+      final Tuple reservoir = TupleFactory.getInstance().newTuple(3);
+      reservoir.set(0, (long) k);
+      reservoir.set(1, k);
+      reservoir.set(2, ReservoirSamplingTest.generateDataBag(k, 0));
+
+      final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
+      inputBag.add(reservoir);
+      final Tuple inputTuple = TupleFactory.getInstance().newTuple(inputBag);
+
+      final ReservoirUnion ru = new ReservoirUnion(Integer.toString(maxK));
+      final Tuple result = ru.exec(inputTuple);
+
+      assertEquals(result.size(), 3, "Unexpected tuple size from UDF");
+      assertEquals((long) result.get(0), k, "Incorrect total number of items seen");
+      assertEquals((int) result.get(1), maxK, "Unexpected value of k");
+
+      final DataBag outputSamples = (DataBag) result.get(2);
+      assertEquals(outputSamples.size(), maxK,
+              "Output reservoir size does not match maxK");
+      for (Tuple t : outputSamples) {
+        // expected format: (i:int, -i:chararray)
+        final int i = (int) t.get(0);
+        assertTrue(i >= 0 && i < k);
+        assertEquals((String) t.get(1), Integer.toString(-i));
+      }
+    } catch (final IOException e) {
+      fail("Unexpected exception");
+    }
+  }
+
+  @Test
   public void checkDegenerateInput() {
     // using default max k value
     final ReservoirUnion ru = new ReservoirUnion();
