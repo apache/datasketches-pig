@@ -17,8 +17,8 @@ import com.yahoo.sketches.sampling.ReservoirItemsSketch;
 import com.yahoo.sketches.sampling.ReservoirItemsUnion;
 
 /**
- * This is a Pig UDF that unions reservoir samples. It implements both
- * the <tt>Accumulator</tt> and <tt>Algebraic</tt> interfaces for efficient performance. Input is
+ * This is a Pig UDF that unions reservoir samples. It implements
+ * the <tt>Accumulator</tt> interface for more efficient performance. Input is
  * assumed to come from the reservoir sampling UDF or to be in a compatible format:
  * <tt>(n, k, {(samples)}</tt>
  * where <tt>n</tt> is the total number of items presented to the sketch and <tt>k</tt> is the
