@@ -21,6 +21,8 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.annotations.Test;
 
 public class ReservoirUnionTest {
+
+  @SuppressWarnings("unused")
   @Test
   public void invalidMaxKTest() {
     try {
