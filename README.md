@@ -21,5 +21,5 @@ that also includes a shaded sketches-core.
 [mavenbadge]:https://search.maven.org/#search|gav|1|g%3A%22com.yahoo.datasketches%22%20AND%20a%3A%22sketches-pig%22
 [mavenbadge img]:https://maven-badges.herokuapp.com/maven-central/com.yahoo.datasketches/sketches-pig/badge.svg
 
-[versioneye]:https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b
-[versioneye img]:https://www.versioneye.com/user/projects/5751d96f7757a0004a1ddc9b/badge.svg?style=flat
+[versioneye]:https://www.versioneye.com/user/projects/587fd6ebb194d4003d5289ae
+[versioneye img]:https://www.versioneye.com/user/projects/587fd6ebb194d4003d5289ae/badge.svg?style=flat
