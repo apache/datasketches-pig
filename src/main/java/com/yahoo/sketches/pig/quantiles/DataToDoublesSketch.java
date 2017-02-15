@@ -63,7 +63,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     super();
     unionBuilder_ = DoublesUnion.builder();
     if (k > 0) {
-      unionBuilder_.setK(k);
+      unionBuilder_.setMaxK(k);
     }
   }
 
@@ -297,7 +297,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     public IntermediateFinal(final int k) {
       unionBuilder_ = DoublesUnion.builder();
       if (k > 0) {
-        unionBuilder_.setK(k);
+        unionBuilder_.setMaxK(k);
       }
     }
 

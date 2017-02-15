@@ -15,6 +15,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.sampling.ReservoirItemsSketch;
 import com.yahoo.sketches.sampling.ReservoirItemsUnion;
+import com.yahoo.sketches.sampling.SamplingPigUtil;
 
 /**
  * This is a Pig UDF that unions reservoir samples. It implements
@@ -82,8 +83,9 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
       return null;
     }
 
+    // newDefaultBag(List<Tuple>) does *not* copy values
     final ReservoirItemsSketch<Tuple> resultSketch = union_.getResult();
-    final List<Tuple> data = resultSketch.getRawSamplesAsList();
+    final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(resultSketch);
     final DataBag sampleBag = BagFactory.getInstance().newDefaultBag(data);
 
     return ReservoirSampling.createResultTuple(resultSketch.getN(), resultSketch.getK(), sampleBag);
