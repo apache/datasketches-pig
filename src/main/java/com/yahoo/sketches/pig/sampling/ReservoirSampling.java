@@ -23,6 +23,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.sampling.ReservoirItemsSketch;
 import com.yahoo.sketches.sampling.ReservoirItemsUnion;
+import com.yahoo.sketches.sampling.SamplingPigUtil;
 
 /**
  * This is a Pig UDF that applies reservoir sampling to input tuples. It implements both
@@ -121,8 +122,6 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
         recordSchema.add(new Schema.FieldSchema(N_ALIAS, DataType.LONG));
         recordSchema.add(new Schema.FieldSchema(K_ALIAS, DataType.INTEGER));
 
-        //final Schema tupleSchema = new Schema();
-        //tupleSchema.add(new Schema.FieldSchema(SAMPLES_ALIAS))
         // this should add a bag to the output
         recordSchema.add(new Schema.FieldSchema(SAMPLES_ALIAS, source, DataType.BAG));
 
@@ -205,7 +204,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
           reservoir.update(t);
         }
         // newDefaultBag(List<Tuple>) does *not* copy values
-        final List<Tuple> data = reservoir.getRawSamplesAsList();
+        final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(reservoir);
         outputBag = BagFactory.getInstance().newDefaultBag(data);
         k = reservoir.getK();
       }
