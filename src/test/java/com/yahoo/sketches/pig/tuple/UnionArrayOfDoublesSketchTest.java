@@ -13,7 +13,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -24,6 +23,7 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 public class UnionArrayOfDoublesSketchTest {
+
   @Test
   public void execNullInput() throws Exception {
     EvalFunc<Tuple> func = new UnionArrayOfDoublesSketch("32", "1");
@@ -378,6 +378,6 @@ public class UnionArrayOfDoublesSketchTest {
       sum += values[0];
     }
     // each update added 10 to the total on average
-    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02); // there is a slight chance of failing here 
+    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02); // there is a slight chance of failing here
   }
 }

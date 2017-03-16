@@ -11,7 +11,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

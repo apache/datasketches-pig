@@ -64,7 +64,7 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
     super();
     unionBuilder_ = DoublesUnion.builder();
     if (k > 0) {
-      unionBuilder_.setK(k);
+      unionBuilder_.setMaxK(k);
     }
   }
 
@@ -304,7 +304,7 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
      */
     public IntermediateFinal(final int k) {
       unionBuilder_ = DoublesUnion.builder();
-      if (k > 0) { unionBuilder_.setK(k); }
+      if (k > 0) { unionBuilder_.setMaxK(k); }
     }
 
     @Override // IntermediateFinal exec

@@ -28,6 +28,7 @@ import com.yahoo.sketches.tuple.Sketches;
  * that the DoubleSummary was used in the Sum mode.
  */
 public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
+
   @Override
   public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {

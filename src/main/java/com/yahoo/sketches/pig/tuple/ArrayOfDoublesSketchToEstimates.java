@@ -27,6 +27,7 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
  * scaled to the original population).
  */
 public class ArrayOfDoublesSketchToEstimates extends EvalFunc<Tuple> {
+
   @Override
   public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {

@@ -11,7 +11,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -24,6 +23,7 @@ import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 public class DataToDoubleSummarySketchTest {
+
   @Test
   public void execNullInputTuple() throws Exception {
     EvalFunc<Tuple> func = new DataToDoubleSummarySketch();

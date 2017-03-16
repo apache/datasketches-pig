@@ -25,6 +25,7 @@ import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
 
 public class UnionDoubleSummarySketchTest {
+
   @Test
   public void execNullInput() throws Exception {
     EvalFunc<Tuple> func = new UnionDoubleSummarySketch();
@@ -407,6 +408,6 @@ public class UnionDoubleSummarySketchTest {
       sum += summary.getValue();
     }
     // each update added 10 to the total on average
-    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02); // there is a slight chance of failing here 
+    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02); // there is a slight chance of failing here
   }
 }

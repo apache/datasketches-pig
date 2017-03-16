@@ -13,7 +13,6 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
