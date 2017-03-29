@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
-
+import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 
 public class UnionDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
@@ -52,7 +52,7 @@ public class UnionDoublesSketchTest {
   public void execNormalCase() throws Exception {
     EvalFunc<Tuple> func = new UnionDoublesSketch();
     DataBag bag = bagFactory.newDefaultBag();
-    DoublesSketch inputSketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch inputSketch = DoublesSketch.builder().build();
     inputSketch.update(1.0);
     bag.add(tupleFactory.newTuple(new DataByteArray(inputSketch.toByteArray())));
     Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
@@ -90,7 +90,7 @@ public class UnionDoublesSketchTest {
 
     // normal case
     DataBag bag = bagFactory.newDefaultBag();
-    DoublesSketch inputSketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch inputSketch = DoublesSketch.builder().build();
     inputSketch.update(1.0);
     bag.add(tupleFactory.newTuple(new DataByteArray(inputSketch.toByteArray())));
     func.accumulate(tupleFactory.newTuple(bag));
@@ -142,14 +142,14 @@ public class UnionDoublesSketchTest {
 
     { // this is to simulate an output from Initial
       DataBag innerBag = bagFactory.newDefaultBag();
-      DoublesSketch qs = DoublesSketch.builder().build();
+      UpdateDoublesSketch qs = DoublesSketch.builder().build();
       qs.update(1.0);
       innerBag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
       bag.add(tupleFactory.newTuple(innerBag));
     }
 
     { // this is to simulate an output from a prior call of IntermediateFinal
-      DoublesSketch qs = DoublesSketch.builder().build();
+      UpdateDoublesSketch qs = DoublesSketch.builder().build();
       qs.update(2.0);
       bag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
     }

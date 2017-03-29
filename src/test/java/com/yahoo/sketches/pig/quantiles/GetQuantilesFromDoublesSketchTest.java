@@ -5,6 +5,7 @@
 package com.yahoo.sketches.pig.quantiles;
 
 import com.yahoo.sketches.quantiles.DoublesSketch;
+import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 
 import java.util.Arrays;
 
@@ -58,7 +59,7 @@ public class GetQuantilesFromDoublesSketchTest {
   @Test
   public void oneFraction() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
-    DoublesSketch sketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch sketch = DoublesSketch.builder().build();
     for (int i = 1; i <= 10; i++) sketch.update(i);
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
     Assert.assertNotNull(resultTuple);
@@ -69,7 +70,7 @@ public class GetQuantilesFromDoublesSketchTest {
   @Test
   public void severalFractions() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
-    DoublesSketch sketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch sketch = DoublesSketch.builder().build();
     for (int i = 1; i <= 10; i++) sketch.update(i);
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 0.5, 1.0)));
     Assert.assertNotNull(resultTuple);
@@ -82,7 +83,7 @@ public class GetQuantilesFromDoublesSketchTest {
   @Test
   public void numberOfEvenlySpacedIntervals() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromDoublesSketch();
-    DoublesSketch sketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch sketch = DoublesSketch.builder().build();
     for (int i = 1; i <= 10; i++) sketch.update(i);
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3)));
     Assert.assertNotNull(resultTuple);

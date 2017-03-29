@@ -132,11 +132,11 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
       }
       final DoublesSketch resultSketch = union.getResultAndReset();
       if (resultSketch != null) {
-        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(true)));
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
+    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   @Override
@@ -191,11 +191,11 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     if (accumUnion_ != null) {
       final DoublesSketch resultSketch = accumUnion_.getResultAndReset();
       if (resultSketch != null) {
-        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(true)));
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
+    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   /**
@@ -332,11 +332,11 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
         }
         final DoublesSketch resultSketch = union.getResultAndReset();
         if (resultSketch != null) {
-          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray()));
+          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(true)));
         }
       }
       // return empty sketch
-      return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray()));
+      return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
     }
   } // end IntermediateFinal
 
