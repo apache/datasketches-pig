@@ -5,6 +5,7 @@
 package com.yahoo.sketches.pig.quantiles;
 
 import com.yahoo.sketches.quantiles.DoublesSketch;
+import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 
 import java.util.Arrays;
 
@@ -29,7 +30,7 @@ public class GetQuantileFromDoublesSketchTest {
   @Test
   public void normalCase() throws Exception {
     EvalFunc<Double> func = new GetQuantileFromDoublesSketch();
-    DoublesSketch sketch = DoublesSketch.builder().build();
+    UpdateDoublesSketch sketch = DoublesSketch.builder().build();
     sketch.update(1.0);
     Double result = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
     Assert.assertEquals(result, 1.0);

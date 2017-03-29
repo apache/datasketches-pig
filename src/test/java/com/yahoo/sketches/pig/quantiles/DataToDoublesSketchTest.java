@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
-
+import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 
 public class DataToDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
@@ -151,7 +151,7 @@ public class DataToDoublesSketchTest {
     }
 
     { // this is to simulate an output from a prior call of IntermediateFinal
-      DoublesSketch qs = DoublesSketch.builder().build();
+      UpdateDoublesSketch qs = UpdateDoublesSketch.builder().build();
       qs.update(2.0);
       bag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
     }
