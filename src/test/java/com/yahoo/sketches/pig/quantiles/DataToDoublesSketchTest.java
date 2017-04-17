@@ -151,7 +151,7 @@ public class DataToDoublesSketchTest {
     }
 
     { // this is to simulate an output from a prior call of IntermediateFinal
-      UpdateDoublesSketch qs = UpdateDoublesSketch.builder().build();
+      UpdateDoublesSketch qs = DoublesSketch.builder().build();
       qs.update(2.0);
       bag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
     }

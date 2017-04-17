@@ -12,6 +12,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.memory.NativeMemory;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.Sketch;
@@ -40,11 +41,11 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
     final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
 
     final double percentile = (double) input.get(1);
-    if (percentile < 0 || percentile > 100) {
+    if ((percentile < 0) || (percentile > 100)) {
       throw new IllegalArgumentException("percentile must be between 0 and 100");
     }
 
-    final UpdateDoublesSketch qs = UpdateDoublesSketch.builder().build(QUANTILES_SKETCH_SIZE);
+    final UpdateDoublesSketch qs = DoublesSketch.builder().build(QUANTILES_SKETCH_SIZE);
     final SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
       qs.update(it.getSummary().getValue());
