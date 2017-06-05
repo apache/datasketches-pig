@@ -13,7 +13,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.WritableMemory;
 import com.yahoo.sketches.ResizeFactor;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.Sketch;
@@ -60,7 +60,7 @@ class PigUtil {
   static final Sketch tupleToSketch(final Tuple tuple, final long seed) {
     DataByteArray sketchDBA = null;
     sketchDBA = (DataByteArray) extractFieldAtIndex(tuple, 0);
-    final Memory srcMem = new NativeMemory(sketchDBA.get());
+    final Memory srcMem = Memory.wrap(sketchDBA.get());
     final Sketch sketch = Sketch.wrap(srcMem, seed);
     return sketch;
   }
@@ -133,7 +133,8 @@ class PigUtil {
    * @return an empty compact ordered sketch tuple
    */
   static final Tuple emptySketchTuple(final long seed) {
-    final UpdateSketch sketch = UpdateSketch.builder().setSeed(seed).setResizeFactor(RF).build(16);
+    final UpdateSketch sketch = UpdateSketch.builder().setSeed(seed).setResizeFactor(RF)
+            .setNominalEntries(16).build();
     final CompactSketch compOrdSketch = sketch.compact(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }

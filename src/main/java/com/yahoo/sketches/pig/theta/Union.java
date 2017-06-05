@@ -29,7 +29,7 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.WritableMemory;
 import com.yahoo.sketches.Util;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
@@ -177,7 +177,8 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
     final com.yahoo.sketches.theta.Union union =
-        SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).buildUnion(nomEntries_);
+        SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF)
+                .setNominalEntries(nomEntries_).buildUnion();
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return emptyCompactOrderedSketchTuple_; //Configured with parent
@@ -221,7 +222,8 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
   public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
     if (accumUnion_ == null) {
       accumUnion_ =
-          SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF).buildUnion(nomEntries_);
+          SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF)
+                  .setNominalEntries(nomEntries_).buildUnion();
     }
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) { return; }
@@ -296,7 +298,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
       if (type == DataType.BYTEARRAY) {
         final DataByteArray dba = (DataByteArray) f0;
         if (dba.size() > 0) {
-          union.update(new NativeMemory(dba.get()));
+          union.update(WritableMemory.wrap(dba.get()));
         }
       } else {
         throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);
@@ -459,7 +461,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
 
       final com.yahoo.sketches.theta.Union union =
           SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF)
-          .buildUnion(myNomEntries_);
+                  .setNominalEntries(myNomEntries_).buildUnion();
       final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
         return myEmptyCompactOrderedSketchTuple_;
@@ -490,7 +492,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           //It is due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = (DataByteArray) f0;
-          final Memory srcMem = new NativeMemory(dba.get());
+          final Memory srcMem = Memory.wrap(dba.get());
           union.update(srcMem);
 
         }

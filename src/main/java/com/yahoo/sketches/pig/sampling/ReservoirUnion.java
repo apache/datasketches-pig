@@ -60,7 +60,7 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
     final DataBag reservoirs = (DataBag) inputTuple.get(0);
 
     if (union_ == null) {
-      union_ = ReservoirItemsUnion.getInstance(maxK_);
+      union_ = ReservoirItemsUnion.newInstance(maxK_);
     }
 
     try {

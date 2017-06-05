@@ -82,7 +82,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     final DataBag samples = (DataBag) inputTuple.get(0);
 
     if (reservoir_ == null) {
-      reservoir_ = ReservoirItemsSketch.getInstance(targetK_);
+      reservoir_ = ReservoirItemsSketch.newInstance(targetK_);
     }
 
     for (Tuple t : samples) {
@@ -96,7 +96,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
       return null;
     }
 
-    final List<Tuple> data = reservoir_.getRawSamplesAsList();
+    final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(reservoir_);
     final DataBag sampleBag = BagFactory.getInstance().newDefaultBag(data);
 
     return createResultTuple(reservoir_.getN(), reservoir_.getK(), sampleBag);
@@ -199,7 +199,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
       if (records.size() <= targetK_) {
         outputBag = records;
       } else {
-        reservoir = ReservoirItemsSketch.getInstance(targetK_);
+        reservoir = ReservoirItemsSketch.newInstance(targetK_);
         for (Tuple t : records) {
           reservoir.update(t);
         }
@@ -244,7 +244,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
         return null;
       }
 
-      final ReservoirItemsUnion<Tuple> union = ReservoirItemsUnion.getInstance(targetK_);
+      final ReservoirItemsUnion<Tuple> union = ReservoirItemsUnion.newInstance(targetK_);
 
       final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (Tuple reservoir : outerBag) {
@@ -262,7 +262,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
       }
 
       final ReservoirItemsSketch<Tuple> result = union.getResult();
-      final ArrayList<Tuple> data = result.getRawSamplesAsList();
+      final ArrayList<Tuple> data = SamplingPigUtil.getRawSamplesAsList(result);
       final DataBag sampleBag = BagFactory.getInstance().newDefaultBag(data);
 
       final Tuple output = TupleFactory.getInstance().newTuple(3);

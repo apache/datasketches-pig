@@ -18,7 +18,7 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.DoublesUnion;
 import com.yahoo.sketches.quantiles.DoublesUnionBuilder;
@@ -324,7 +324,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
             // due to system bagged outputs from multiple mapper Intermediate functions.
             // Each dataTuple.DBA:sketch will merged into the union.
             final DataByteArray dba = (DataByteArray) f0;
-            union.update(new NativeMemory(dba.get()));
+            union.update(Memory.wrap(dba.get()));
           } else {
             throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "
                 + f0.getClass().getName());

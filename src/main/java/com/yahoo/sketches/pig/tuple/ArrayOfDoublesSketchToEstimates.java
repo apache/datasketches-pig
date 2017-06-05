@@ -11,7 +11,7 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketchIterator;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
@@ -35,7 +35,7 @@ public class ArrayOfDoublesSketchToEstimates extends EvalFunc<Tuple> {
     }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get()));
+    final ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get()));
 
     final double[] estimates = new double[sketch.getNumValues() + 1];
     estimates[0] = sketch.getEstimate();

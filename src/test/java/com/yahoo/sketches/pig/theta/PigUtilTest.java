@@ -22,7 +22,7 @@ public class PigUtilTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkCompOrdSketchToTuple() {
-    UpdateSketch usk = UpdateSketch.builder().build(16);
+    UpdateSketch usk = UpdateSketch.builder().setNominalEntries(16).build();
     for (int i=0; i<16; i++) usk.update(i);
     CompactSketch csk = usk.compact(false, null);
     compactOrderedSketchToTuple(csk);

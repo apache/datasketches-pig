@@ -16,7 +16,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 
@@ -188,6 +188,6 @@ public class UnionDoublesSketchTest {
     Assert.assertEquals(tuple.size(), 1);
     DataByteArray bytes = (DataByteArray) tuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    return DoublesSketch.heapify(new NativeMemory(bytes.get()));
+    return DoublesSketch.heapify(Memory.wrap(bytes.get()));
   }
 }

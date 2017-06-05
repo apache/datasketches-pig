@@ -11,7 +11,7 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 
 /**
@@ -34,7 +34,7 @@ public class GetQuantileFromDoublesSketch extends EvalFunc<Double> {
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.heapify(Memory.wrap(dba.get()));
 
     if (!(input.get(1) instanceof Double)) {
       throw new IllegalArgumentException("expected a double value as a fraction, got "

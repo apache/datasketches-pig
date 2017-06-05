@@ -28,7 +28,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.Util;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
@@ -295,7 +295,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   private static final Union newUnion(final int nomEntries, final float p, final long seed) {
     return SetOperation.builder()
-        .setSeed(seed).setP(p).setResizeFactor(RF).buildUnion(nomEntries);
+        .setSeed(seed).setP(p).setResizeFactor(RF).setNominalEntries(nomEntries).buildUnion();
   }
 
   /*************************************************************************************************
@@ -533,7 +533,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = ((DataByteArray) f0);
-          union.update(new NativeMemory(dba.get()));
+          union.update(Memory.wrap(dba.get()));
 
         }
         else { // we should never get here.

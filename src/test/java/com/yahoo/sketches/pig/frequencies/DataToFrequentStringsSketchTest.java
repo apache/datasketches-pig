@@ -14,7 +14,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.frequencies.ItemsSketch;
 import com.yahoo.sketches.pig.tuple.PigUtil;
@@ -43,7 +43,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(Memory.wrap(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 0);
   }
 
@@ -89,7 +89,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(Memory.wrap(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 6);
@@ -120,7 +120,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(Memory.wrap(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 6);
@@ -132,7 +132,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ItemsSketch<String> sketch2 = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch2 = ItemsSketch.getInstance(Memory.wrap(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertTrue(sketch2.isEmpty());
     Assert.assertEquals(sketch2.getNumActiveItems(), 0);
   }
@@ -185,7 +185,7 @@ public class DataToFrequentStringsSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ItemsSketch<String> sketch = ItemsSketch.getInstance(new NativeMemory(bytes.get()), new ArrayOfStringsSerDe());
+    ItemsSketch<String> sketch = ItemsSketch.getInstance(Memory.wrap(bytes.get()), new ArrayOfStringsSerDe());
     Assert.assertEquals(sketch.getNumActiveItems(), 2);
     Assert.assertEquals(sketch.getEstimate("a"), 3);
     Assert.assertEquals(sketch.getEstimate("b"), 4);
