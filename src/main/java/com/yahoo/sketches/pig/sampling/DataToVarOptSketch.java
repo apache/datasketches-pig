@@ -33,10 +33,10 @@ import com.yahoo.sketches.sampling.VarOptItemsUnion;
 public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {
   private static final int DEFAULT_TARGET_K = 1024;
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
+  private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   private final int targetK_;
   private VarOptItemsSketch<Tuple> sketch_;
-  private ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   /**
    * VarOpt sampling constructor.
@@ -107,15 +107,14 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
                   + ": " + fields.toString());
 
         }
-
-        return new Schema(new Schema.FieldSchema(getSchemaName(this
-                .getClass().getName().toLowerCase(), input), DataType.BYTEARRAY));
       }
       catch (final FrontendException e) {
         // fall through
       }
     }
-    return null;
+
+    return new Schema(new Schema.FieldSchema(getSchemaName(this
+            .getClass().getName().toLowerCase(), input), DataType.BYTEARRAY));
   }
 
 
@@ -126,18 +125,16 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
 
   @Override
   public String getIntermed() {
-    return IntermediateFinal.class.getName();
+    return Intermediate.class.getName();
   }
 
   @Override
   public String getFinal() {
-    return IntermediateFinal.class.getName();
+    return Final.class.getName();
   }
 
   public static class Initial extends EvalFunc<Tuple> {
     private final int targetK_;
-    private VarOptItemsSketch<Tuple> sketch_;
-    private static ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
     public Initial() {
       targetK_ = DEFAULT_TARGET_K;
@@ -162,10 +159,7 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
       }
 
       final DataBag samples = (DataBag) inputTuple.get(0);
-
-      if (sketch_ == null) {
-        sketch_ = VarOptItemsSketch.newInstance(targetK_);
-      }
+      final VarOptItemsSketch<Tuple> sketch_ = VarOptItemsSketch.newInstance(targetK_);
 
       for (Tuple t : samples) {
         // first element is weight
@@ -179,19 +173,58 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
     }
   }
 
-  public static class IntermediateFinal extends EvalFunc<DataByteArray> {
+  public static class Intermediate extends EvalFunc<Tuple> {
     private final int targetK_;
-    private VarOptItemsUnion<Tuple> union_;
-    private static ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
-    public IntermediateFinal() {
+    public Intermediate() {
       targetK_ = DEFAULT_TARGET_K;
     }
 
-    /** Combiner and reducer constructor for VarOpt dataToSketch
+    /** Combiner constructor for VarOpt dataToSketch
      * @param kStr String indicating the maximum number of desired entries in the sample.
      */
-    public IntermediateFinal(final String kStr) {
+    public Intermediate(final String kStr) {
+      targetK_ = Integer.parseInt(kStr);
+
+      if (targetK_ < 1) {
+        throw new IllegalArgumentException("VarOpt requires target sample size >= 1: "
+                + targetK_);
+      }
+    }
+
+    @Override
+    public Tuple exec(final Tuple inputTuple) throws IOException {
+      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+        return null;
+      }
+
+      final DataBag outerBag = (DataBag) inputTuple.get(0);
+      final VarOptItemsUnion<Tuple> union_ = VarOptItemsUnion.newInstance(targetK_);
+
+      Memory mem;
+      for (Tuple reservoir : outerBag) {
+        final DataByteArray dba = (DataByteArray) reservoir.get(0);
+        mem = Memory.wrap(dba.get());
+        union_.update(mem, serDe_);
+      }
+
+      final Tuple output = TUPLE_FACTORY.newTuple(1);
+      output.set(0, new DataByteArray(union_.getResult().toByteArray(serDe_)));
+      return output;
+    }
+  }
+
+  public static class Final extends EvalFunc<DataByteArray> {
+    private final int targetK_;
+
+    public Final() {
+      targetK_ = DEFAULT_TARGET_K;
+    }
+
+    /** Reducer constructor for VarOpt dataToSketch
+     * @param kStr String indicating the maximum number of desired entries in the sample.
+     */
+    public Final(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
 
       if (targetK_ < 1) {
@@ -206,12 +239,10 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
         return null;
       }
 
-      if (union_ == null) {
-        union_ = VarOptItemsUnion.newInstance(targetK_);
-      }
+      final DataBag outerBag = (DataBag) inputTuple.get(0);
+      final VarOptItemsUnion<Tuple> union_ = VarOptItemsUnion.newInstance(targetK_);
 
       Memory mem;
-      final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (Tuple reservoir : outerBag) {
         final DataByteArray dba = (DataByteArray) reservoir.get(0);
         mem = Memory.wrap(dba.get());

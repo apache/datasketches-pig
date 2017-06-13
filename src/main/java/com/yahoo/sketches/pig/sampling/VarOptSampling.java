@@ -40,12 +40,10 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   private static final BagFactory BAG_FACTORY = BagFactory.getInstance();
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
+  private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   private final int targetK_;
   private VarOptItemsSketch<Tuple> sketch_;
-
-  private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
-
 
   /**
    * VarOpt sampling constructor.
@@ -233,7 +231,6 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   public static class Final extends EvalFunc<DataBag> {
     private final int targetK_;
-    private static ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
     public Final() {
       targetK_ = DEFAULT_TARGET_K;

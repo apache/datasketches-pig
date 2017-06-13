@@ -36,7 +36,6 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
 
   private static final BagFactory BAG_FACTORY = BagFactory.getInstance();
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
-
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
   @Override
