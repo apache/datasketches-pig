@@ -5,20 +5,21 @@
 
 package com.yahoo.sketches.pig.sampling;
 
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.RECORD_ALIAS;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.WEIGHT_ALIAS;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createResultFromSketch;
+
 import java.io.IOException;
 
 import org.apache.pig.EvalFunc;
-import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.sketches.sampling.VarOptItemsSamples;
 import com.yahoo.sketches.sampling.VarOptItemsSketch;
 
 /**
@@ -31,11 +32,7 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
  */
 public class GetVarOptSamples extends EvalFunc<DataBag> {
   // defined for test consistency
-  static final String WEIGHT_ALIAS = "vo_weight";
-  static final String RECORD_ALIAS = "record";
 
-  private static final BagFactory BAG_FACTORY = BagFactory.getInstance();
-  private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
   @Override
@@ -48,17 +45,7 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
     final Memory mem = Memory.wrap(dba.get());
     final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.heapify(mem, SERDE);
 
-    final VarOptItemsSamples<Tuple> samples = sketch.getSketchSamples();
-    final DataBag result = BAG_FACTORY.newDefaultBag();
-
-    for (VarOptItemsSamples.WeightedSample s : samples) {
-      final Tuple t = TUPLE_FACTORY.newTuple(2);
-      t.set(0, s.getWeight());
-      t.set(1, s.getItem());
-      result.add(t);
-    }
-
-    return result;
+    return createResultFromSketch(sketch);
   }
 
   @Override

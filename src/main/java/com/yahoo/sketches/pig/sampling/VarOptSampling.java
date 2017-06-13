@@ -5,23 +5,22 @@
 
 package com.yahoo.sketches.pig.sampling;
 
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.RECORD_ALIAS;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.WEIGHT_ALIAS;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createResultFromSketch;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.unionSketches;
+
 import java.io.IOException;
 
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
-import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.memory.Memory;
-import com.yahoo.sketches.sampling.VarOptItemsSamples;
 import com.yahoo.sketches.sampling.VarOptItemsSketch;
 import com.yahoo.sketches.sampling.VarOptItemsUnion;
 
@@ -32,15 +31,7 @@ import com.yahoo.sketches.sampling.VarOptItemsUnion;
  * @author Jon Malkin
  */
 public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Algebraic {
-  // defined for test consistency
-  static final String WEIGHT_ALIAS = "vo_weight";
-  static final String RECORD_ALIAS = "record";
-
   private static final int DEFAULT_TARGET_K = 1024;
-
-  private static final BagFactory BAG_FACTORY = BagFactory.getInstance();
-  private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
-  private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   private final int targetK_;
   private VarOptItemsSketch<Tuple> sketch_;
@@ -133,100 +124,17 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   @Override
   public String getInitial() {
-    return Initial.class.getName();
+    return VarOptCommonImpl.RawTuplesToSketchTupleImpl.class.getName();
   }
 
   @Override
   public String getIntermed() {
-    return Intermediate.class.getName();
+    return VarOptCommonImpl.UnionSketchesAsTuple.class.getName();
   }
 
   @Override
   public String getFinal() {
     return Final.class.getName();
-  }
-
-  public static class Initial extends EvalFunc<Tuple> {
-    private final int targetK_;
-
-    public Initial() {
-      targetK_ = DEFAULT_TARGET_K;
-    }
-
-    /**
-     * Map-side VarOpt sampling constructor.
-     * @param kStr String indicating the maximum number of desired samples to return.
-     */
-    public Initial(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-
-      if (targetK_ < 1) {
-        throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 1: "
-                + targetK_);
-      }
-    }
-
-    @Override
-    public Tuple exec(final Tuple inputTuple) throws IOException {
-      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
-        return null;
-      }
-
-      final DataBag records = (DataBag) inputTuple.get(0);
-
-      final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.newInstance(targetK_);
-
-      for (Tuple t : records) {
-        sketch.update(t, (double) t.get(0));
-      }
-
-      final DataByteArray dba = new DataByteArray(sketch.toByteArray(serDe_));
-      final Tuple outputTuple = TUPLE_FACTORY.newTuple(1);
-      outputTuple.set(0, dba);
-      return outputTuple;
-    }
-  }
-
-  public static class Intermediate extends EvalFunc<Tuple> {
-    private final int targetK_;
-
-    public Intermediate() {
-      targetK_ = DEFAULT_TARGET_K;
-    }
-
-    /**
-     * Combiner VarOpt sampling constructor.
-     * @param kStr String indicating the maximum number of desired samples to return.
-     */
-    public Intermediate(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-
-      if (targetK_ < 1) {
-        throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 1: "
-                + targetK_);
-      }
-    }
-
-    @Override
-    public Tuple exec(final Tuple inputTuple) throws IOException {
-      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
-        return null;
-      }
-
-      final VarOptItemsUnion<Tuple> union = VarOptItemsUnion.newInstance(targetK_);
-
-      final DataBag sketchBag = (DataBag) inputTuple.get(0);
-      for (Tuple t : sketchBag) {
-        final DataByteArray dba = (DataByteArray) t.get(0);
-        final Memory mem = Memory.wrap(dba.get());
-        union.update(mem, serDe_);
-      }
-
-      final DataByteArray dba = new DataByteArray(union.getResult().toByteArray(serDe_));
-      final Tuple outputTuple = TUPLE_FACTORY.newTuple(1);
-      outputTuple.set(0, dba);
-      return outputTuple;
-    }
   }
 
   public static class Final extends EvalFunc<DataBag> {
@@ -255,38 +163,8 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
         return null;
       }
 
-      final VarOptItemsUnion<Tuple> union = VarOptItemsUnion.newInstance(targetK_);
-
-      final DataBag sketches = (DataBag) inputTuple.get(0);
-      for (Tuple t : sketches) {
-        final DataByteArray dba = (DataByteArray) t.get(0);
-        final Memory mem = Memory.wrap(dba.get());
-        union.update(mem, serDe_);
-      }
-
-      final VarOptItemsSketch<Tuple> result = union.getResult();
-
-      return VarOptSampling.createResultFromSketch(result);
+      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, targetK_);
+      return createResultFromSketch(union.getResult());
     }
-  }
-
-  private static DataBag createResultFromSketch(final VarOptItemsSketch<Tuple> sketch) {
-    final DataBag output = BAG_FACTORY.newDefaultBag();
-
-    final VarOptItemsSamples<Tuple> samples = sketch.getSketchSamples();
-
-    try {
-      // create (weight, item) tuples to add to output bag
-      for (VarOptItemsSamples.WeightedSample ws : samples) {
-        final Tuple weightedSample = TUPLE_FACTORY.newTuple(2);
-        weightedSample.set(0, ws.getWeight());
-        weightedSample.set(1, ws.getItem());
-        output.add(weightedSample);
-      }
-    } catch (final ExecException e) {
-      throw new RuntimeException("Pig error: " + e.getMessage(), e);
-    }
-
-    return output;
   }
 }
