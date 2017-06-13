@@ -7,7 +7,7 @@ package com.yahoo.sketches.pig.sampling;
 
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.RECORD_ALIAS;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.WEIGHT_ALIAS;
-import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createResultFromSketch;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createDataBagFromSketch;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.unionSketches;
 
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
       return null;
     }
 
-    return createResultFromSketch(sketch_);
+    return createDataBagFromSketch(sketch_);
   }
 
   @Override
@@ -124,7 +124,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   @Override
   public String getInitial() {
-    return VarOptCommonImpl.RawTuplesToSketchTupleImpl.class.getName();
+    return VarOptCommonImpl.RawTuplesToSketchTuple.class.getName();
   }
 
   @Override
@@ -164,7 +164,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
       }
 
       final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, targetK_);
-      return createResultFromSketch(union.getResult());
+      return createDataBagFromSketch(union.getResult());
     }
   }
 }

@@ -16,6 +16,8 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
 import com.yahoo.sketches.sampling.VarOptItemsUnion;
 
 /**
+ * A collection of methods and constants used across VarOpt UDFs.
+ *
  * @author Jon Malkin
  */
 class VarOptCommonImpl {
@@ -28,6 +30,7 @@ class VarOptCommonImpl {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
+  // Produces a sketch from a bag of input Tuples
   static VarOptItemsSketch<Tuple> rawTuplesToSketch(final Tuple inputTuple, final int k)
           throws IOException {
     assert inputTuple != null;
@@ -46,6 +49,7 @@ class VarOptCommonImpl {
     return sketch;
   }
 
+  // Produces a union from a bag of serialized sketches
   static VarOptItemsUnion<Tuple> unionSketches(final Tuple inputTuple, final int k)
           throws IOException {
     assert inputTuple != null;
@@ -64,6 +68,7 @@ class VarOptCommonImpl {
     return union;
   }
 
+  // Serializes a sketch to a DataByteArray and wraps it in a Tuple
   static Tuple wrapSketchInTuple(final VarOptItemsSketch<Tuple> sketch) throws IOException {
     final DataByteArray dba = new DataByteArray(sketch.toByteArray(SERDE));
     final Tuple outputTuple = TUPLE_FACTORY.newTuple(1);
@@ -71,7 +76,8 @@ class VarOptCommonImpl {
     return outputTuple;
   }
 
-  static DataBag createResultFromSketch(final VarOptItemsSketch<Tuple> sketch) {
+  // Produces a DataBag containing the samples from the input sketch
+  static DataBag createDataBagFromSketch(final VarOptItemsSketch<Tuple> sketch) {
     final DataBag output = BAG_FACTORY.newDefaultBag();
 
     final VarOptItemsSamples<Tuple> samples = sketch.getSketchSamples();
@@ -91,10 +97,13 @@ class VarOptCommonImpl {
     return output;
   }
 
-  public static class RawTuplesToSketchTupleImpl extends EvalFunc<Tuple> {
+  /**
+   * Adds raw Tuples to a sketch, returns a Tuple with the serialized sketch.
+   */
+  public static class RawTuplesToSketchTuple extends EvalFunc<Tuple> {
     private final int targetK_;
 
-    public RawTuplesToSketchTupleImpl() {
+    public RawTuplesToSketchTuple() {
       targetK_ = DEFAULT_TARGET_K;
     }
 
@@ -102,7 +111,7 @@ class VarOptCommonImpl {
      * VarOpt sampling constructor.
      * @param kStr String indicating the maximum number of desired samples to return.
      */
-    public RawTuplesToSketchTupleImpl(final String kStr) {
+    public RawTuplesToSketchTuple(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
 
       if (targetK_ < 1) {
@@ -122,6 +131,9 @@ class VarOptCommonImpl {
     }
   }
 
+  /**
+   * Unions serialized sketches, returns a Tuple with a sketch obtained from the union result.
+   */
   public static class UnionSketchesAsTuple extends EvalFunc<Tuple> {
     private final int targetK_;
 
@@ -153,6 +165,9 @@ class VarOptCommonImpl {
     }
   }
 
+  /**
+   * Unions serialized sketches, returns a DataByteArray of the sketch obtained from the union.
+   */
   public static class UnionSketchesAsByteArray extends EvalFunc<DataByteArray> {
     private final int targetK_;
 

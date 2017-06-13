@@ -7,7 +7,7 @@ package com.yahoo.sketches.pig.sampling;
 
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.RECORD_ALIAS;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.WEIGHT_ALIAS;
-import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createResultFromSketch;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createDataBagFromSketch;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
     final Memory mem = Memory.wrap(dba.get());
     final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.heapify(mem, SERDE);
 
-    return createResultFromSketch(sketch);
+    return createDataBagFromSketch(sketch);
   }
 
   @Override
