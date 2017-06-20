@@ -22,6 +22,7 @@ import com.yahoo.sketches.sampling.VarOptItemsUnion;
  */
 class VarOptCommonImpl {
   static final int DEFAULT_TARGET_K = 1024;
+  static final int DEFAULT_WEIGHT_IDX = 0;
 
   static final String WEIGHT_ALIAS = "vo_weight";
   static final String RECORD_ALIAS = "record";
@@ -102,9 +103,11 @@ class VarOptCommonImpl {
    */
   public static class RawTuplesToSketchTuple extends EvalFunc<Tuple> {
     private final int targetK_;
+    private final int weightIdx_;
 
     public RawTuplesToSketchTuple() {
       targetK_ = DEFAULT_TARGET_K;
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -113,10 +116,30 @@ class VarOptCommonImpl {
      */
     public RawTuplesToSketchTuple(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
 
       if (targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target reservoir size >= 1: "
                 + targetK_);
+      }
+    }
+
+    /**
+     * VarOpt sampling constructor.
+     * @param kStr String indicating the maximum number of desired samples to return.
+     * @param weightIdxStr String indicating column index (0-based) of weight values
+     */
+    public RawTuplesToSketchTuple(final String kStr, final String weightIdxStr) {
+      targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = Integer.parseInt(weightIdxStr);
+
+      if (targetK_ < 1) {
+        throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+                + targetK_);
+      }
+      if (weightIdx_ < 0) {
+        throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+                + weightIdx_);
       }
     }
 
@@ -136,9 +159,11 @@ class VarOptCommonImpl {
    */
   public static class UnionSketchesAsTuple extends EvalFunc<Tuple> {
     private final int targetK_;
+    private final int weightIdx_;
 
     public UnionSketchesAsTuple() {
       targetK_ = DEFAULT_TARGET_K;
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -147,10 +172,30 @@ class VarOptCommonImpl {
      */
     public UnionSketchesAsTuple(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
 
       if (targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target sample size >= 1: "
                 + targetK_);
+      }
+    }
+
+    /**
+     * VarOpt sampling constructor.
+     * @param kStr String indicating the maximum number of desired samples to return.
+     * @param weightIdxStr String indicating column index (0-based) of weight values
+     */
+    public UnionSketchesAsTuple(final String kStr, final String weightIdxStr) {
+      targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = Integer.parseInt(weightIdxStr);
+
+      if (targetK_ < 1) {
+        throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+                + targetK_);
+      }
+      if (weightIdx_ < 0) {
+        throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+                + weightIdx_);
       }
     }
 
@@ -170,9 +215,11 @@ class VarOptCommonImpl {
    */
   public static class UnionSketchesAsByteArray extends EvalFunc<DataByteArray> {
     private final int targetK_;
+    private final int weightIdx_;
 
     public UnionSketchesAsByteArray() {
       targetK_ = DEFAULT_TARGET_K;
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -181,10 +228,30 @@ class VarOptCommonImpl {
      */
     public UnionSketchesAsByteArray(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
 
       if (targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target sample size >= 1: "
                 + targetK_);
+      }
+    }
+
+    /**
+     * VarOpt sampling constructor.
+     * @param kStr String indicating the maximum number of desired samples to return.
+     * @param weightIdxStr String indicating column index (0-based) of weight values
+     */
+    public UnionSketchesAsByteArray(final String kStr, final String weightIdxStr) {
+      targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = Integer.parseInt(weightIdxStr);
+
+      if (targetK_ < 1) {
+        throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+                + targetK_);
+      }
+      if (weightIdx_ < 0) {
+        throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+                + weightIdx_);
       }
     }
 

@@ -5,6 +5,8 @@
 
 package com.yahoo.sketches.pig.sampling;
 
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.DEFAULT_TARGET_K;
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.DEFAULT_WEIGHT_IDX;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.RECORD_ALIAS;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.WEIGHT_ALIAS;
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.createDataBagFromSketch;
@@ -31,9 +33,8 @@ import com.yahoo.sketches.sampling.VarOptItemsUnion;
  * @author Jon Malkin
  */
 public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Algebraic {
-  private static final int DEFAULT_TARGET_K = 1024;
-
   private final int targetK_;
+  private final int weightIdx_;
   private VarOptItemsSketch<Tuple> sketch_;
 
   /**
@@ -42,6 +43,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
    */
   public VarOptSampling(final String kStr) {
     targetK_ = Integer.parseInt(kStr);
+    weightIdx_ = DEFAULT_WEIGHT_IDX;
 
     if (targetK_ < 1) {
       throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
@@ -49,8 +51,28 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
     }
   }
 
+  /**
+   * VarOpt sampling constructor.
+   * @param kStr String indicating the maximum number of desired samples to return.
+   * @param weightIdxStr String indicating column index (0-based) of weight values
+   */
+  public VarOptSampling(final String kStr, final String weightIdxStr) {
+    targetK_ = Integer.parseInt(kStr);
+    weightIdx_ = Integer.parseInt(weightIdxStr);
+
+    if (targetK_ < 1) {
+      throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+              + targetK_);
+    }
+    if (weightIdx_ < 0) {
+      throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+              + weightIdx_);
+    }
+  }
+
   VarOptSampling() {
     targetK_ = DEFAULT_TARGET_K;
+    weightIdx_ = DEFAULT_WEIGHT_IDX;
   }
 
   @Override
@@ -67,7 +89,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
     for (Tuple t : samples) {
       // first element is weight
-      final double weight = (double) t.get(0);
+      final double weight = (double) t.get(weightIdx_);
       sketch_.update(t, weight);
     }
   }
@@ -100,8 +122,8 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
         record = record.getField(0).schema; // record has a tuple in field 0
         final Schema fields = record.getField(0).schema; //
-        if (fields.getField(0).type != DataType.DOUBLE
-                && fields.getField(0).type != DataType.FLOAT) {
+        if (fields.getField(weightIdx_).type != DataType.DOUBLE
+                && fields.getField(weightIdx_).type != DataType.FLOAT) {
           throw new IllegalArgumentException("First item of VarOpt tuple must be a "
                   + "weight (double/float), found " + fields.getField(0).type
                   + ": " + fields.toString());
@@ -139,9 +161,11 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   public static class Final extends EvalFunc<DataBag> {
     private final int targetK_;
+    private final int weightIdx_;
 
     public Final() {
       targetK_ = DEFAULT_TARGET_K;
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -150,10 +174,30 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
      */
     public Final(final String kStr) {
       targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = DEFAULT_WEIGHT_IDX;
 
       if (targetK_ < 1) {
         throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 1: "
                 + targetK_);
+      }
+    }
+
+    /**
+     * VarOpt sampling constructor.
+     * @param kStr String indicating the maximum number of desired samples to return.
+     * @param weightIdxStr String indicating column index (0-based) of weight values
+     */
+    public Final(final String kStr, final String weightIdxStr) {
+      targetK_ = Integer.parseInt(kStr);
+      weightIdx_ = Integer.parseInt(weightIdxStr);
+
+      if (targetK_ < 1) {
+        throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+                + targetK_);
+      }
+      if (weightIdx_ < 0) {
+        throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+                + weightIdx_);
       }
     }
 
