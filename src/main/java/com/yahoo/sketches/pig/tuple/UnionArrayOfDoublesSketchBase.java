@@ -17,7 +17,7 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
@@ -103,7 +103,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
         continue;
       }
       final DataByteArray dba = (DataByteArray) innerTuple.get(0);
-      union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
+      union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
     }
   }
 

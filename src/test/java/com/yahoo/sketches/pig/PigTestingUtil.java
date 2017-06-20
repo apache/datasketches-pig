@@ -45,7 +45,7 @@ public class PigTestingUtil {
    * @return DataByteArray
    */
   public static DataByteArray createDbaFromQssRange(int nomSize, int start, int numValues) {
-    UpdateSketch skA = UpdateSketch.builder().build(nomSize);
+    UpdateSketch skA = UpdateSketch.builder().setNominalEntries(nomSize).build();
     for (int i = start; i < (start + numValues); i++ ) {
       skA.update(i);
     }
@@ -63,7 +63,8 @@ public class PigTestingUtil {
    * @return DataByteArray
    */
   public static DataByteArray createDbaFromAlphaRange(int nomSize, int start, int numValues) {
-    UpdateSketch skA = UpdateSketch.builder().setFamily(Family.ALPHA).build(nomSize);
+    UpdateSketch skA = UpdateSketch.builder().setFamily(Family.ALPHA)
+            .setNominalEntries(nomSize).build();
     for (int i = start; i < (start + numValues); i++ ) {
       skA.update(i);
     }

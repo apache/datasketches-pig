@@ -19,7 +19,7 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 import com.yahoo.sketches.quantiles.ItemsUnion;
@@ -314,7 +314,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
             // due to system bagged outputs from multiple mapper Intermediate functions.
             // Each dataTuple.DBA:sketch will merged into the union.
             final DataByteArray dba = (DataByteArray) f0;
-            union.update(ItemsSketch.getInstance(new NativeMemory(dba.get()), comparator_, serDe_));
+            union.update(ItemsSketch.getInstance(Memory.wrap(dba.get()), comparator_, serDe_));
           } else {
             throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "
                 + f0.getClass().getName());

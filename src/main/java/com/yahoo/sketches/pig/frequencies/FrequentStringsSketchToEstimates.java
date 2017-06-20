@@ -17,7 +17,7 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.frequencies.ErrorType;
 import com.yahoo.sketches.frequencies.ItemsSketch;
@@ -53,7 +53,7 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
 
     final DataByteArray dba = (DataByteArray) input.get(0);
     final ItemsSketch<String> sketch =
-        ItemsSketch.getInstance(new NativeMemory(dba.get()), new ArrayOfStringsSerDe());
+        ItemsSketch.getInstance(Memory.wrap(dba.get()), new ArrayOfStringsSerDe());
     final ItemsSketch.Row<String>[] result = sketch.getFrequentItems(errorType);
 
     final DataBag bag = BagFactory.getInstance().newDefaultBag();

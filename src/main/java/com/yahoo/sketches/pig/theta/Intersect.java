@@ -25,7 +25,6 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.Intersection;
 import com.yahoo.sketches.theta.SetOperation;
@@ -242,7 +241,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     // add only the first field of the innerTuple to the intersection
     if (type == DataType.BYTEARRAY) {
       final DataByteArray dba = (DataByteArray) f0;
-      final Memory srcMem = new NativeMemory(dba.get());
+      final Memory srcMem = Memory.wrap(dba.get());
       final Sketch sketch = Sketch.wrap(srcMem, seed);
       intersection.update(sketch);
     }
@@ -368,7 +367,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           //It is due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = (DataByteArray) f0;
-          final Memory srcMem = new NativeMemory(dba.get());
+          final Memory srcMem = Memory.wrap(dba.get());
           final Sketch sketch = Sketch.wrap(srcMem, mySeed_);
           intersection.update(sketch);
         }

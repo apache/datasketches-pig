@@ -15,7 +15,7 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSetOperationBuilder;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUnion;
@@ -85,7 +85,7 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
         // Intermediate function. merge it with the
         // current sketch.
         final DataByteArray dba = (DataByteArray) item;
-        union.update(ArrayOfDoublesSketches.wrapSketch(new NativeMemory(dba.get())));
+        union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
       } else {
         // we should never get here.
         throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: "

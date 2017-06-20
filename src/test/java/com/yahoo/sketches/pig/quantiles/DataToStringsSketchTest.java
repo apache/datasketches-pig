@@ -18,7 +18,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
@@ -207,6 +207,6 @@ public class DataToStringsSketchTest {
     Assert.assertEquals(tuple.size(), 1);
     DataByteArray bytes = (DataByteArray) tuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    return ItemsSketch.getInstance(new NativeMemory(bytes.get()), COMPARATOR, SER_DE);
+    return ItemsSketch.getInstance(Memory.wrap(bytes.get()), COMPARATOR, SER_DE);
   }
 }

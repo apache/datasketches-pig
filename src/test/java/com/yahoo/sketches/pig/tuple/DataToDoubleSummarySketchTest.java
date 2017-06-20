@@ -2,6 +2,7 @@
  * Copyright 2016, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.tuple;
 
 import org.apache.pig.Accumulator;
@@ -14,7 +15,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.Sketch;
@@ -47,7 +48,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
@@ -91,7 +92,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 8.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {
@@ -114,7 +115,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {
@@ -147,7 +148,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {
@@ -161,7 +162,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch2 = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch2 = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch2.getEstimate(), 0.0, 0.0);
   }
 
@@ -222,7 +223,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {
@@ -248,7 +249,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (DoubleSummary summary: sketch.getSummaries()) {

@@ -20,7 +20,6 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.memory.NativeMemory;
 import com.yahoo.sketches.theta.AnotB;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
@@ -112,14 +111,14 @@ public class AexcludeB extends EvalFunc<Tuple> {
     Sketch sketchA = null;
     if (objA != null) {
       final DataByteArray dbaA = (DataByteArray)objA;
-      final Memory srcMem = new NativeMemory(dbaA.get());
+      final Memory srcMem = Memory.wrap(dbaA.get());
       sketchA = Sketch.wrap(srcMem, seed_);
     }
     final Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
       final DataByteArray dbaB = (DataByteArray)objB;
-      final Memory srcMem = new NativeMemory(dbaB.get());
+      final Memory srcMem = Memory.wrap(dbaB.get());
       sketchB = Sketch.wrap(srcMem, seed_);
     }
 

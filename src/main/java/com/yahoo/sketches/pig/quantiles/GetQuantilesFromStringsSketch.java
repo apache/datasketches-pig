@@ -14,7 +14,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
@@ -39,7 +39,7 @@ public class GetQuantilesFromStringsSketch extends EvalFunc<Tuple> {
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
     final ItemsSketch<String> sketch = ItemsSketch.getInstance(
-        new NativeMemory(dba.get()), Comparator.naturalOrder(), new ArrayOfStringsSerDe());
+        Memory.wrap(dba.get()), Comparator.naturalOrder(), new ArrayOfStringsSerDe());
     if (sketch.isEmpty()) { return null; }
 
     if (input.size() == 2) {

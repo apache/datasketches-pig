@@ -13,7 +13,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 
 /**
@@ -36,7 +36,7 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final DoublesSketch sketch = DoublesSketch.heapify(new NativeMemory(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.heapify(Memory.wrap(dba.get()));
 
     if (input.size() == 2) {
       final Object arg = input.get(1);

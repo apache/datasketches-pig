@@ -10,7 +10,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.Sketches;
 import com.yahoo.sketches.tuple.Summary;
@@ -29,7 +29,7 @@ final class Util {
 
   static <S extends Summary> Sketch<S> deserializeSketchFromTuple(final Tuple tuple) throws ExecException {
     final byte[] bytes = ((DataByteArray) tuple.get(0)).get();
-    return Sketches.heapifySketch(new NativeMemory(bytes));
+    return Sketches.heapifySketch(Memory.wrap(bytes));
   }
 
 }

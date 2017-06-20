@@ -14,7 +14,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketch;
@@ -45,7 +45,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
@@ -89,7 +89,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 8.0, 0.0);
 
     for (double[] values: sketch.getValues()) {
@@ -108,7 +108,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
   }
 
@@ -137,7 +137,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (double[] values: sketch.getValues()) {
@@ -151,7 +151,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch2 = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch2 = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch2.getEstimate(), 0.0, 0.0);
   }
 
@@ -196,7 +196,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     for (double[] values: sketch.getValues()) {
@@ -217,7 +217,7 @@ public class DataToArrayOfDoublesSketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(new NativeMemory(bytes.get()));
+    ArrayOfDoublesSketch sketch = ArrayOfDoublesSketches.heapifySketch(Memory.wrap(bytes.get()));
     Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
   }
 

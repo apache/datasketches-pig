@@ -12,7 +12,7 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfStringsSerDe;
 import com.yahoo.sketches.quantiles.ItemsSketch;
 
@@ -38,7 +38,7 @@ public class GetPmfFromStringsSketch extends EvalFunc<Tuple> {
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
     final ItemsSketch<String> sketch =
-        ItemsSketch.getInstance(new NativeMemory(dba.get()), Comparator.naturalOrder(),
+        ItemsSketch.getInstance(Memory.wrap(dba.get()), Comparator.naturalOrder(),
             new ArrayOfStringsSerDe());
 
     final String[] splitPoints = new String[input.size() - 1];

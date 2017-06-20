@@ -12,7 +12,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.DoubleSummary;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
@@ -36,7 +36,7 @@ public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
     }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(new NativeMemory(dba.get()));
+    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(dba.get()));
 
     final Tuple output = TupleFactory.getInstance().newTuple(2);
     output.set(0, sketch.getEstimate());

@@ -10,7 +10,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import com.yahoo.memory.NativeMemory;
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.ArrayOfItemsSerDe;
 import com.yahoo.sketches.frequencies.ItemsSketch;
 
@@ -28,7 +28,7 @@ final class Util {
   static <T> ItemsSketch<T> deserializeSketchFromTuple(
       final Tuple tuple, final ArrayOfItemsSerDe<T> serDe) throws ExecException {
     final byte[] bytes = ((DataByteArray) tuple.get(0)).get();
-    return ItemsSketch.getInstance(new NativeMemory(bytes), serDe);
+    return ItemsSketch.getInstance(Memory.wrap(bytes), serDe);
   }
 
 }
