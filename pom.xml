@@ -145,13 +145,13 @@
     <dependency>
       <groupId>com.yahoo.datasketches</groupId>
       <artifactId>sketches-core</artifactId>
-      <version>0.9.1-SNAPSHOT</version>
+      <version>0.10.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.yahoo.datasketches</groupId>
       <artifactId>memory</artifactId>
-      <version>0.10.0</version>
+      <version>0.10.1</version>
     </dependency>
 
     <!-- Pig -->
