@@ -32,7 +32,8 @@ class VarOptCommonImpl {
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
   // Produces a sketch from a bag of input Tuples
-  static VarOptItemsSketch<Tuple> rawTuplesToSketch(final Tuple inputTuple, final int k)
+  static VarOptItemsSketch<Tuple> rawTuplesToSketch(final Tuple inputTuple,
+                                                    final int k, final int weightIdx)
           throws IOException {
     assert inputTuple != null;
     assert inputTuple.size() >= 1;
@@ -43,7 +44,7 @@ class VarOptCommonImpl {
 
     for (Tuple t : samples) {
       // first element is weight
-      final double weight = (double) t.get(0);
+      final double weight = (double) t.get(weightIdx);
       sketch.update(t, weight);
     }
 
@@ -149,7 +150,7 @@ class VarOptCommonImpl {
         return null;
       }
 
-      final VarOptItemsSketch<Tuple> sketch = rawTuplesToSketch(inputTuple, targetK_);
+      final VarOptItemsSketch<Tuple> sketch = rawTuplesToSketch(inputTuple, targetK_, weightIdx_);
       return wrapSketchInTuple(sketch);
     }
   }
