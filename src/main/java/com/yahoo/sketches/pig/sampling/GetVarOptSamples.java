@@ -31,8 +31,6 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
  * @author Jon Malkin
  */
 public class GetVarOptSamples extends EvalFunc<DataBag> {
-  // defined for test consistency
-
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
   @Override
@@ -51,6 +49,12 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
   @Override
   public Schema outputSchema(final Schema input) {
     try {
+      if (input == null || input.size() == 0
+              || input.getField(0).type != DataType.BYTEARRAY) {
+        throw new IllegalArgumentException("Input to GetVarOptSamples must be a DataByteArray: "
+                + (input == null ? "null" : input.toString()));
+      }
+
       final Schema weightedSampleSchema = new Schema();
       weightedSampleSchema.add(new Schema.FieldSchema(WEIGHT_ALIAS, DataType.DOUBLE));
       weightedSampleSchema.add(new Schema.FieldSchema(RECORD_ALIAS, DataType.TUPLE));
@@ -58,9 +62,7 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
       return new Schema(new Schema.FieldSchema(getSchemaName(this
               .getClass().getName().toLowerCase(), input), weightedSampleSchema, DataType.BAG));
     } catch (final FrontendException e) {
-      // fall through
+      return null;
     }
-
-    return null;
   }
 }

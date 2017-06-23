@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 import com.yahoo.sketches.sampling.VarOptItemsSketch;
 
 public class VarOptSamplingTest {
-  private static final double EPS = 1e-10;
+  static final double EPS = 1e-10;
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   @Test
