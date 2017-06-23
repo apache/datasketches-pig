@@ -179,10 +179,6 @@ public class VarOptSamplingTest {
   public void validOutputSchemaTest() throws IOException {
     VarOptSampling udf = new VarOptSampling("5", "1");
 
-    // first a couple degenerate cases
-    assertNull(udf.outputSchema(null));
-    assertNull(udf.outputSchema(new Schema()));
-
     final Schema recordSchema = new Schema();
     recordSchema.add(new Schema.FieldSchema("field1", DataType.CHARARRAY));
     recordSchema.add(new Schema.FieldSchema("field2", DataType.DOUBLE));
@@ -230,6 +226,19 @@ public class VarOptSamplingTest {
     inputSchema.add(new Schema.FieldSchema("data", tupleSchema, DataType.BAG));
 
     final VarOptSampling udf = new VarOptSampling("5", "0");
+
+    // degenerate input schemas
+    try {
+      udf.outputSchema(null);
+    } catch (final IllegalArgumentException e) {
+      // expected
+    }
+
+    try {
+      udf.outputSchema(new Schema());
+    } catch (final IllegalArgumentException e) {
+      // expected
+    }
 
     // expecting weight in element 0
     try {

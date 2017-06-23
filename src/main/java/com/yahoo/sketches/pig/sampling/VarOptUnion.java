@@ -1,5 +1,7 @@
 package com.yahoo.sketches.pig.sampling;
 
+import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.DEFAULT_TARGET_K;
+
 import java.io.IOException;
 
 import org.apache.pig.AccumulatorEvalFunc;
@@ -25,7 +27,6 @@ import com.yahoo.sketches.sampling.VarOptItemsUnion;
  * @author Jon Malkin
  */
 public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {
-  private static final int DEFAULT_TARGET_K = 1024;
   private static final ArrayOfTuplesSerDe SERDE = new ArrayOfTuplesSerDe();
 
   private final int maxK_;
@@ -38,8 +39,8 @@ public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements A
   public VarOptUnion(final String kStr) {
     maxK_ = Integer.parseInt(kStr);
 
-    if (maxK_ < 2) {
-      throw new IllegalArgumentException("ReservoirUnion requires max reservoir size >= 2: "
+    if (maxK_ < 1) {
+      throw new IllegalArgumentException("VarOptUnion requires max sample size >= 1: "
               + maxK_);
     }
   }

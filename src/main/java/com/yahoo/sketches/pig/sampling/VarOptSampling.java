@@ -110,38 +110,36 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input != null && input.size() > 0) {
-      try {
-        Schema record = input;
-
-        // first element must be a bag, first element of tuples must be the weight (float or double)
-        if (record.getField(0).type != DataType.BAG) {
-          throw new IllegalArgumentException("VarOpt input must be a data bag: "
-                  + record.toString());
-        }
-
-        record = record.getField(0).schema; // record has a tuple in field 0
-        final Schema fields = record.getField(0).schema; //
-        if (fields.getField(weightIdx_).type != DataType.DOUBLE
-                && fields.getField(weightIdx_).type != DataType.FLOAT) {
-          throw new IllegalArgumentException("First item of VarOpt tuple must be a "
-                  + "weight (double/float), found " + fields.getField(0).type
-                  + ": " + fields.toString());
-
-        }
-
-        final Schema weightedSampleSchema = new Schema();
-        weightedSampleSchema.add(new Schema.FieldSchema(WEIGHT_ALIAS, DataType.DOUBLE));
-        weightedSampleSchema.add(new Schema.FieldSchema(RECORD_ALIAS, record, DataType.TUPLE));
-
-        return new Schema(new Schema.FieldSchema(getSchemaName(this
-                .getClass().getName().toLowerCase(), record), weightedSampleSchema, DataType.BAG));
+    try {
+      if (input == null || input.size() == 0) {
+        throw new IllegalArgumentException("Degenerate input schema to VarOptSampling");
       }
-      catch (final FrontendException e) {
-        // fall through
+
+      // first element must be a bag, first element of tuples must be the weight (float or double)
+      if (input.getField(0).type != DataType.BAG) {
+        throw new IllegalArgumentException("VarOpt input must be a data bag: "
+                + input.toString());
       }
+
+      final Schema record = input.getField(0).schema; // record has a tuple in field 0
+      final Schema fields = record.getField(0).schema; //
+      if (fields.getField(weightIdx_).type != DataType.DOUBLE
+              && fields.getField(weightIdx_).type != DataType.FLOAT) {
+        throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
+                + "weight (double/float), found " + fields.getField(0).type
+                + ": " + fields.toString());
+      }
+
+      final Schema weightedSampleSchema = new Schema();
+      weightedSampleSchema.add(new Schema.FieldSchema(WEIGHT_ALIAS, DataType.DOUBLE));
+      weightedSampleSchema.add(new Schema.FieldSchema(RECORD_ALIAS, record, DataType.TUPLE));
+
+      return new Schema(new Schema.FieldSchema(getSchemaName(this
+              .getClass().getName().toLowerCase(), record), weightedSampleSchema, DataType.BAG));
     }
-    return null;
+    catch (final FrontendException e) {
+      return null;
+    }
   }
 
   @Override

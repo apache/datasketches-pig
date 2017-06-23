@@ -22,7 +22,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import com.yahoo.sketches.sampling.VarOptItemsSketch;
 
 /**
- * This UDF creates a binary version of a VarOpt sampling over input tuples. The resulting
+ * Creates a binary version of a VarOpt sampling over input tuples. The resulting
  * <tt>DataByteArray</tt> can be read in Pig with <tt>GetVarOptSamples</tt>, although the
  * per-record schema will be lost. It implements both the <tt>Accumulator</tt> and
  * <tt>Algebraic</tt> interfaces for efficient performance.
@@ -45,7 +45,7 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
     weightIdx_ = DEFAULT_WEIGHT_IDX;
 
     if (targetK_ < 1) {
-      throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+      throw new IllegalArgumentException("DataToVarOptSketch requires target sample size >= 1: "
               + targetK_);
     }
   }
@@ -60,11 +60,11 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
     weightIdx_ = Integer.parseInt(weightIdxStr);
 
     if (targetK_ < 1) {
-      throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
+      throw new IllegalArgumentException("DataToVarOptSketch requires target sample size >= 1: "
               + targetK_);
     }
     if (weightIdx_ < 0) {
-      throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
+      throw new IllegalArgumentException("DataToVarOptSketch requires weight index >= 0: "
               + weightIdx_);
     }
   }
@@ -125,32 +125,31 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input != null && input.size() > 0) {
-      try {
-        Schema record = input;
-
-        // first element must be a bag, first element of tuples must be the weight (float or double)
-        if (record.getField(0).type != DataType.BAG) {
-          throw new IllegalArgumentException("VarOpt input must be a data bag: "
-                  + record.toString());
-        }
-
-        record = record.getField(0).schema; // record has a tuple in field 0
-        final Schema fields = record.getField(weightIdx_).schema; //
-        if (fields.getField(weightIdx_).type != DataType.DOUBLE
-                && fields.getField(0).type != DataType.FLOAT) {
-          throw new IllegalArgumentException("First item of VarOpt tuple must be a "
-                  + "weight (double/float), found " + fields.getField(0).type
-                  + ": " + fields.toString());
-
-        }
+    try {
+      if (input == null || input.size() == 0) {
+        throw new IllegalArgumentException("Degenerate input schema to VarOptSampling");
       }
-      catch (final FrontendException e) {
-        // fall through
+
+      // first element must be a bag, first element of tuples must be the weight (float or double)
+      if (input.getField(0).type != DataType.BAG) {
+        throw new IllegalArgumentException("VarOpt input must be a data bag: "
+                + input.toString());
       }
+
+      final Schema record = input.getField(0).schema; // record has a tuple in field 0
+      final Schema fields = record.getField(weightIdx_).schema; //
+      if (fields.getField(weightIdx_).type != DataType.DOUBLE
+              && fields.getField(0).type != DataType.FLOAT) {
+        throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
+                + "weight (double/float), found " + fields.getField(0).type
+                + ": " + fields.toString());
+      }
+
+      return new Schema(new Schema.FieldSchema(getSchemaName(this
+              .getClass().getName().toLowerCase(), input), DataType.BYTEARRAY));
     }
-
-    return new Schema(new Schema.FieldSchema(getSchemaName(this
-            .getClass().getName().toLowerCase(), input), DataType.BYTEARRAY));
+    catch (final FrontendException e) {
+      return null;
+    }
   }
 }
