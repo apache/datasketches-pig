@@ -61,14 +61,10 @@ public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements A
       union_ = VarOptItemsUnion.newInstance(maxK_);
     }
 
-    try {
-      for (Tuple t : sketches) {
-        final DataByteArray dba = (DataByteArray) t.get(0);
-        final Memory sketch = Memory.wrap(dba.get());
-        union_.update(sketch, SERDE);
-      }
-    } catch (final IndexOutOfBoundsException e) {
-      throw new ExecException("Cannot update union with given sketch", e);
+    for (Tuple t : sketches) {
+      final DataByteArray dba = (DataByteArray) t.get(0);
+      final Memory sketch = Memory.wrap(dba.get());
+      union_.update(sketch, SERDE);
     }
   }
 

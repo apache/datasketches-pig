@@ -107,7 +107,6 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
     sketch_ = null;
   }
 
-
   @Override
   public String getInitial() {
     return VarOptCommonImpl.RawTuplesToSketchTuple.class.getName();
