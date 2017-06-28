@@ -132,6 +132,22 @@ public class VarOptSamplingTest {
   }
 
   @Test
+  public void degenerateExecInput() {
+    final VarOptSampling udf = new VarOptSampling();
+
+    try {
+      assertNull(udf.exec(null));
+      assertNull(udf.exec(TupleFactory.getInstance().newTuple(0)));
+
+      final Tuple in = TupleFactory.getInstance().newTuple(1);
+      in.set(0, null);
+      assertNull(udf.exec(in));
+    } catch (final IOException e) {
+      fail("Unexpected exception");
+    }
+  }
+
+  @Test
   public void algebraicDegenerateInput() {
     try {
       // Tuple version

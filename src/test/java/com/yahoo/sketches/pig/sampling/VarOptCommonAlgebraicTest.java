@@ -289,7 +289,8 @@ public class VarOptCommonAlgebraicTest {
     }
   }
 
-  void compareResults(final VarOptItemsSketch<Tuple> s1,
+  // checks N, K, and ensures the same weights and items exist (order may differ)
+  static void compareResults(final VarOptItemsSketch<Tuple> s1,
                       final VarOptItemsSketch<Tuple> s2) {
     assertEquals(s1.getN(), s2.getN());
     assertEquals(s1.getK(), s2.getK());

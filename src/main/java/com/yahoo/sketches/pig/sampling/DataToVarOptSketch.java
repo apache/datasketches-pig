@@ -130,16 +130,16 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
         throw new IllegalArgumentException("Degenerate input schema to VarOptSampling");
       }
 
-      // first element must be a bag, first element of tuples must be the weight (float or double)
+      // first element must be a bag
       if (input.getField(0).type != DataType.BAG) {
         throw new IllegalArgumentException("VarOpt input must be a data bag: "
                 + input.toString());
       }
 
       final Schema record = input.getField(0).schema; // record has a tuple in field 0
-      final Schema fields = record.getField(weightIdx_).schema; //
+      final Schema fields = record.getField(0).schema;
       if (fields.getField(weightIdx_).type != DataType.DOUBLE
-              && fields.getField(0).type != DataType.FLOAT) {
+              && fields.getField(weightIdx_).type != DataType.FLOAT) {
         throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
                 + "weight (double/float), found " + fields.getField(0).type
                 + ": " + fields.toString());
