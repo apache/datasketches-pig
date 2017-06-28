@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017, Yahoo! Inc.
+ * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
+ */
+
 package com.yahoo.sketches.pig.sampling;
 
 import static com.yahoo.sketches.pig.sampling.VarOptCommonImpl.DEFAULT_TARGET_K;
@@ -6,7 +11,6 @@ import java.io.IOException;
 
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
-import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;

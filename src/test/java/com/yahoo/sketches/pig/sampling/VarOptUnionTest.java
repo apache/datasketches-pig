@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017, Yahoo! Inc.
+ * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
+ */
+
 package com.yahoo.sketches.pig.sampling;
 
 import static org.testng.Assert.assertEquals;
@@ -7,9 +12,6 @@ import static org.testng.Assert.fail;
 
 import java.io.IOException;
 
-import com.yahoo.memory.Memory;
-import com.yahoo.sketches.sampling.VarOptItemsSketch;
-import com.yahoo.sketches.sampling.VarOptItemsUnion;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
@@ -18,6 +20,10 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.annotations.Test;
+
+import com.yahoo.memory.Memory;
+import com.yahoo.sketches.sampling.VarOptItemsSketch;
+import com.yahoo.sketches.sampling.VarOptItemsUnion;
 
 public class VarOptUnionTest {
   @Test
