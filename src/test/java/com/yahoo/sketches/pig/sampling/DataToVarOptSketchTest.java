@@ -39,18 +39,21 @@ public class DataToVarOptSketchTest {
 
     try {
       new DataToVarOptSketch("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new DataToVarOptSketch("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new DataToVarOptSketch("10", "-1");
+      fail("Accepted weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -153,19 +156,22 @@ public class DataToVarOptSketchTest {
     // degenerate input schemas
     try {
       udf.outputSchema(null);
+      fail("Accepted null schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       udf.outputSchema(new Schema());
+      fail("Accepted empty schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
-    // expecting weight in element 0
+    // expecting weight in element 0 (based on constructor arg)
     try {
       udf.outputSchema(inputSchema);
+      fail("Accepted non-weight value in weightIndex column");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -173,6 +179,7 @@ public class DataToVarOptSketchTest {
     // passing in Tuple instead of DataBag
     try {
       udf.outputSchema(tupleSchema);
+      fail("Accepted Tuple instead of DataBag");
     } catch (final IllegalArgumentException e) {
       // expected
     }

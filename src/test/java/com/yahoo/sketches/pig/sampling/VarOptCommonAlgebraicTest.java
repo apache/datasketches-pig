@@ -46,18 +46,21 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -78,18 +81,21 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -110,18 +116,21 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }

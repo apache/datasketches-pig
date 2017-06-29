@@ -86,8 +86,7 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
       sketch_ = VarOptItemsSketch.newInstance(targetK_);
     }
 
-    for (Tuple t : samples) {
-      // first element is weight
+    for (final Tuple t : samples) {
       final double weight = (double) t.get(weightIdx_);
       sketch_.update(t, weight);
     }

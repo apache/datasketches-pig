@@ -53,7 +53,7 @@ public class GetVarOptSamplesTest {
       double cumWt = 0.0;
       for (int i = 1; i <= n; ++i) {
         final Tuple t = TupleFactory.getInstance().newTuple(2);
-       final double wt = 1.0 * i;
+        final double wt = 1.0 * i;
         t.set(0, wt);
         t.set(1, i);
         vis.update(t, wt);
@@ -83,10 +83,7 @@ public class GetVarOptSamplesTest {
 
     final Schema serializedSketch = new Schema();
     serializedSketch.add(new Schema.FieldSchema("field1", DataType.BYTEARRAY));
-    //final Schema inputSchema = new Schema();
-    //inputSchema.add(new Schema.FieldSchema("record", serializedSketch, DataType.TUPLE));
 
-    //final Schema output = udf.outputSchema(inputSchema);
     final Schema output = udf.outputSchema(serializedSketch);
     assertEquals(output.size(), 1);
     assertEquals(output.getField(0).type, DataType.BAG);
@@ -107,12 +104,14 @@ public class GetVarOptSamplesTest {
 
     try {
       udf.outputSchema(null);
+      fail("Accepted null schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       udf.outputSchema(new Schema());
+      fail("Accepted empty schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -121,6 +120,7 @@ public class GetVarOptSamplesTest {
       final Schema wrongSchema = new Schema();
       wrongSchema.add(new Schema.FieldSchema("field", DataType.BOOLEAN));
       udf.outputSchema(wrongSchema);
+      fail("Accepted schema with no DataByteArray");
     } catch (final IllegalArgumentException e) {
       // expected
     }

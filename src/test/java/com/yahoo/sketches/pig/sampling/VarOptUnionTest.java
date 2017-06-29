@@ -37,6 +37,7 @@ public class VarOptUnionTest {
 
     try {
       new VarOptUnion("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
        // expected
     }

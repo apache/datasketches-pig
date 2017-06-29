@@ -47,8 +47,7 @@ class VarOptCommonImpl {
     final DataBag samples = (DataBag) inputTuple.get(0);
     final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.newInstance(k);
 
-    for (Tuple t : samples) {
-      // first element is weight
+    for (final Tuple t : samples) {
       final double weight = (double) t.get(weightIdx);
       sketch.update(t, weight);
     }
@@ -66,7 +65,7 @@ class VarOptCommonImpl {
     final VarOptItemsUnion<Tuple> union = VarOptItemsUnion.newInstance(k);
 
     final DataBag sketchBag = (DataBag) inputTuple.get(0);
-    for (Tuple t : sketchBag) {
+    for (final Tuple t : sketchBag) {
       final DataByteArray dba = (DataByteArray) t.get(0);
       final Memory mem = Memory.wrap(dba.get());
       union.update(mem, SERDE);
@@ -78,9 +77,7 @@ class VarOptCommonImpl {
   // Serializes a sketch to a DataByteArray and wraps it in a Tuple
   static Tuple wrapSketchInTuple(final VarOptItemsSketch<Tuple> sketch) throws IOException {
     final DataByteArray dba = new DataByteArray(sketch.toByteArray(SERDE));
-    final Tuple outputTuple = TUPLE_FACTORY.newTuple(1);
-    outputTuple.set(0, dba);
-    return outputTuple;
+    return TUPLE_FACTORY.newTuple(dba);
   }
 
   // Produces a DataBag containing the samples from the input sketch
@@ -91,7 +88,7 @@ class VarOptCommonImpl {
 
     try {
       // create (weight, item) tuples to add to output bag
-      for (VarOptItemsSamples.WeightedSample ws : samples) {
+      for (final VarOptItemsSamples.WeightedSample ws : samples) {
         final Tuple weightedSample = TUPLE_FACTORY.newTuple(2);
         weightedSample.set(0, ws.getWeight());
         weightedSample.set(1, ws.getItem());
