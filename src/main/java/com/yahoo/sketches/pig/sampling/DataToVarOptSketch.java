@@ -147,7 +147,7 @@ public class DataToVarOptSketch extends AccumulatorEvalFunc<DataByteArray> imple
               .getClass().getName().toLowerCase(), input), DataType.BYTEARRAY));
     }
     catch (final FrontendException e) {
-      return null;
+      throw new RuntimeException(e);
     }
   }
 }

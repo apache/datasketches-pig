@@ -137,7 +137,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
               .getClass().getName().toLowerCase(), record), weightedSampleSchema, DataType.BAG));
     }
     catch (final FrontendException e) {
-      return null;
+      throw new RuntimeException(e);
     }
   }
 

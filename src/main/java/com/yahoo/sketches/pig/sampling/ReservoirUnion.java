@@ -130,7 +130,7 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
                   .getClass().getName().toLowerCase(), source), source, DataType.TUPLE));
         }
       } catch (final FrontendException e) {
-        // fall through
+        throw new RuntimeException(e);
       }
     }
 
