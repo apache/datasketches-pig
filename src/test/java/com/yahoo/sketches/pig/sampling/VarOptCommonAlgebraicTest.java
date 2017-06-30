@@ -31,6 +31,7 @@ public class VarOptCommonAlgebraicTest {
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   // constructors: just make sure result not null with valid args, throw exceptions if invalid
+  @SuppressWarnings("unused")
   @Test
   public void rawTuplesToSketchConstructors() {
     VarOptCommonImpl.RawTuplesToSketchTuple udf;
@@ -46,23 +47,27 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.RawTuplesToSketchTuple("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesAsSketchConstructors() {
     VarOptCommonImpl.UnionSketchesAsTuple udf;
@@ -78,23 +83,27 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsTuple("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesAsByteArrayConstructors() {
     VarOptCommonImpl.UnionSketchesAsByteArray udf;
@@ -110,18 +119,21 @@ public class VarOptCommonAlgebraicTest {
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptCommonImpl.UnionSketchesAsByteArray("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }

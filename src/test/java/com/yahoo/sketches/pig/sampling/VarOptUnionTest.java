@@ -26,6 +26,7 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
 import com.yahoo.sketches.sampling.VarOptItemsUnion;
 
 public class VarOptUnionTest {
+  @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
     // these three should work
@@ -37,6 +38,7 @@ public class VarOptUnionTest {
 
     try {
       new VarOptUnion("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
        // expected
     }

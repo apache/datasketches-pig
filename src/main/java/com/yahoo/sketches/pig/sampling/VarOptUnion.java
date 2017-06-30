@@ -74,11 +74,7 @@ public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements A
 
   @Override
   public DataByteArray getValue() {
-    if (union_ == null) {
-      return null;
-    }
-
-    return new DataByteArray(union_.getResult().toByteArray(SERDE));
+    return union_ == null ? null : new DataByteArray(union_.getResult().toByteArray(SERDE));
   }
 
   @Override

@@ -87,8 +87,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
       sketch_ = VarOptItemsSketch.newInstance(targetK_);
     }
 
-    for (Tuple t : samples) {
-      // first element is weight
+    for (final Tuple t : samples) {
       final double weight = (double) t.get(weightIdx_);
       sketch_.update(t, weight);
     }
@@ -115,14 +114,14 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
         throw new IllegalArgumentException("Degenerate input schema to VarOptSampling");
       }
 
-      // first element must be a bag, first element of tuples must be the weight (float or double)
+      // first element must be a bag, weightIdx_ element of tuples must be a float or double
       if (input.getField(0).type != DataType.BAG) {
         throw new IllegalArgumentException("VarOpt input must be a data bag: "
                 + input.toString());
       }
 
       final Schema record = input.getField(0).schema; // record has a tuple in field 0
-      final Schema fields = record.getField(0).schema; //
+      final Schema fields = record.getField(0).schema;
       if (fields.getField(weightIdx_).type != DataType.DOUBLE
               && fields.getField(weightIdx_).type != DataType.FLOAT) {
         throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
@@ -138,7 +137,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
               .getClass().getName().toLowerCase(), record), weightedSampleSchema, DataType.BAG));
     }
     catch (final FrontendException e) {
-      return null;
+      throw new RuntimeException(e);
     }
   }
 

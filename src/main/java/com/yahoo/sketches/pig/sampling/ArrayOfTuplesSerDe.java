@@ -15,6 +15,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.WritableByteArray;
 
 import com.yahoo.memory.Memory;
+import com.yahoo.memory.WritableMemory;
 import com.yahoo.sketches.ArrayOfItemsSerDe;
 
 /**
@@ -27,10 +28,9 @@ public class ArrayOfTuplesSerDe extends ArrayOfItemsSerDe<Tuple> {
   @Override
   public byte[] serializeToByteArray(final Tuple[] items) {
     final WritableByteArray wba = new WritableByteArray();
-    final DataOutputStream os = new DataOutputStream(wba);
-    try {
+    try (final DataOutputStream os = new DataOutputStream(wba)) {
       for (Tuple t : items) {
-        // BinInterSedes is more efficient, but only suitable for intermediate data within a job
+        // BinInterSedes is more efficient, but only suitable for intermediate data within a job.
         DataReaderWriter.writeDatum(os, t);
       }
     } catch (final IOException e) {
@@ -42,20 +42,17 @@ public class ArrayOfTuplesSerDe extends ArrayOfItemsSerDe<Tuple> {
 
   @Override
   public Tuple[] deserializeFromMemory(final Memory mem, final int numItems) {
-    // if we could get the correct offset into the region, the following avoids a copy:
-    //final byte[] bytes = (byte[]) ((WritableMemory) mem).getArray();
-    final int size = (int) mem.getCapacity();
-    final byte[] bytes = new byte[size];
-    mem.getByteArray(0, bytes, 0, size);
-
-    final DataInputStream is = new DataInputStream(new ByteArrayInputStream(bytes));
+    final byte[] bytes = (byte[]) ((WritableMemory) mem).getArray();
+    final int offset = (int) ((WritableMemory) mem).getRegionOffset(0L);
+    final int length = (int) mem.getCapacity();
 
     final Tuple[] result = new Tuple[numItems];
-    try {
+    try (final ByteArrayInputStream bais = new ByteArrayInputStream(bytes, offset, length);
+         final DataInputStream dis = new DataInputStream(bais)) {
       for (int i = 0; i < numItems; ++i) {
-        // BinInterSedes is more efficient, but only suitable for intermediate data within a job
-        // we know we're getting Tuples back in this case
-        result[i] = (Tuple) DataReaderWriter.readDatum(is);
+        // BinInterSedes is more efficient, but only suitable for intermediate data within a job.
+        // We know we're getting Tuples back in this case so cast is safe
+        result[i] = (Tuple) DataReaderWriter.readDatum(dis);
       }
     } catch (final IOException e) {
       throw new RuntimeException("Error deserializing tuple: " + e.getMessage());

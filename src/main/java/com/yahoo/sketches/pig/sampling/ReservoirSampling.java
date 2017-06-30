@@ -129,7 +129,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
                 .getClass().getName().toLowerCase(), source), recordSchema, DataType.TUPLE));
       }
       catch (final FrontendException e) {
-        // fall through
+        throw new RuntimeException(e);
       }
     }
     return null;

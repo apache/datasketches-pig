@@ -20,7 +20,7 @@ public class PigUtil {
    */
   public static Tuple objectsToTuple(final Object ... objects) {
     final Tuple tuple = TupleFactory.getInstance().newTuple();
-    for (Object object: objects) { tuple.append(object); }
+    for (final Object object: objects) { tuple.append(object); }
     return tuple;
   }
 
@@ -31,7 +31,7 @@ public class PigUtil {
    */
   public static DataBag tuplesToBag(final Tuple ... tuples) {
     final DataBag bag = BagFactory.getInstance().newDefaultBag();
-    for (Tuple tuple: tuples) { bag.add(tuple); }
+    for (final Tuple tuple: tuples) { bag.add(tuple); }
     return bag;
   }
 
@@ -43,7 +43,7 @@ public class PigUtil {
    */
   public static <T> DataBag listToBagOfTuples(final List<T> list) {
       final DataBag bag = BagFactory.getInstance().newDefaultBag();
-      for (Object object: list) {
+      for (final Object object: list) {
           final Tuple tuple = TupleFactory.getInstance().newTuple();
           tuple.append(object);
           bag.add(tuple);

@@ -31,6 +31,7 @@ public class VarOptSamplingTest {
   static final double EPS = 1e-10;
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
+  @SuppressWarnings("unused")
   @Test
   public void baseConstructors() {
     // these three should work
@@ -45,18 +46,21 @@ public class VarOptSamplingTest {
 
     try {
       new VarOptSampling("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptSampling("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptSampling("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -76,18 +80,21 @@ public class VarOptSamplingTest {
 
     try {
       new VarOptSampling.Final("-1");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptSampling.Final("-1", "3");
+      fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       new VarOptSampling.Final("10", "-1");
+      fail("Accepted negative weight index");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -99,7 +106,6 @@ public class VarOptSamplingTest {
     final VarOptSampling udf = new VarOptSampling(Integer.toString(k), "0");
 
     final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
-    final Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     double cumWeight = 0.0;
     try {
       for (int i = 1; i < k; ++i) {
@@ -110,7 +116,7 @@ public class VarOptSamplingTest {
         inputBag.add(t);
         cumWeight += i;
       }
-      inputTuple.set(0, inputBag);
+      final Tuple inputTuple = TupleFactory.getInstance().newTuple(inputBag);
 
       assertNull(udf.getValue());
       udf.accumulate(inputTuple);
@@ -251,19 +257,22 @@ public class VarOptSamplingTest {
     // degenerate input schemas
     try {
       udf.outputSchema(null);
+      fail("Accepted null schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
       udf.outputSchema(new Schema());
+      fail("Accepted empty schema");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
-    // expecting weight in element 0
+    // expecting weight in element 0 (based on constructor args)
     try {
       udf.outputSchema(inputSchema);
+      fail("Accepted non-weight in weightIndex column");
     } catch (final IllegalArgumentException e) {
       // expected
     }
@@ -271,6 +280,7 @@ public class VarOptSamplingTest {
     // passing in Tuple instead of DataBag
     try {
       udf.outputSchema(tupleSchema);
+      fail("Accepted input Tuple instead of DataBag");
     } catch (final IllegalArgumentException e) {
       // expected
     }

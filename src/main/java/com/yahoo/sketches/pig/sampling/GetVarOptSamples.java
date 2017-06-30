@@ -62,7 +62,7 @@ public class GetVarOptSamples extends EvalFunc<DataBag> {
       return new Schema(new Schema.FieldSchema(getSchemaName(this
               .getClass().getName().toLowerCase(), input), weightedSampleSchema, DataType.BAG));
     } catch (final FrontendException e) {
-      return null;
+      throw new RuntimeException(e);
     }
   }
 }
