@@ -31,6 +31,7 @@ public class VarOptSamplingTest {
   static final double EPS = 1e-10;
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
+  @SuppressWarnings("unused")
   @Test
   public void baseConstructors() {
     // these three should work

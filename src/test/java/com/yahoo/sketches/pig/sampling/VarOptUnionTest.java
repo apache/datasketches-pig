@@ -26,6 +26,7 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
 import com.yahoo.sketches.sampling.VarOptItemsUnion;
 
 public class VarOptUnionTest {
+  @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
     // these three should work

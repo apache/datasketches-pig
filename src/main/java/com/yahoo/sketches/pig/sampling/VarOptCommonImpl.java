@@ -88,7 +88,7 @@ class VarOptCommonImpl {
 
     try {
       // create (weight, item) tuples to add to output bag
-      for (final VarOptItemsSamples.WeightedSample ws : samples) {
+      for (final VarOptItemsSamples<Tuple>.WeightedSample ws : samples) {
         final Tuple weightedSample = TUPLE_FACTORY.newTuple(2);
         weightedSample.set(0, ws.getWeight());
         weightedSample.set(1, ws.getItem());

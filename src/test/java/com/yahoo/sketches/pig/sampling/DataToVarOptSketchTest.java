@@ -26,6 +26,7 @@ import com.yahoo.sketches.sampling.VarOptItemsSketch;
 
 public class DataToVarOptSketchTest {
   @Test
+  @SuppressWarnings("unused")
   public void checkConstructors() {
     // these three should work
     DataToVarOptSketch udf = new DataToVarOptSketch();

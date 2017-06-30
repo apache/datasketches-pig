@@ -31,6 +31,7 @@ public class VarOptCommonAlgebraicTest {
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
   // constructors: just make sure result not null with valid args, throw exceptions if invalid
+  @SuppressWarnings("unused")
   @Test
   public void rawTuplesToSketchConstructors() {
     VarOptCommonImpl.RawTuplesToSketchTuple udf;
@@ -66,6 +67,7 @@ public class VarOptCommonAlgebraicTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesAsSketchConstructors() {
     VarOptCommonImpl.UnionSketchesAsTuple udf;
@@ -101,6 +103,7 @@ public class VarOptCommonAlgebraicTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesAsByteArrayConstructors() {
     VarOptCommonImpl.UnionSketchesAsByteArray udf;
