@@ -66,6 +66,7 @@ public class VarOptSamplingTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void algebraicFinalConstructors() {
     // these there should work

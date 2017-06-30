@@ -75,7 +75,7 @@ class VarOptCommonImpl {
   }
 
   // Serializes a sketch to a DataByteArray and wraps it in a Tuple
-  static Tuple wrapSketchInTuple(final VarOptItemsSketch<Tuple> sketch) throws IOException {
+  static Tuple wrapSketchInTuple(final VarOptItemsSketch<Tuple> sketch) {
     final DataByteArray dba = new DataByteArray(sketch.toByteArray(SERDE));
     return TUPLE_FACTORY.newTuple(dba);
   }
