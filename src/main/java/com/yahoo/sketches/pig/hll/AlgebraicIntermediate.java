@@ -36,7 +36,7 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
   private final int lgK_;
   private final TgtHllType tgtHllType_;
   private Tuple emptySketchTuple_; // this is to cash an empty sketch tuple
-  private boolean isFirstCall_; // for logging
+  private boolean isFirstCall_ = true; // for logging
 
   /**
    * Constructor with primitives for the intermediate pass of an Algebraic function.

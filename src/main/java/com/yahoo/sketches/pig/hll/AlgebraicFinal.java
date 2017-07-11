@@ -32,7 +32,7 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
   private final int lgK_;
   private final TgtHllType tgtHllType_;
   private DataByteArray emptySketch_; // this is to cash an empty sketch tuple
-  private boolean isFirstCall_; // for logging
+  private boolean isFirstCall_ = true; // for logging
 
   /**
    * Constructor with primitives for the final passes of an Algebraic function.
