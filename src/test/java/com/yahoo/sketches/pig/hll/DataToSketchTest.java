@@ -132,6 +132,26 @@ public class DataToSketchTest {
   }
 
   @Test
+  public void algebraicInitialWithLgK() throws Exception {
+    EvalFunc<Tuple> func =
+        (EvalFunc<Tuple>) Class.forName(new DataToSketch().getInitial())
+        .getConstructor(String.class).newInstance("10");
+    Tuple input = tupleFactory.newTuple();
+    Tuple result = func.exec(input);
+    Assert.assertEquals(result, input);
+  }
+
+  @Test
+  public void algebraicInitialWithLgKAndTgtHllType() throws Exception {
+    EvalFunc<Tuple> func =
+        (EvalFunc<Tuple>) Class.forName(new DataToSketch().getInitial())
+        .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
+    Tuple input = tupleFactory.newTuple();
+    Tuple result = func.exec(input);
+    Assert.assertEquals(result, input);
+  }
+
+  @Test
   public void algebraicIntermediateNullInputTuple() throws Exception {
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed()).newInstance();
