@@ -16,6 +16,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.yahoo.sketches.hll.HllSketch;
+import com.yahoo.sketches.hll.TgtHllType;
 
 public class UnionSketchTest {
 
@@ -32,18 +33,21 @@ public class UnionSketchTest {
 
   @Test
   public void execEmptyInputTuple() throws Exception {
-    EvalFunc<DataByteArray> func = new UnionSketch();
+    EvalFunc<DataByteArray> func = new UnionSketch("10");
     DataByteArray result = func.exec(tupleFactory.newTuple());
     HllSketch sketch = DataToSketchTest.getSketch(result);
     Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
   }
 
   @Test
   public void execEmptyBag() throws Exception {
-    EvalFunc<DataByteArray> func = new UnionSketch();
+    EvalFunc<DataByteArray> func = new UnionSketch("10", "HLL_6");
     DataByteArray result = func.exec(tupleFactory.newTuple(bagFactory.newDefaultBag()));
     HllSketch sketch = DataToSketchTest.getSketch(result);
     Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
+    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
   }
 
   @Test
@@ -127,16 +131,19 @@ public class UnionSketchTest {
   @Test
   public void algebraicIntermediateEmptyInputTuple() throws Exception {
     EvalFunc<Tuple> func =
-        (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed()).newInstance();
+        (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed())
+        .getConstructor(String.class).newInstance("10");
     Tuple result = func.exec(tupleFactory.newTuple());
     HllSketch sketch = DataToSketchTest.getSketch((DataByteArray) result.get(0));
     Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
   }
 
   @Test
   public void algebraicIntermediateFromInitial() throws Exception {
     EvalFunc<Tuple> func =
-        (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed()).newInstance();
+        (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed())
+        .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
     HllSketch inputSketch = new HllSketch(12);
     inputSketch.update(1);
     inputSketch.update(2);
@@ -149,6 +156,8 @@ public class UnionSketchTest {
     HllSketch sketch = DataToSketchTest.getSketch((DataByteArray) result.get(0));
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getEstimate(), 3.0, 0.01);
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
+    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
   }
 
   @Test
@@ -178,16 +187,19 @@ public class UnionSketchTest {
   @Test
   public void algebraicFinalEmptyInputTuple() throws Exception {
     EvalFunc<DataByteArray> func =
-        (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal()).newInstance();
+        (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal())
+        .getConstructor(String.class).newInstance("10");
     DataByteArray result = func.exec(tupleFactory.newTuple());
     HllSketch sketch = DataToSketchTest.getSketch(result);
     Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
   }
 
   @Test
   public void algebraicFinalFromInitial() throws Exception {
     EvalFunc<DataByteArray> func =
-        (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal()).newInstance();
+        (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal())
+        .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
     HllSketch inputSketch = new HllSketch(12);
     inputSketch.update(1);
     inputSketch.update(2);
@@ -200,6 +212,8 @@ public class UnionSketchTest {
     HllSketch sketch = DataToSketchTest.getSketch(result);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getEstimate(), 3.0, 0.01);
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
+    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
   }
 
   @Test
