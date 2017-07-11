@@ -172,10 +172,21 @@ public class DataToSketchTest {
   }
 
   @Test
-  public void algebraicIntermediateFromInitial() throws Exception {
+  public void algebraicIntermediateEmptyBag() throws Exception {
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
+    Tuple result = func.exec(tupleFactory.newTuple(bagFactory.newDefaultBag()));
+    HllSketch sketch = getSketch((DataByteArray) result.get(0));
+    Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
+    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
+  }
+
+  @Test
+  public void algebraicIntermediateFromInitial() throws Exception {
+    EvalFunc<Tuple> func =
+        (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed()).newInstance();
     DataBag outerBag = bagFactory.newDefaultBag();
     DataBag innerBag = bagFactory.newDefaultBag();
     innerBag.add(tupleFactory.newTuple("a"));
@@ -186,8 +197,6 @@ public class DataToSketchTest {
     HllSketch sketch = getSketch((DataByteArray) result.get(0));
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getEstimate(), 3.0, 0.01);
-    Assert.assertEquals(sketch.getLgConfigK(), 10);
-    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
   }
 
   @Test
@@ -226,10 +235,21 @@ public class DataToSketchTest {
   }
 
   @Test
-  public void algebraicFinalFromInitial() throws Exception {
+  public void algebraicFinalEmptyBag() throws Exception {
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
+    DataByteArray result = func.exec(tupleFactory.newTuple(bagFactory.newDefaultBag()));
+    HllSketch sketch = getSketch(result);
+    Assert.assertTrue(sketch.isEmpty());
+    Assert.assertEquals(sketch.getLgConfigK(), 10);
+    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
+  }
+
+  @Test
+  public void algebraicFinalFromInitial() throws Exception {
+    EvalFunc<DataByteArray> func =
+        (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal()).newInstance();
     DataBag outerBag = bagFactory.newDefaultBag();
     DataBag innerBag = bagFactory.newDefaultBag();
     innerBag.add(tupleFactory.newTuple("a"));
@@ -240,8 +260,6 @@ public class DataToSketchTest {
     HllSketch sketch = getSketch(result);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getEstimate(), 3.0, 0.01);
-    Assert.assertEquals(sketch.getLgConfigK(), 10);
-    Assert.assertEquals(sketch.getTgtHllType(), TgtHllType.HLL_6);
   }
 
   @Test
