@@ -7,13 +7,15 @@ package com.yahoo.sketches.pig.hll;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.yahoo.sketches.hll.HllSketch;
-
-import junit.framework.Assert;
 
 public class SketchToEstimateAndErrorBoundsTest {
 
@@ -44,6 +46,21 @@ public class SketchToEstimateAndErrorBoundsTest {
     Assert.assertEquals((Double) result.get(0), 2.0, 0.01);
     Assert.assertTrue((Double) result.get(1) <= 2.0);
     Assert.assertTrue((Double) result.get(2) >= 2.0);
+  }
+
+  @Test
+  public void schema() throws Exception {
+    EvalFunc<Tuple> func = new SketchToEstimateAndErrorBounds();
+    Schema inputSchema = new Schema(new Schema.FieldSchema("Sketch", DataType.BYTEARRAY));
+    Schema outputSchema = func.outputSchema(inputSchema);
+    Assert.assertNotNull(outputSchema);
+    Assert.assertEquals(outputSchema.size(), 1);
+    Assert.assertEquals(DataType.findTypeName(outputSchema.getField(0).type), "tuple");
+    Schema innerSchema = outputSchema.getField(0).schema;
+    Assert.assertEquals(innerSchema.size(), 3);
+    Assert.assertEquals(DataType.findTypeName(innerSchema.getField(0).type), "double");
+    Assert.assertEquals(DataType.findTypeName(innerSchema.getField(1).type), "double");
+    Assert.assertEquals(DataType.findTypeName(innerSchema.getField(2).type), "double");
   }
 
 }
