@@ -29,7 +29,6 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.memory.WritableMemory;
 import com.yahoo.sketches.Util;
 import com.yahoo.sketches.theta.CompactSketch;
 import com.yahoo.sketches.theta.SetOperation;
@@ -298,7 +297,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
       if (type == DataType.BYTEARRAY) {
         final DataByteArray dba = (DataByteArray) f0;
         if (dba.size() > 0) {
-          union.update(WritableMemory.wrap(dba.get()));
+          union.update(Memory.wrap(dba.get()));
         }
       } else {
         throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);

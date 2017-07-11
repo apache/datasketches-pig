@@ -27,7 +27,7 @@ import com.yahoo.sketches.theta.Sketch;
 
 /**
  * This is a Pig UDF that performs the A-NOT-B Set Operation on two given Sketches. Because this
- * operation is fundamentally asymetric, it is structured as a single stateless operation rather
+ * operation is fundamentally asymmetric, it is structured as a single stateless operation rather
  * than stateful as are Union and Intersection UDFs, which can be iterative.
  * The requirement to perform iterative A\B\C\... is rare. If needed, it can be rendered easily by
  * the caller.
