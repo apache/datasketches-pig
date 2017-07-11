@@ -46,15 +46,32 @@ public class DataToSketchTest {
     Assert.assertTrue(sketch.isEmpty());
   }
 
-  @Test
-  public void execNormalCase() throws Exception {
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void execUnsupportedType() throws Exception {
     EvalFunc<DataByteArray> func = new DataToSketch();
     DataBag bag = bagFactory.newDefaultBag();
+    bag.add(tupleFactory.newTuple(new Object()));
+    func.exec(tupleFactory.newTuple(bag));
+  }
+
+  @Test
+  public void execVariousTypesOfInput() throws Exception {
+    EvalFunc<DataByteArray> func = new DataToSketch();
+    DataBag bag = bagFactory.newDefaultBag();
+    Tuple tupleWithNull = tupleFactory.newTuple(1);
+    tupleWithNull.set(0, null);
+    bag.add(tupleWithNull);
+    bag.add(tupleFactory.newTuple(new Byte((byte) 1)));
+    bag.add(tupleFactory.newTuple(new Integer(2)));
+    bag.add(tupleFactory.newTuple(new Long(3)));
+    bag.add(tupleFactory.newTuple(new Float(1)));
+    bag.add(tupleFactory.newTuple(new Double(2)));
+    bag.add(tupleFactory.newTuple(new DataByteArray(new byte[] {(byte) 1})));
     bag.add(tupleFactory.newTuple("a"));
     DataByteArray result = func.exec(tupleFactory.newTuple(bag));
     HllSketch sketch = getSketch(result);
     Assert.assertFalse(sketch.isEmpty());
-    Assert.assertEquals(sketch.getEstimate(), 1.0, 0.01);
+    Assert.assertEquals(sketch.getEstimate(), 7.0, 0.01);
   }
 
   @Test
