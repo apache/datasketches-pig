@@ -10,9 +10,7 @@ import static com.yahoo.sketches.pig.theta.PigUtil.tupleToSketch;
 import java.io.IOException;
 
 import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import com.yahoo.sketches.Util;
 import com.yahoo.sketches.theta.Sketch;
@@ -80,22 +78,4 @@ public class SketchToString extends EvalFunc<String> {
     return sketch.toString(true, detailOut, 8, true);
   }
 
-  /**
-   * The output is a String Tuple.
-   */
-  @Override
-  public Schema outputSchema(final Schema input) {
-    if (input != null) {
-      try {
-        final Schema tupleSchema = new Schema();
-        tupleSchema.add(new Schema.FieldSchema("PrettyString", DataType.CHARARRAY));
-        return new Schema(new Schema.FieldSchema(getSchemaName(this
-            .getClass().getName().toLowerCase(), input), tupleSchema, DataType.TUPLE));
-      }
-      catch (final Exception e) {
-        // fall through
-      }
-    }
-    return null;
-  }
 }
