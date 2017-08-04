@@ -67,15 +67,13 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
         for (int i = 0; i < valuesA.length; i++) {
             // Do some special math to get an accurate mean from the sketches
             // Take the sum of the values, divide by theta, then divide by the
-            // estimate number of records. Note, this only counts the number
-            // of distinct records, not the total number of records.
+            // estimate number of records.
             double meanA = (StatUtils.sum(valuesA[i]) / sketchA.getTheta()) / sketchA.getEstimate();
             double meanB = (StatUtils.sum(valuesB[i]) / sketchB.getTheta()) / sketchB.getEstimate();
             // Variance is based only on the samples we have in the tuple sketch
             double varianceA = StatUtils.variance(valuesA[i]);
             double varianceB = StatUtils.variance(valuesB[i]);
             // Use the estimated number of uniques
-            // Not completely accurate, as repeats that share the same ID won't be in the estimate
             double numA = sketchA.getEstimate();
             double numB = sketchB.getEstimate();
             pValues[i] = tTest.callTTest(meanA, meanB, varianceA, varianceB, numA, numB);
