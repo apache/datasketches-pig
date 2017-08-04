@@ -83,7 +83,7 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
     }
 
     /**
-     * Perform a clockwise rotation the output values from the tuple sketch.
+     * Perform a clockwise rotation on the output values from the tuple sketch.
      *
      * @param m Input matrix to rotate
      * @return Rotated matrix
