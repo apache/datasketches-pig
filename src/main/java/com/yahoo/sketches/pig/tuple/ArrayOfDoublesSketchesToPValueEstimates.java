@@ -58,25 +58,17 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
         // Get the values from each sketch
         double[][] valuesA = sketchA.getValues();
         double[][] valuesB = sketchB.getValues();
+
+        // Need to rotate the matrix to get arrays of each metric
         valuesA = rotateMatrix(valuesA);
         valuesB = rotateMatrix(valuesB);
 
         // Calculate the p-values
         double[] pValues = new double[valuesA.length];
-        TTestWithSketch tTest = new TTestWithSketch();
+        TTest tTest = new TTest();
         for (int i = 0; i < valuesA.length; i++) {
-            // Do some special math to get an accurate mean from the sketches
-            // Take the sum of the values, divide by theta, then divide by the
-            // estimate number of records.
-            double meanA = (StatUtils.sum(valuesA[i]) / sketchA.getTheta()) / sketchA.getEstimate();
-            double meanB = (StatUtils.sum(valuesB[i]) / sketchB.getTheta()) / sketchB.getEstimate();
-            // Variance is based only on the samples we have in the tuple sketch
-            double varianceA = StatUtils.variance(valuesA[i]);
-            double varianceB = StatUtils.variance(valuesB[i]);
-            // Use the estimated number of uniques
-            double numA = sketchA.getEstimate();
-            double numB = sketchB.getEstimate();
-            pValues[i] = tTest.callTTest(meanA, meanB, varianceA, varianceB, numA, numB);
+            // Pass the sampled values
+            pValues[i] = tTest.tTest(valuesA[i], valuesB[i]);
         }
 
         return Util.doubleArrayToTuple(pValues);
@@ -98,17 +90,5 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
             }
         }
         return result;
-    }
-
-    /**
-     * This class exists to get around the protected tTest method.
-     */
-    private class TTestWithSketch extends TTest {
-        /**
-         * Call the protected tTest method.
-         */
-        public double callTTest(double m1, double m2, double v1, double v2, double n1, double n2) {
-            return super.tTest(m1, m2, v1, v2, n1, n2);
-        }
     }
 }

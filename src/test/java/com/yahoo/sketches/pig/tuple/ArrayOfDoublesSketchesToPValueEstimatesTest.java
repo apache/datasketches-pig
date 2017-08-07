@@ -18,6 +18,8 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.commons.math3.stat.StatUtils;
 
+import java.util.Random;
+
 /**
  * Test p-value estimation of two ArrayOfDoublesSketch.
  */
@@ -134,38 +136,35 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
         // Create the two sketches
         ArrayOfDoublesUpdatableSketch sketchA = new ArrayOfDoublesUpdatableSketchBuilder()
                                                     .setNumberOfValues(1)
-                                                    .setNominalEntries(4096)
+                                                    .setNominalEntries(16000)
                                                     .build();
         ArrayOfDoublesUpdatableSketch sketchB = new ArrayOfDoublesUpdatableSketchBuilder()
                                                     .setNumberOfValues(1)
-                                                    .setNominalEntries(4096)
+                                                    .setNominalEntries(16000)
                                                     .build();
 
         // Number of values to use.
-        int n = 1000000;
+        int n = 100000;
         int bShift = 1000;
         double[] a = new double[n];
         double[] b = new double[n];
 
+        // Random number generator
+        Random rand = new Random(41L);
+
         // Add values to A sketch
         for (int i = 0; i < n; i++) {
-            sketchA.update(i, new double[] {i});
-            a[i] = i;
+            double val = rand.nextGaussian();
+            sketchA.update(i, new double[] {val});
+            a[i] = val;
         }
 
         // Add values to B sketch
         for (int i = 0; i < n; i++) {
-            int val = i + bShift;
+            double val = rand.nextGaussian() + bShift;
             sketchB.update(i, new double[] {val});
             b[i] = val;
         }
-
-        double meanA = StatUtils.mean(a);
-        double meanB = StatUtils.mean(b);
-        double varianceA = StatUtils.variance(a);
-        double varianceB = StatUtils.variance(b);
-        double numA = a.length;
-        double numB = b.length;
 
         TTest tTest = new TTest();
         double expectedPValue = tTest.tTest(a, b);
