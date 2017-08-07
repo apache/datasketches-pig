@@ -22,10 +22,6 @@ import org.apache.pig.data.Tuple;
  * Calculate p-values given two ArrayOfDoublesSketch. Each value in the sketch
  * is treated as a separate metric measurement, and a p-value will be generated
  * for each metric.
- *
- * The t-statistic is calculated as follows: t = (m1 - m2) / sqrt(var1/n1 + var2/n2)
- *
- * Degrees of freedom is approximated by Welch-Satterthwaite.
  */
 public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
     @Override
@@ -67,7 +63,7 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
         double[] pValues = new double[valuesA.length];
         TTest tTest = new TTest();
         for (int i = 0; i < valuesA.length; i++) {
-            // Pass the sampled values
+            // Pass the sampled values for each metric
             pValues[i] = tTest.tTest(valuesA[i], valuesB[i]);
         }
 
