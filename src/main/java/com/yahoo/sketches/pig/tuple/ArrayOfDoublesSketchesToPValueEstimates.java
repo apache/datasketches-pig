@@ -8,11 +8,12 @@ package com.yahoo.sketches.pig.tuple;
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
+import com.yahoo.sketches.tuple.ArrayOfDoublesSketchIterator;
 
 import java.io.IOException;
 
 import org.apache.commons.math3.stat.inference.TTest;
-import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
@@ -41,6 +42,9 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
             throw new IllegalArgumentException("Both sketches must have the same number of values");
         }
 
+        // Store the number of metrics
+        int numMetrics = sketchA.getNumValues();
+
         // Check if either sketch is empty
         if (sketchA.isEmpty() || sketchB.isEmpty()) {
             return null;
@@ -51,40 +55,40 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
             return null;
         }
 
-        // Get the values from each sketch
-        double[][] valuesA = sketchA.getValues();
-        double[][] valuesB = sketchB.getValues();
+        //// Get the stastical summary from each sketch
+        SummaryStatistics[] summaryA = new SummaryStatistics[numMetrics];
+        SummaryStatistics[] summaryB = new SummaryStatistics[numMetrics];
 
-        // Need to rotate the matrix to get arrays of each metric
-        valuesA = rotateMatrix(valuesA);
-        valuesB = rotateMatrix(valuesB);
+        // Init the arrays
+        for (int i = 0; i < numMetrics; i++) {
+            summaryA[i] = new SummaryStatistics();
+            summaryB[i] = new SummaryStatistics();
+        }
+
+        // Summary of A
+        ArrayOfDoublesSketchIterator it = sketchA.iterator();
+        while (it.next()) {
+            for (int i = 0; i < it.getValues().length; i++) {
+                summaryA[i].addValue(it.getValues()[i]);
+            }
+        }
+
+        // Summary of B
+        it = sketchB.iterator();
+        while (it.next()) {
+            for (int i = 0; i < it.getValues().length; i++) {
+                summaryB[i].addValue(it.getValues()[i]);
+            }
+        }
 
         // Calculate the p-values
-        double[] pValues = new double[valuesA.length];
+        double[] pValues = new double[numMetrics];
         TTest tTest = new TTest();
-        for (int i = 0; i < valuesA.length; i++) {
+        for (int i = 0; i < numMetrics; i++) {
             // Pass the sampled values for each metric
-            pValues[i] = tTest.tTest(valuesA[i], valuesB[i]);
+            pValues[i] = tTest.tTest(summaryA[i], summaryB[i]);
         }
 
         return Util.doubleArrayToTuple(pValues);
-    }
-
-    /**
-     * Perform a clockwise rotation on the output values from the tuple sketch.
-     *
-     * @param m Input matrix to rotate
-     * @return Rotated matrix
-     */
-    private static double[][] rotateMatrix(double[][] m) {
-        final int width = m.length;
-        final int height = m[0].length;
-        double[][] result = new double[height][width];
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                result[j][width - 1 - i] = m[i][j];
-            }
-        }
-        return result;
     }
 }
