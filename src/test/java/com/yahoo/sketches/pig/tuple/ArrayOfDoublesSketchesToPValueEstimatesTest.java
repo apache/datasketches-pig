@@ -118,7 +118,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
                                                   new DataByteArray(sketchB.compact().toByteArray()));
         Tuple resultTuple = func.exec(inputTuple);
 
-        // Should get 2 p-values back
+        // Should get 1 p-value back
         Assert.assertNotNull(resultTuple);
         Assert.assertEquals(resultTuple.size(), 1);
 
@@ -174,7 +174,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
                                                   new DataByteArray(sketchB.compact().toByteArray()));
         Tuple resultTuple = func.exec(inputTuple);
 
-        // Should get 2 p-values back
+        // Should get 1 p-value back
         Assert.assertNotNull(resultTuple);
         Assert.assertEquals(resultTuple.size(), 1);
 
