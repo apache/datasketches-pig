@@ -50,12 +50,12 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
             return null;
         }
 
-        // Check that each sketch has at least 2 values
+        // If the sketches contain fewer than 2 values, the p-value can't be calculated
         if (sketchA.getRetainedEntries() < 2 || sketchB.getRetainedEntries() < 2) {
             return null;
         }
 
-        //// Get the stastical summary from each sketch
+        // Get the statistical summary from each sketch
         SummaryStatistics[] summaryA = new SummaryStatistics[numMetrics];
         SummaryStatistics[] summaryB = new SummaryStatistics[numMetrics];
 
