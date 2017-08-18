@@ -45,11 +45,6 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
         // Store the number of metrics
         int numMetrics = sketchA.getNumValues();
 
-        // Check if either sketch is empty
-        if (sketchA.isEmpty() || sketchB.isEmpty()) {
-            return null;
-        }
-
         // If the sketches contain fewer than 2 values, the p-value can't be calculated
         if (sketchA.getRetainedEntries() < 2 || sketchB.getRetainedEntries() < 2) {
             return null;
