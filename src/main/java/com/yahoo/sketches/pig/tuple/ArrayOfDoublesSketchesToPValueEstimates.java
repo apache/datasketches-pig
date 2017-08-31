@@ -70,8 +70,8 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
       Map<String, Double> map = new HashMap<>();
       // Pass the sampled values for each metric
       map.put(P_VALUE_KEY, tTest.tTest(summaryA[i], summaryB[i]));
-      // The mean delta is equal to A_mean - B_mean
-      map.put(DELTA_KEY, summaryA[i].getMean() - summaryB[i].getMean());
+      // Add the change percent between the means of A and B
+      map.put(DELTA_KEY, relativeChangePercent(summaryA[i].getMean(), summaryB[i].getMean()));
       // Add the map to the tuple
       tuple.set(i, map);
     }
@@ -105,6 +105,17 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
     }
 
     return summaryStatistics;
+  }
+
+  /**
+   * Calculate the relative change between two doubles.
+   *
+   * @ a First number.
+   * @ b Second number.
+   * @return Percent difference.
+   */
+  private static double relativeChangePercent(double a, double b) {
+      return (b - a) / Math.abs(a);
   }
 
 }
