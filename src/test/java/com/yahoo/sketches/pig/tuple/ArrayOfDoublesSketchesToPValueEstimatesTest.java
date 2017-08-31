@@ -18,6 +18,7 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.commons.math3.stat.StatUtils;
 
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -123,7 +124,9 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
         Assert.assertEquals(resultTuple.size(), 1);
 
         // Check p-value values, with a delta
-        Assert.assertEquals((double) resultTuple.get(0), 0.0043, 0.0001);
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.P_VALUE_KEY), 0.0043, 0.0001);
+        // Check mean delta
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.DELTA_KEY), 1.034, 0.1);
     }
 
     /**
@@ -179,7 +182,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
         Assert.assertEquals(resultTuple.size(), 1);
 
         // Check p-value values, with a delta
-        Assert.assertEquals((double) resultTuple.get(0), expectedPValue, 0.01);
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.P_VALUE_KEY), expectedPValue, 0.01);
+        // Check mean delta
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.DELTA_KEY), -1000.0, 100);
+
     }
 
     /**
@@ -223,8 +229,13 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
         Assert.assertEquals(resultTuple.size(), 2);
 
         // Check expected p-value values, with a delta
-        Assert.assertEquals((double) resultTuple.get(0), 0.0043, 0.0001);
-        Assert.assertEquals((double) resultTuple.get(1), 0.58, 0.01);
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.P_VALUE_KEY), 0.0043, 0.0001);
+        Assert.assertEquals((double) ((Map) resultTuple.get(1)).get(ArrayOfDoublesSketchesToPValueEstimates.P_VALUE_KEY), 0.58, 0.01);
+
+        // Check mean delta
+        Assert.assertEquals((double) ((Map) resultTuple.get(0)).get(ArrayOfDoublesSketchesToPValueEstimates.DELTA_KEY), 1.03, 0.1);
+        Assert.assertEquals((double) ((Map) resultTuple.get(1)).get(ArrayOfDoublesSketchesToPValueEstimates.DELTA_KEY), -1.0, 0.1);
+
     }
 
     /**
