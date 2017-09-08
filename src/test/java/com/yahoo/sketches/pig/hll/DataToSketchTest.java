@@ -124,6 +124,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getInitial()).newInstance();
     Tuple input = tupleFactory.newTuple();
@@ -133,6 +134,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicInitialWithLgK() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getInitial())
         .getConstructor(String.class).newInstance("10");
@@ -143,6 +145,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicInitialWithLgKAndTgtHllType() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getInitial())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
@@ -153,6 +156,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateNullInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed()).newInstance();
     Tuple result = func.exec(null);
@@ -162,6 +166,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateEmptyInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed())
         .getConstructor(String.class).newInstance("10");
@@ -173,6 +178,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateEmptyBag() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
@@ -185,6 +191,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateFromInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed()).newInstance();
     DataBag outerBag = bagFactory.newDefaultBag();
@@ -201,6 +208,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicIntermediateFromIntermediate() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new DataToSketch().getIntermed()).newInstance();
     HllSketch inputSketch = new HllSketch(12);
@@ -216,6 +224,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicFinalNullInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal()).newInstance();
     DataByteArray result = func.exec(null);
@@ -225,6 +234,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicFinalEmptyInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal())
         .getConstructor(String.class).newInstance("10");
@@ -236,6 +246,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicFinalEmptyBag() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
@@ -248,6 +259,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicFinalFromInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal()).newInstance();
     DataBag outerBag = bagFactory.newDefaultBag();
@@ -264,6 +276,7 @@ public class DataToSketchTest {
 
   @Test
   public void algebraicFinalFromIntermediate() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new DataToSketch().getFinal()).newInstance();
     HllSketch inputSketch = new HllSketch(12);

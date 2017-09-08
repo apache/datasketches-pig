@@ -112,6 +112,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new UnionSketch().getInitial()).newInstance();
     Tuple input = tupleFactory.newTuple();
@@ -121,6 +122,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicIntermediateNullInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed()).newInstance();
     Tuple result = func.exec(null);
@@ -130,6 +132,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicIntermediateEmptyInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed())
         .getConstructor(String.class).newInstance("10");
@@ -141,6 +144,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicIntermediateFromInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
@@ -162,6 +166,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicIntermediateFromIntermediate() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<Tuple> func =
         (EvalFunc<Tuple>) Class.forName(new UnionSketch().getIntermed()).newInstance();
     HllSketch inputSketch = new HllSketch(12);
@@ -177,6 +182,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicFinalNullInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal()).newInstance();
     DataByteArray result = func.exec(null);
@@ -186,6 +192,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicFinalEmptyInputTuple() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal())
         .getConstructor(String.class).newInstance("10");
@@ -197,6 +204,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicFinalFromInitial() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal())
         .getConstructor(String.class, String.class).newInstance("10", "HLL_6");
@@ -218,6 +226,7 @@ public class UnionSketchTest {
 
   @Test
   public void algebraicFinalFromIntermediate() throws Exception {
+    @SuppressWarnings("unchecked")
     EvalFunc<DataByteArray> func =
         (EvalFunc<DataByteArray>) Class.forName(new UnionSketch().getFinal()).newInstance();
     HllSketch inputSketch = new HllSketch(12);
