@@ -68,9 +68,8 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     // if entire input data fits in reservoir, shortcut result
     if (samples.size() <= targetK_) {
       return createResultTuple(samples.size(), targetK_, samples);
-    } else {
-      return super.exec(inputTuple);
     }
+    return super.exec(inputTuple);
   }
 
   @Override
