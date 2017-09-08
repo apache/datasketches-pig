@@ -36,7 +36,7 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final DoublesSketch sketch = DoublesSketch.heapify(Memory.wrap(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.wrap(Memory.wrap(dba.get()));
 
     if (input.size() == 2) {
       final Object arg = input.get(1);
@@ -48,17 +48,17 @@ public class GetQuantilesFromDoublesSketch extends EvalFunc<Tuple> {
         throw new IllegalArgumentException("expected a double value as a fraction or an integer value"
             + " as a number of evenly spaced intervals, got " + arg.getClass().getSimpleName());
       }
-    } else { // more than one number - must be double fractions
-      final double[] fractions = new double[input.size() - 1];
-      for (int i = 1; i < input.size(); i++) {
-        if (!(input.get(i) instanceof Double)) {
-          throw new IllegalArgumentException("expected a double value as a fraction, got "
-              + input.get(i).getClass().getSimpleName());
-        }
-        fractions[i - 1] = (double) input.get(i);
-      }
-      return Util.doubleArrayToTuple(sketch.getQuantiles(fractions));
     }
+    // more than one number - must be double fractions
+    final double[] fractions = new double[input.size() - 1];
+    for (int i = 1; i < input.size(); i++) {
+      if (!(input.get(i) instanceof Double)) {
+        throw new IllegalArgumentException("expected a double value as a fraction, got "
+            + input.get(i).getClass().getSimpleName());
+      }
+      fractions[i - 1] = (double) input.get(i);
+    }
+    return Util.doubleArrayToTuple(sketch.getQuantiles(fractions));
   }
 
 }

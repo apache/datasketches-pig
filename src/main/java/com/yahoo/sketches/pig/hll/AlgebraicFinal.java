@@ -77,7 +77,7 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
         // due to system bagged outputs from multiple mapper Intermediate functions.
         // Each dataTuple.DBA:sketch will merged into the union.
         final DataByteArray dba = (DataByteArray) f0;
-        union.update(HllSketch.heapify(Memory.wrap(dba.get())));
+        union.update(HllSketch.wrap(Memory.wrap(dba.get())));
       } else { // we should never get here
         throw new IllegalArgumentException("dataTuple.Field0 is not a DataBag or DataByteArray: "
             + f0.getClass().getName());

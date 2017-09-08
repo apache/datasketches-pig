@@ -36,7 +36,7 @@ public class GetPmfFromDoublesSketch extends EvalFunc<Tuple> {
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final DoublesSketch sketch = DoublesSketch.heapify(Memory.wrap(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.wrap(Memory.wrap(dba.get()));
 
     final double[] splitPoints = new double[input.size() - 1];
     for (int i = 1; i < input.size(); i++) {

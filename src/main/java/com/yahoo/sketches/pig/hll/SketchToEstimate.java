@@ -11,6 +11,7 @@ import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.hll.HllSketch;
 
 /**
@@ -26,7 +27,7 @@ public class SketchToEstimate extends EvalFunc<Double> {
       return null;
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
-    final HllSketch sketch = HllSketch.heapify(dba.get());
+    final HllSketch sketch = HllSketch.wrap(Memory.wrap(dba.get()));
     return sketch.getEstimate();
   }
 

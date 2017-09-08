@@ -189,7 +189,7 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
       final byte type = innerTuple.getType(0);
       if (type == DataType.BYTEARRAY) {
         final DataByteArray dba = (DataByteArray) f0;
-        union.update(HllSketch.heapify(Memory.wrap(dba.get())));
+        union.update(HllSketch.wrap(Memory.wrap(dba.get())));
       } else {
         throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);
       }

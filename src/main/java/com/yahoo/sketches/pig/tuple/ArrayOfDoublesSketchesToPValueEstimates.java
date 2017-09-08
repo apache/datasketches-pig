@@ -13,10 +13,10 @@ import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
-import com.yahoo.sketches.tuple.ArrayOfDoublesSketchIterator;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketches;
 
 /**
@@ -52,46 +52,18 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
     }
 
     // Get the statistical summary from each sketch
-    final SummaryStatistics[] summaryA = sketchToSummaryStatistics(sketchA, numMetrics);
-    final SummaryStatistics[] summaryB = sketchToSummaryStatistics(sketchB, numMetrics);
+    final SummaryStatistics[] summariesA = ArrayOfDoublesSketchStats.sketchToSummaryStatistics(sketchA);
+    final SummaryStatistics[] summariesB = ArrayOfDoublesSketchStats.sketchToSummaryStatistics(sketchB);
 
     // Calculate the p-values
-    final double[] pValues = new double[numMetrics];
     final TTest tTest = new TTest();
+    final Tuple pValues = TupleFactory.getInstance().newTuple(numMetrics);
     for (int i = 0; i < numMetrics; i++) {
       // Pass the sampled values for each metric
-      pValues[i] = tTest.tTest(summaryA[i], summaryB[i]);
+      pValues.set(i, tTest.tTest(summariesA[i], summariesB[i]));
     }
 
-    return Util.doubleArrayToTuple(pValues);
+    return pValues;
   }
-  
-  /**
-   * Convert sketch to a summary statistic.
-   *
-   * @param sketch ArrayOfDoublesSketch to convert to a summary statistic.
-   * @param numMetrics Number of metrics (values) in the ArrayOfDoublesSketch.
-   * @return A summary statistic.
-   */
-  private static SummaryStatistics[] sketchToSummaryStatistics(final ArrayOfDoublesSketch sketch,
-      final int numMetrics) {
-    // Store a summary statistic object for each metric
-    final SummaryStatistics[] summaryStatistics = new SummaryStatistics[numMetrics];
 
-    // Init the array
-    for (int i = 0; i < numMetrics; i++) {
-      summaryStatistics[i] = new SummaryStatistics();
-    }
-
-    // Add sketch values to the summary statistic object
-    final ArrayOfDoublesSketchIterator it = sketch.iterator();
-    while (it.next()) {
-      for (int i = 0; i < it.getValues().length; i++) {
-        summaryStatistics[i].addValue(it.getValues()[i]);
-      }
-    }
-
-    return summaryStatistics;
-  }
-  
 }

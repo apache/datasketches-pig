@@ -16,7 +16,6 @@ import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 import org.apache.commons.math3.stat.inference.TTest;
-import org.apache.commons.math3.stat.StatUtils;
 
 import java.util.Random;
 
@@ -26,6 +25,7 @@ import java.util.Random;
 public class ArrayOfDoublesSketchesToPValueEstimatesTest {
     /**
      * Check null input to UDF.
+     * @throws Exception
      */
     @Test
     public void nullInput() throws Exception {
@@ -38,6 +38,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of empty tuple.
+     * @throws Exception
      */
     @Test
     public void emptyInput() throws Exception {
@@ -50,6 +51,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of single empty sketch.
+     * @throws Exception
      */
     @Test
     public void oneEmptySketch() throws Exception {
@@ -66,6 +68,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of two empty sketches.
+     * @throws Exception
      */
     @Test
     public void twoEmptySketches() throws Exception {
@@ -84,6 +87,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for the smoker data set. Single metric.
+     * @throws Exception
      */
     @Test
     public void smokerDatasetSingleMetric() throws Exception {
@@ -128,6 +132,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for a large data set.
+     * @throws Exception
      */
     @Test
     public void largeDataSet() throws Exception {
@@ -184,6 +189,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for two metrics at the same time.
+     * @throws Exception
      */
     @Test
     public void twoMetrics() throws Exception {
@@ -229,6 +235,7 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check with sketch having only one input.
+     * @throws Exception
      */
     @Test
     public void sketchWithSingleValue() throws Exception {

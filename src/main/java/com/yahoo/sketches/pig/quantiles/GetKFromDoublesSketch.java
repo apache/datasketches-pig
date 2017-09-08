@@ -32,7 +32,7 @@ public class GetKFromDoublesSketch extends EvalFunc<Integer> {
           + input.get(0).getClass().getSimpleName());
     }
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final DoublesSketch sketch = DoublesSketch.heapify(Memory.wrap(dba.get()));
+    final DoublesSketch sketch = DoublesSketch.wrap(Memory.wrap(dba.get()));
 
     return sketch.getK();
   }

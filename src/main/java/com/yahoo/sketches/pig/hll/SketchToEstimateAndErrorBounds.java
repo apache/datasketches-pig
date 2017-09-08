@@ -15,6 +15,7 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
+import com.yahoo.memory.Memory;
 import com.yahoo.sketches.hll.HllSketch;
 
 /**
@@ -34,7 +35,7 @@ public class SketchToEstimateAndErrorBounds extends EvalFunc<Tuple> {
       return null;
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
-    final HllSketch sketch = HllSketch.heapify(dba.get());
+    final HllSketch sketch = HllSketch.wrap(Memory.wrap(dba.get()));
     final Tuple outputTuple = TupleFactory.getInstance().newTuple(3);
     outputTuple.set(0, Double.valueOf(sketch.getEstimate()));
     outputTuple.set(1, Double.valueOf(sketch.getLowerBound(2)));
