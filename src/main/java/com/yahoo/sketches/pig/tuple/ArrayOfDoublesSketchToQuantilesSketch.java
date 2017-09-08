@@ -36,10 +36,11 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
 
   /**
    * Constructor with a given parameter k for quantiles sketch
-   * @param k parameter that determines the accuracy and size of the quantiles sketch
+   * @param k string representation of the parameter k that determines the accuracy
+   *   and size of the quantiles sketch
    */
-  public ArrayOfDoublesSketchToQuantilesSketch(final int k) {
-    this.k = k;
+  public ArrayOfDoublesSketchToQuantilesSketch(final String k) {
+    this.k = Integer.parseInt(k);
   }
 
   @Override

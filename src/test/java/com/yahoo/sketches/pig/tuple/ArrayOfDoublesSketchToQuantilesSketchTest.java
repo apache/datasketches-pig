@@ -49,7 +49,7 @@ public class ArrayOfDoublesSketchToQuantilesSketchTest {
   @Test
   public void nonEmptyInputSketchWithTwoColumnsExplicitK() throws Exception {
     int k = 256;
-    EvalFunc<DataByteArray> func = new ArrayOfDoublesSketchToQuantilesSketch(k);
+    EvalFunc<DataByteArray> func = new ArrayOfDoublesSketchToQuantilesSketch(Integer.toString(k));
     ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNumberOfValues(2).build();
     sketch.update(1, new double[] {1.0, 2.0});
     sketch.update(2, new double[] {10.0, 20.0});
