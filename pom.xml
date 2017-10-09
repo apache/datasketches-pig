@@ -154,6 +154,12 @@
       <version>0.10.3</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.yahoo.datasketches</groupId>
+      <artifactId>sketches-vector</artifactId>
+      <version>0.0.2</version>
+    </dependency>
+
     <!-- Pig -->
     <dependency>
       <groupId>org.apache.pig</groupId>

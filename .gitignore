@@ -4,6 +4,11 @@
 .settings/
 .checkstyle
 
+# IntelliJ project files
+*.iml
+*.ipr
+*.iws
+
 #OSX files
 .DS_Store
 
