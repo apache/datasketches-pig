@@ -12,6 +12,7 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.memory.Memory;
+import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.DoublesSketchBuilder;
 import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 import com.yahoo.sketches.tuple.ArrayOfDoublesSketch;
@@ -55,13 +56,13 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
     int column = 1;
     if (input.size() > 1) {
       column = (int) input.get(1);
-      if (column < 1 || column > sketch.getNumValues()) {
+      if ((column < 1) || (column > sketch.getNumValues())) {
         throw new IllegalArgumentException("Column number out of range. The given sketch has "
           + sketch.getNumValues() + " columns");
       }
     }
 
-    final DoublesSketchBuilder builder = UpdateDoublesSketch.builder();
+    final DoublesSketchBuilder builder = DoublesSketch.builder();
     if (k > 0) {
       builder.setK(k);
     }
