@@ -15,11 +15,11 @@ import org.apache.pig.data.TupleFactory;
 /**
  * @author Jon Malkin
  */
-public class MergeFrequentDirectionsUDF
+public class MergeFrequentDirections
         extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {
   private FrequentDirections gadget_;
 
-  public MergeFrequentDirectionsUDF() {
+  public MergeFrequentDirections() {
   }
 
   public DataByteArray getValue() {
