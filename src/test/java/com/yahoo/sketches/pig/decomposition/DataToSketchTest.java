@@ -3,12 +3,13 @@ package com.yahoo.sketches.pig.decomposition;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
+import java.util.Random;
 
-import com.yahoo.memory.Memory;
-import com.yahoo.sketches.decomposition.FrequentDirections;
+import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
@@ -16,7 +17,12 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 
+import com.yahoo.memory.Memory;
+import com.yahoo.sketches.decomposition.FrequentDirections;
+
 public class DataToSketchTest {
+  private static final Random rand = new Random();
+
   // AccumulateEvalFunc
   @Test
   public void checkConstructors() {
@@ -54,29 +60,7 @@ public class DataToSketchTest {
       inputTuple.set(0, outerBag);
       udf.exec(inputTuple); // empty bag
 
-      final FrequentDirections fd = FrequentDirections.newInstance(k, d);
-
-      // add each value to both the input bag and a sketch
-      for (int i = 1; i < k; ++i) {
-        final DataBag innerBag = BagFactory.getInstance().newDefaultBag();
-        final double[] vector = new double[d];
-        // set 2 points, so 2 Tuples
-        Tuple t = TupleFactory.getInstance().newTuple(2);
-        t.set(0, i);
-        t.set(1, 1.0 * i);
-        innerBag.add(t);
-        vector[i] = 1.0 * i;
-
-        t = TupleFactory.getInstance().newTuple(2);
-        t.set(0, k + i);
-        t.set(1, 1.0 * i);
-        innerBag.add(t);
-        vector[k + i] = 1.0 * i;
-
-        final Tuple record = TupleFactory.getInstance().newTuple(innerBag);
-        outerBag.add(record);
-        fd.update(vector);
-      }
+      final FrequentDirections fd = createInputSamplesAndSketch(k, d, outerBag);
 
       assertNull(udf.getValue());
       udf.accumulate(inputTuple);
@@ -149,7 +133,7 @@ public class DataToSketchTest {
 
   @Test
   public void degenerateIntermediateExecInput() {
-    final DataToSketch.Intermediate udf = new DataToSketch.Intermediate();
+    final DataToSketch.Intermediate udf = new DataToSketch.Intermediate("5", "15");
 
     try {
       assertNull(udf.exec(null));
@@ -158,6 +142,85 @@ public class DataToSketchTest {
       final Tuple in = TupleFactory.getInstance().newTuple(1);
       in.set(0, null);
       assertNull(udf.exec(in));
+
+      in.set(0, BagFactory.getInstance().newDefaultBag());
+      assertNull(udf.exec(in));
+    } catch (final IOException e) {
+      fail("Unexpected exception");
+    }
+
+    try {
+      final DataBag outerBag = BagFactory.getInstance().newDefaultBag();
+      outerBag.add(TupleFactory.getInstance().newTuple("test string"));
+      udf.exec(TupleFactory.getInstance().newTuple(outerBag));
+      fail();
+    } catch (final IllegalArgumentException e) {
+      // expected
+    } catch (final IOException e) {
+      fail("Unexpected exception");
+    }
+  }
+
+  @Test
+  public void checkIntermediateDataBagExec() {
+    final int k = 12;
+    final int d = 30;
+
+    DataToSketch.Intermediate udf = new DataToSketch.Intermediate(Integer.toString(k), Integer.toString(d));
+
+    DataByteArray dba = new DataByteArray(makeSketch(k, d, d).toByteArray());
+    Tuple sketchTuple = TupleFactory.getInstance().newTuple(dba);
+    DataBag outerBag = BagFactory.getInstance().newDefaultBag();
+    outerBag.add(sketchTuple);
+
+    try {
+      // input as DataBag of serialized sketches
+      final Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
+      inputTuple.set(0, outerBag);
+      udf.exec(inputTuple);
+
+      // input as Bag of Bags of serialized sketches
+      DataBag innerBag = BagFactory.getInstance().newDefaultBag();
+      dba = new DataByteArray(makeSketch(k, d, d).toByteArray());
+      sketchTuple = TupleFactory.getInstance().newTuple(dba);
+      innerBag.add(sketchTuple);
+      dba = new DataByteArray(makeSketch(k, d, d).toByteArray());
+      sketchTuple = TupleFactory.getInstance().newTuple(dba);
+      innerBag.add(sketchTuple);
+
+      udf.exec(inputTuple);
+    } catch (final IOException e) {
+      fail("Unexpected exception");
+    }
+  }
+
+  @Test
+  public void checkIntermediateTupleExec() {
+    final int k = 20;
+    final int d = 50;
+    final DataToSketch.Intermediate udf = new DataToSketch.Intermediate(Integer.toString(k), Integer.toString(d));
+
+    final DataBag outerBag = BagFactory.getInstance().newDefaultBag();
+    final Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
+
+    try {
+      inputTuple.set(0, outerBag);
+      udf.exec(inputTuple); // empty bag
+
+      final FrequentDirections fd = createInputSamplesAndSketch(k, d, outerBag);
+      final Tuple outTuple = udf.exec(inputTuple);
+      assertNotNull(outTuple);
+      assertEquals(outTuple.size(), 1);
+      assertTrue(outTuple.get(0) instanceof DataByteArray);
+
+      final DataByteArray outBytes = (DataByteArray) outTuple.get(0);
+      final FrequentDirections result = FrequentDirections.heapify(Memory.wrap(outBytes.get()));
+
+      assertNotNull(result);
+      assertEquals(result.getK(), fd.getK());
+      assertEquals(result.getD(), fd.getD());
+      assertEquals(result.getN(), fd.getN());
+      assertEquals(result.getSingularValues(), fd.getSingularValues());
     } catch (final IOException e) {
       fail("Unexpected exception");
     }
@@ -238,4 +301,52 @@ public class DataToSketchTest {
       fail("Unexpected exception");
     }
   }
+
+  private static FrequentDirections makeSketch(final int k, final int d, final int n) {
+    final FrequentDirections fd = FrequentDirections.newInstance(k, d);
+
+    // create some noisy data that approximates a linear increase along the diagonal
+    final double[] vector = new double[d];
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < d; ++j) {
+        double val = rand.nextGaussian();
+        if (i == j) { val += 2 * j * rand.nextDouble(); }
+        vector[j] = val;
+      }
+      fd.update(vector);
+    }
+
+    return fd;
+  }
+
+  private static FrequentDirections createInputSamplesAndSketch(final int k, final int d,
+                                                                final DataBag outerBag) throws ExecException {
+    final FrequentDirections fd = FrequentDirections.newInstance(k, d);
+
+    // add each value to both the input bag and a sketch
+    for (int i = 1; i < k; ++i) {
+      final DataBag innerBag = BagFactory.getInstance().newDefaultBag();
+      final double[] vector = new double[d];
+      // set 2 points, so 2 Tuples
+      Tuple t = TupleFactory.getInstance().newTuple(2);
+      t.set(0, i);
+      t.set(1, 1.0 * i);
+      innerBag.add(t);
+      vector[i] = 1.0 * i;
+
+      t = TupleFactory.getInstance().newTuple(2);
+      t.set(0, k + i);
+      t.set(1, 1.0 * i);
+      innerBag.add(t);
+      vector[k + i] = 1.0 * i;
+
+      final Tuple record = TupleFactory.getInstance().newTuple(innerBag);
+      outerBag.add(record);
+      fd.update(vector);
+    }
+
+    return fd;
+  }
+
+
 }

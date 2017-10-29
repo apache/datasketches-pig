@@ -78,20 +78,18 @@ public class MergeFrequentDirections
     }
   }
 
-  // Intermediate merges serialized sketches, identical to Final but with a different
-  // return type (per Pig spec since we want a DataByteArray at the end)
   public static class Intermediate extends EvalFunc<Tuple> {
     public Intermediate() {
     }
 
     @Override
     public Tuple exec(final Tuple inputTuple) throws IOException {
-
       FrequentDirections fd = null;
 
       final DataBag sketches = (DataBag) inputTuple.get(0);
       for (Tuple t : sketches) {
-        if (t.get(0) instanceof DataBag) {
+        Object field0 = t.get(0);
+        if (field0 instanceof DataBag) {
          final DataBag sketchBag = (DataBag) t.get(0);
          for (Tuple s : sketchBag) {
            DataByteArray sketch = (DataByteArray) s.get(0);
@@ -103,7 +101,7 @@ public class MergeFrequentDirections
              fd.update(FrequentDirections.heapify(mem));
            }
          }
-        } else {
+        } else if (field0 instanceof DataByteArray) {
           DataByteArray sketch = (DataByteArray) t.get(0);
           Memory mem = Memory.wrap(sketch.get());
 
@@ -112,6 +110,9 @@ public class MergeFrequentDirections
           } else {
             fd.update(FrequentDirections.heapify(mem));
           }
+        } else {
+          throw new IllegalArgumentException("dataTuple.Field0: Is neither a DataByteArray nor a DataBag: "
+                  + field0.getClass().getName());
         }
       }
 
