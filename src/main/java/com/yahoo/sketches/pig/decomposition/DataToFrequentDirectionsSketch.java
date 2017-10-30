@@ -17,7 +17,7 @@ import com.yahoo.sketches.decomposition.FrequentDirections;
 /**
  * @author Jon Malkin
  */
-public class DataToSketch extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {
+public class DataToFrequentDirectionsSketch extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {
   private final int tgtK_;
   private final int tgtD_;
   private FrequentDirections sketch_;
@@ -28,7 +28,7 @@ public class DataToSketch extends AccumulatorEvalFunc<DataByteArray> implements 
    * @param kStr String indicating the maximum number rows in the projection matrix
    * @param dStr String indicating number of columns in the projection matrix
    */
-  public DataToSketch(final String kStr, final String dStr) {
+  public DataToFrequentDirectionsSketch(final String kStr, final String dStr) {
     tgtK_ = Integer.parseInt(kStr);
     tgtD_ = Integer.parseInt(dStr);
 
@@ -45,7 +45,7 @@ public class DataToSketch extends AccumulatorEvalFunc<DataByteArray> implements 
   }
 
   // should never be used
-  DataToSketch() {
+  DataToFrequentDirectionsSketch() {
     tgtK_ = 1;
     tgtD_ = 2;
     sketch_ = FrequentDirections.newInstance(tgtK_, tgtD_); // to avoid null checks in getValue() and cleanup()

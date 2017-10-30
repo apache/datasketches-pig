@@ -20,27 +20,27 @@ import org.testng.annotations.Test;
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.decomposition.FrequentDirections;
 
-public class DataToSketchTest {
+public class DataToFrequentDirectionsSketchTest {
   private static final Random rand = new Random();
 
   // AccumulateEvalFunc
   @Test
   public void checkConstructors() {
-    DataToSketch udf = new DataToSketch();
+    DataToFrequentDirectionsSketch udf = new DataToFrequentDirectionsSketch();
     assertNotNull(udf);
 
-    udf = new DataToSketch("50", "100");
+    udf = new DataToFrequentDirectionsSketch("50", "100");
     assertNotNull(udf);
 
     try {
-      new DataToSketch("-1", "3");
+      new DataToFrequentDirectionsSketch("-1", "3");
       fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
-      new DataToSketch("10", "-1");
+      new DataToFrequentDirectionsSketch("10", "-1");
       fail("Accepted negative d");
     } catch (final IllegalArgumentException e) {
       // expected
@@ -51,7 +51,8 @@ public class DataToSketchTest {
   public void checkExecution() {
     final int k = 20;
     final int d = 50;
-    final DataToSketch udf = new DataToSketch(Integer.toString(k), Integer.toString(d));
+    final DataToFrequentDirectionsSketch udf
+            = new DataToFrequentDirectionsSketch(Integer.toString(k), Integer.toString(d));
 
     final DataBag outerBag = BagFactory.getInstance().newDefaultBag();
     final Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -82,7 +83,7 @@ public class DataToSketchTest {
 
   @Test
   public void degenerateExecInput() {
-    final DataToSketch udf = new DataToSketch();
+    final DataToFrequentDirectionsSketch udf = new DataToFrequentDirectionsSketch();
 
     try {
       assertNull(udf.exec(null));
@@ -99,7 +100,7 @@ public class DataToSketchTest {
   // Algebraic.Initial
   @Test
   public void checkInitialExec() {
-    DataToSketch.Initial udf = new DataToSketch.Initial("5", "10");
+    DataToFrequentDirectionsSketch.Initial udf = new DataToFrequentDirectionsSketch.Initial("5", "10");
 
     assertNull(udf.exec(null));
     Tuple input = TupleFactory.getInstance().newTuple("data string");
@@ -110,21 +111,21 @@ public class DataToSketchTest {
   // Algebraic.Intermediate
   @Test
   public void checkIntermediateConstructors() {
-    DataToSketch.Intermediate udf = new DataToSketch.Intermediate();
+    DataToFrequentDirectionsSketch.Intermediate udf = new DataToFrequentDirectionsSketch.Intermediate();
     assertNotNull(udf);
 
-    udf = new DataToSketch.Intermediate("50", "100");
+    udf = new DataToFrequentDirectionsSketch.Intermediate("50", "100");
     assertNotNull(udf);
 
     try {
-      new DataToSketch.Intermediate("-1", "3");
+      new DataToFrequentDirectionsSketch.Intermediate("-1", "3");
       fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
-      new DataToSketch.Intermediate("10", "-1");
+      new DataToFrequentDirectionsSketch.Intermediate("10", "-1");
       fail("Accepted negative d");
     } catch (final IllegalArgumentException e) {
       // expected
@@ -133,7 +134,7 @@ public class DataToSketchTest {
 
   @Test
   public void degenerateIntermediateExecInput() {
-    final DataToSketch.Intermediate udf = new DataToSketch.Intermediate("5", "15");
+    final DataToFrequentDirectionsSketch.Intermediate udf = new DataToFrequentDirectionsSketch.Intermediate("5", "15");
 
     try {
       assertNull(udf.exec(null));
@@ -166,7 +167,8 @@ public class DataToSketchTest {
     final int k = 12;
     final int d = 30;
 
-    DataToSketch.Intermediate udf = new DataToSketch.Intermediate(Integer.toString(k), Integer.toString(d));
+    DataToFrequentDirectionsSketch.Intermediate udf
+            = new DataToFrequentDirectionsSketch.Intermediate(Integer.toString(k), Integer.toString(d));
 
     DataByteArray dba = new DataByteArray(makeSketch(k, d, d).toByteArray());
     Tuple sketchTuple = TupleFactory.getInstance().newTuple(dba);
@@ -198,7 +200,8 @@ public class DataToSketchTest {
   public void checkIntermediateTupleExec() {
     final int k = 20;
     final int d = 50;
-    final DataToSketch.Intermediate udf = new DataToSketch.Intermediate(Integer.toString(k), Integer.toString(d));
+    final DataToFrequentDirectionsSketch.Intermediate udf
+            = new DataToFrequentDirectionsSketch.Intermediate(Integer.toString(k), Integer.toString(d));
 
     final DataBag outerBag = BagFactory.getInstance().newDefaultBag();
     final Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
@@ -229,21 +232,21 @@ public class DataToSketchTest {
   // Algebraic.Final
   @Test
   public void checkFinalConstructors() {
-    DataToSketch.Final udf = new DataToSketch.Final();
+    DataToFrequentDirectionsSketch.Final udf = new DataToFrequentDirectionsSketch.Final();
     assertNotNull(udf);
 
-    udf = new DataToSketch.Final("50", "100");
+    udf = new DataToFrequentDirectionsSketch.Final("50", "100");
     assertNotNull(udf);
 
     try {
-      new DataToSketch.Final("-1", "3");
+      new DataToFrequentDirectionsSketch.Final("-1", "3");
       fail("Accepted negative k");
     } catch (final IllegalArgumentException e) {
       // expected
     }
 
     try {
-      new DataToSketch.Final("10", "-1");
+      new DataToFrequentDirectionsSketch.Final("10", "-1");
       fail("Accepted negative d");
     } catch (final IllegalArgumentException e) {
       // expected
@@ -275,7 +278,8 @@ public class DataToSketchTest {
 
       final Tuple inputTuple = TupleFactory.getInstance().newTuple(sketchBag);
 
-      final DataToSketch.Final udf = new DataToSketch.Final(Integer.toString(k), Integer.toString(d));
+      final DataToFrequentDirectionsSketch.Final udf
+              = new DataToFrequentDirectionsSketch.Final(Integer.toString(k), Integer.toString(d));
       final DataByteArray dbaResult = udf.exec(inputTuple);
       final FrequentDirections result = FrequentDirections.heapify(Memory.wrap(dbaResult.get()));
 
@@ -288,7 +292,7 @@ public class DataToSketchTest {
 
   @Test
   public void degenerateFinalExecInput() {
-    final DataToSketch.Final udf = new DataToSketch.Final();
+    final DataToFrequentDirectionsSketch.Final udf = new DataToFrequentDirectionsSketch.Final();
 
     try {
       assertNull(udf.exec(null));
@@ -302,7 +306,7 @@ public class DataToSketchTest {
     }
   }
 
-  private static FrequentDirections makeSketch(final int k, final int d, final int n) {
+  static FrequentDirections makeSketch(final int k, final int d, final int n) {
     final FrequentDirections fd = FrequentDirections.newInstance(k, d);
 
     // create some noisy data that approximates a linear increase along the diagonal
@@ -319,8 +323,8 @@ public class DataToSketchTest {
     return fd;
   }
 
-  private static FrequentDirections createInputSamplesAndSketch(final int k, final int d,
-                                                                final DataBag outerBag) throws ExecException {
+  static FrequentDirections createInputSamplesAndSketch(final int k, final int d,
+                                                        final DataBag outerBag) throws ExecException {
     final FrequentDirections fd = FrequentDirections.newInstance(k, d);
 
     // add each value to both the input bag and a sketch
@@ -341,12 +345,10 @@ public class DataToSketchTest {
       vector[k + i] = 1.0 * i;
 
       final Tuple record = TupleFactory.getInstance().newTuple(innerBag);
-      outerBag.add(record);
+      if (outerBag != null) { outerBag.add(record); }
       fd.update(vector);
     }
 
     return fd;
   }
-
-
 }
