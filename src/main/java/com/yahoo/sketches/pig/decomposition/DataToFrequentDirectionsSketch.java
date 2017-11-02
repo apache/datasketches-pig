@@ -15,6 +15,14 @@ import com.yahoo.memory.Memory;
 import com.yahoo.sketches.decomposition.FrequentDirections;
 
 /**
+ * This UDF builds a Frequent Directions sketch from data.
+ * <p>For efficient performance, this UDF implements both the <tt>Accumulator</tt> and <tt>Algebraic
+ * interfaces.</tt></p>
+ *
+ * <p>Constructors allocate a dense matrix of <tt>2kd</tt> doubles, which may be quite memory intensive. Assuming
+ * there are at least <tt>k</tt> input records, the result will be a serialized sketch with between <tt>k</tt> and
+ * <tt>2*k</tt> rows.</p>
+ *
  * @author Jon Malkin
  */
 public class DataToFrequentDirectionsSketch extends AccumulatorEvalFunc<DataByteArray> implements Algebraic {

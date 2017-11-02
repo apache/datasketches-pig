@@ -14,6 +14,14 @@ import com.yahoo.memory.Memory;
 import com.yahoo.sketches.decomposition.FrequentDirections;
 
 /**
+ * This UDF merges a set of serialized Frequent Directions sketches.
+ * <p>For efficient performance, this UDF implements both the <tt>Accumulator</tt> and <tt>Algebraic
+ * interfaces.</tt></p>
+ *
+ * <p>All input sketches must contain the same number of dimensions per row and a value of <tt>k</tt> at least as
+ * large as the current input; it will implicitly be reduced to the <tt>k</tt> of the first input sketch. An exception
+ * will be thrown if attempting to merge a smaller k sketch into a larger sketch.</p>
+ *
  * @author Jon Malkin
  */
 public class MergeFrequentDirections
