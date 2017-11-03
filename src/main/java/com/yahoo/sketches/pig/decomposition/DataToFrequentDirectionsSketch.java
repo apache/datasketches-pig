@@ -19,6 +19,9 @@ import com.yahoo.sketches.decomposition.FrequentDirections;
  * <p>For efficient performance, this UDF implements both the <tt>Accumulator</tt> and <tt>Algebraic
  * interfaces.</tt></p>
  *
+ * <p>Each input row is assumed to be a <tt>DataBag</tt> of sparse <tt>(dimension, value)</tt> pairs, where
+ * <em>dimension</em> is an integer and <em>value</em> a double.</p>
+ *
  * <p>Constructors allocate a dense matrix of <tt>2kd</tt> doubles, which may be quite memory intensive. Assuming
  * there are at least <tt>k</tt> input records, the result will be a serialized sketch with between <tt>k</tt> and
  * <tt>2*k</tt> rows.</p>
@@ -59,6 +62,7 @@ public class DataToFrequentDirectionsSketch extends AccumulatorEvalFunc<DataByte
     sketch_ = FrequentDirections.newInstance(tgtK_, tgtD_); // to avoid null checks in getValue() and cleanup()
   }
 
+  @Override
   public DataByteArray getValue() {
     if (sketch_.isEmpty()) {
       return null;
@@ -67,10 +71,12 @@ public class DataToFrequentDirectionsSketch extends AccumulatorEvalFunc<DataByte
     }
   }
 
+  @Override
   public void cleanup() {
     sketch_.reset();
   }
 
+  @Override
   public void accumulate(final Tuple input) throws IOException {
     if (input == null || input.size() < 1 || input.isNull(0)) {
       return;
