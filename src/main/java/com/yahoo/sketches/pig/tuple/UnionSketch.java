@@ -36,8 +36,8 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   private boolean isFirstCall_ = true;
 
   /**
-   * Constructs a function given a summary factory and default sketch size
-   * @param summaryFactory an instance of SummaryFactory
+   * Constructs a function given a summary set operations, summary deserializer and default sketch size
+   * @param summarySetOps an instance of SummarySetOperations
    * @param summaryDeserializer an instance of SummaryDeserializer
    */
   public UnionSketch(final SummarySetOperations<S> summarySetOps,
@@ -46,11 +46,11 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   }
 
   /**
-   * Constructs a function given a sketch size and summary factory
+   * Constructs a function given a sketch size, summary set operations and summary deserializer
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
-   * @param summaryFactory an instance of SummaryFactory
+   * @param summarySetOps an instance of SummarySetOperations
    * @param summaryDeserializer an instance of SummaryDeserializer
    */
   public UnionSketch(final int sketchSize, final SummarySetOperations<S> summarySetOps,
