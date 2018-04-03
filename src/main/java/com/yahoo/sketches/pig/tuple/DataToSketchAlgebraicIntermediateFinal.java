@@ -42,8 +42,8 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
   private boolean isFirstCall_ = true;
 
   /**
-   * Constructs a function given a summary factory, default sketch size and default
-   * sampling probability of 1.
+   * Constructs a function given a summary factory, summary set operations, summary deserializer,
+   * default sketch size and default sampling probability of 1.
    * @param summaryFactory an instance of SummaryFactory
    * @param summarySetOps an instance of SummarySetOperaions
    * @param summaryDeserializer an instance of SummaryDeserializer
@@ -54,8 +54,8 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
   }
 
   /**
-   * Constructs a function given a sketch size, summary factory and default
-   * sampling probability of 1.
+   * Constructs a function given a sketch size, summary factory, summary set operations,
+   * summary deserializer and default sampling probability of 1.
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
@@ -70,7 +70,8 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
   }
 
   /**
-   * Constructs a function given a sketch size, sampling probability and summary factory
+   * Constructs a function given a sketch size, sampling probability, summary factory,
+   * summary set operations and summary deserializer
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
