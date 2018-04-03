@@ -46,7 +46,9 @@ public class GetPmfFromDoublesSketch extends EvalFunc<Tuple> {
       }
       splitPoints[i - 1] = (double) input.get(i);
     }
-    return Util.doubleArrayToTuple(sketch.getPMF(splitPoints));
+    final double[] pmf = sketch.getPMF(splitPoints);
+    if (pmf == null) { return null; }
+    return Util.doubleArrayToTuple(pmf);
   }
 
 }

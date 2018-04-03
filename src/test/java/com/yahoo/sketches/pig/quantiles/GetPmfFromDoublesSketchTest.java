@@ -25,10 +25,7 @@ public class GetPmfFromDoublesSketchTest {
     EvalFunc<Tuple> func = new GetPmfFromDoublesSketch();
     DoublesSketch sketch = DoublesSketch.builder().build();
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
-    Assert.assertNotNull(resultTuple);
-    Assert.assertEquals(resultTuple.size(), 2);
-    Assert.assertEquals(((double) resultTuple.get(0)), Double.NaN);
-    Assert.assertEquals(((double) resultTuple.get(1)), Double.NaN);
+    Assert.assertNull(resultTuple);
   }
 
   @Test

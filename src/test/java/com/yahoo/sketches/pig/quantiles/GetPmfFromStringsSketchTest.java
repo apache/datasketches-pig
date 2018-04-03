@@ -30,10 +30,7 @@ public class GetPmfFromStringsSketchTest {
     EvalFunc<Tuple> func = new GetPmfFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
     Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), "a")));
-    Assert.assertNotNull(resultTuple);
-    Assert.assertEquals(resultTuple.size(), 2);
-    Assert.assertEquals(((double) resultTuple.get(0)), Double.NaN);
-    Assert.assertEquals(((double) resultTuple.get(1)), Double.NaN);
+    Assert.assertNull(resultTuple);
   }
 
   @Test

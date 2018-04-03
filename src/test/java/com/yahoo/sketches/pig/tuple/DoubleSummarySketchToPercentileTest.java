@@ -26,7 +26,7 @@ public class DoubleSummarySketchToPercentileTest {
     UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
     Tuple inputTuple = TupleFactory.getInstance().newTuple(Arrays.asList(new DataByteArray(sketch.compact().toByteArray()), 0.0));
     double result = func.exec(inputTuple);
-    Assert.assertEquals(result, Double.POSITIVE_INFINITY);
+    Assert.assertEquals(result, Double.NaN);
   }
 
   @Test

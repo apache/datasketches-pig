@@ -8,7 +8,10 @@ package com.yahoo.sketches.pig.tuple;
 import org.apache.pig.Algebraic;
 
 import com.yahoo.sketches.tuple.DoubleSummary;
+import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
+import com.yahoo.sketches.tuple.DoubleSummarySetOperations;
+import com.yahoo.sketches.tuple.SummarySetOperations;
 
 /**
  * This is to union Sketch&lt;DoubleSummary&gt;.
@@ -20,7 +23,7 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
    * Constructor with default sketch size and default mode (sum)
    */
   public UnionDoubleSummarySketch() {
-    super(new DoubleSummaryFactory());
+    super(new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
   }
 
   /**
@@ -28,7 +31,7 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
    * @param sketchSize String representation of sketch size
    */
   public UnionDoubleSummarySketch(final String sketchSize) {
-    super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
+    super(Integer.parseInt(sketchSize), new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
   }
 
   /**
@@ -37,7 +40,9 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
    * @param summaryMode String representation of mode (sum, min or max)
    */
   public UnionDoubleSummarySketch(final String sketchSize, final String summaryMode) {
-    super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
+    super(Integer.parseInt(sketchSize),
+        new DoubleSummarySetOperations(DoubleSummary.Mode.valueOf(summaryMode)),
+        new DoubleSummaryDeserializer());
   }
 
   @Override
@@ -84,7 +89,7 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
      * Default sketch size and default mode.
      */
     public IntermediateFinal() {
-      super(new DoubleSummaryFactory());
+      super(new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
     }
 
     /**
@@ -93,7 +98,7 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
      * @param sketchSize String representation of sketch size
      */
     public IntermediateFinal(final String sketchSize) {
-      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
+      super(Integer.parseInt(sketchSize), new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
     }
 
     /**
@@ -103,7 +108,9 @@ public class UnionDoubleSummarySketch extends UnionSketch<DoubleSummary> impleme
      * @param summaryMode String representation of mode (sum, min or max)
      */
     public IntermediateFinal(final String sketchSize, final String summaryMode) {
-      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
+      super(Integer.parseInt(sketchSize),
+          new DoubleSummarySetOperations(DoubleSummary.Mode.valueOf(summaryMode)),
+          new DoubleSummaryDeserializer());
     }
   }
 

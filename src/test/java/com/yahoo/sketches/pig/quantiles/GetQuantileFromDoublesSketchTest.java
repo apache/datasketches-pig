@@ -24,7 +24,7 @@ public class GetQuantileFromDoublesSketchTest {
     EvalFunc<Double> func = new GetQuantileFromDoublesSketch();
     DoublesSketch sketch = DoublesSketch.builder().build();
     Double result = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0)));
-    Assert.assertEquals(result, Double.POSITIVE_INFINITY);
+    Assert.assertEquals(result, Double.NaN);
   }
 
   @Test

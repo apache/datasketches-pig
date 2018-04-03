@@ -15,9 +15,11 @@ import com.yahoo.memory.Memory;
 import com.yahoo.sketches.quantiles.DoublesSketch;
 import com.yahoo.sketches.quantiles.UpdateDoublesSketch;
 import com.yahoo.sketches.tuple.DoubleSummary;
+import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
+import com.yahoo.sketches.tuple.SummaryDeserializer;
 
 /**
  * This UDF is to get a percentile value from a Sketch&lt;DoubleSummary&gt;.
@@ -29,6 +31,8 @@ import com.yahoo.sketches.tuple.Sketches;
  */
 public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
 
+  private static final SummaryDeserializer<DoubleSummary> SUMMARY_DESERIALIZER =
+      new DoubleSummaryDeserializer(); 
   private static final int QUANTILES_SKETCH_SIZE = 1024;
 
   @Override
@@ -38,7 +42,8 @@ public class DoubleSummarySketchToPercentile extends EvalFunc<Double> {
     }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(dba.get()));
+    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(
+        Memory.wrap(dba.get()), SUMMARY_DESERIALIZER);
 
     final double percentile = (double) input.get(1);
     if ((percentile < 0) || (percentile > 100)) {
