@@ -16,7 +16,9 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 
 import com.yahoo.sketches.tuple.Sketch;
+import com.yahoo.sketches.tuple.SummaryDeserializer;
 import com.yahoo.sketches.tuple.SummaryFactory;
+import com.yahoo.sketches.tuple.SummarySetOperations;
 import com.yahoo.sketches.tuple.Union;
 import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
@@ -34,44 +36,56 @@ import com.yahoo.sketches.tuple.UpdatableSummary;
 public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends UpdatableSummary<U>>
     extends EvalFunc<Tuple> {
   private final int sketchSize_;
-  private final SummaryFactory<S> summaryFactory_;
+  private final SummarySetOperations<S> summarySetOps_;
+  private final SummaryDeserializer<S> summaryDeserializer_;
   private final UpdatableSketchBuilder<U, S> sketchBuilder_;
   private boolean isFirstCall_ = true;
 
   /**
-   * Constructs a function given a summary factory, default sketch size and default
-   * sampling probability of 1.
+   * Constructs a function given a summary factory, summary set operations, summary deserializer,
+   * default sketch size and default sampling probability of 1.
    * @param summaryFactory an instance of SummaryFactory
+   * @param summarySetOps an instance of SummarySetOperaions
+   * @param summaryDeserializer an instance of SummaryDeserializer
    */
-  public DataToSketchAlgebraicIntermediateFinal(final SummaryFactory<S> summaryFactory) {
-    this(DEFAULT_NOMINAL_ENTRIES, 1f, summaryFactory);
+  public DataToSketchAlgebraicIntermediateFinal(final SummaryFactory<S> summaryFactory,
+      final SummarySetOperations<S> summarySetOps, final SummaryDeserializer<S> summaryDeserializer) {
+    this(DEFAULT_NOMINAL_ENTRIES, 1f, summaryFactory, summarySetOps, summaryDeserializer);
   }
 
   /**
-   * Constructs a function given a sketch size, summary factory and default
-   * sampling probability of 1.
+   * Constructs a function given a sketch size, summary factory, summary set operations,
+   * summary deserializer and default sampling probability of 1.
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
    * @param summaryFactory an instance of SummaryFactory
+   * @param summarySetOps an instance of SummarySetOperaions
+   * @param summaryDeserializer an instance of SummaryDeserializer
    */
   public DataToSketchAlgebraicIntermediateFinal(final int sketchSize,
-      final SummaryFactory<S> summaryFactory) {
-    this(sketchSize, 1f, summaryFactory);
+      final SummaryFactory<S> summaryFactory, final SummarySetOperations<S> summarySetOps,
+      final SummaryDeserializer<S> summaryDeserializer) {
+    this(sketchSize, 1f, summaryFactory, summarySetOps, summaryDeserializer);
   }
 
   /**
-   * Constructs a function given a sketch size, sampling probability and summary factory
+   * Constructs a function given a sketch size, sampling probability, summary factory,
+   * summary set operations and summary deserializer
    * @param sketchSize parameter controlling the size of the sketch and the accuracy.
    * It represents nominal number of entries in the sketch. Forced to the nearest power of 2
    * greater than given value.
    * @param samplingProbability parameter from 0 to 1 inclusive
    * @param summaryFactory an instance of SummaryFactory
+   * @param summarySetOps an instance of SummarySetOperaions
+   * @param summaryDeserializer an instance of SummaryDeserializer
    */
-  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize,
-      final float samplingProbability, final SummaryFactory<S> summaryFactory) {
+  public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, final float samplingProbability,
+      final SummaryFactory<S> summaryFactory, final SummarySetOperations<S> summarySetOps,
+      final SummaryDeserializer<S> summaryDeserializer) {
     sketchSize_ = sketchSize;
-    summaryFactory_ = summaryFactory;
+    summarySetOps_ = summarySetOps;
+    summaryDeserializer_ = summaryDeserializer;
     sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
@@ -83,7 +97,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
       Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final Union<S> union = new Union<S>(sketchSize_, summaryFactory_);
+    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -102,7 +116,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
-        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple);
+        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, summaryDeserializer_);
         union.update(incomingSketch);
       } else {
         // we should never get here.

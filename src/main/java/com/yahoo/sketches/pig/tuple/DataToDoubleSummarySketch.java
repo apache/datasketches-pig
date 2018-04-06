@@ -8,7 +8,9 @@ package com.yahoo.sketches.pig.tuple;
 import org.apache.pig.Algebraic;
 
 import com.yahoo.sketches.tuple.DoubleSummary;
+import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
+import com.yahoo.sketches.tuple.DoubleSummarySetOperations;
 
 /**
  * This UDF creates a Sketch&lt;DoubleSummary&gt; from raw data.
@@ -86,7 +88,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * Default sketch size and default mode
      */
     public IntermediateFinal() {
-      super(new DoubleSummaryFactory());
+      super(new DoubleSummaryFactory(), new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
     }
 
     /**
@@ -95,7 +97,8 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * @param sketchSize String representation of sketch size
      */
     public IntermediateFinal(final String sketchSize) {
-      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
+      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(), new DoubleSummarySetOperations(),
+          new DoubleSummaryDeserializer());
     }
 
     /**
@@ -105,7 +108,9 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * @param summaryMode String representation of mode (sum, min or max)
      */
     public IntermediateFinal(final String sketchSize, final String summaryMode) {
-      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)));
+      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.valueOf(summaryMode)),
+          new DoubleSummarySetOperations(DoubleSummary.Mode.valueOf(summaryMode)),
+          new DoubleSummaryDeserializer());
     }
 
   }

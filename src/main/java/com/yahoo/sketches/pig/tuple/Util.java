@@ -14,6 +14,7 @@ import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.Sketches;
 import com.yahoo.sketches.tuple.Summary;
+import com.yahoo.sketches.tuple.SummaryDeserializer;
 
 final class Util {
 
@@ -27,9 +28,10 @@ final class Util {
     return tuple;
   }
 
-  static <S extends Summary> Sketch<S> deserializeSketchFromTuple(final Tuple tuple) throws ExecException {
+  static <S extends Summary> Sketch<S> deserializeSketchFromTuple(final Tuple tuple,
+      final SummaryDeserializer<S> summaryDeserializer) throws ExecException {
     final byte[] bytes = ((DataByteArray) tuple.get(0)).get();
-    return Sketches.heapifySketch(Memory.wrap(bytes));
+    return Sketches.heapifySketch(Memory.wrap(bytes), summaryDeserializer);
   }
 
 }

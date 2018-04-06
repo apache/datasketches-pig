@@ -14,9 +14,11 @@ import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.DoubleSummary;
+import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
+import com.yahoo.sketches.tuple.SummaryDeserializer;
 
 /**
  * This UDF converts a Sketch&lt;DoubleSummary&gt; to estimates.
@@ -29,6 +31,9 @@ import com.yahoo.sketches.tuple.Sketches;
  */
 public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
 
+  private static final SummaryDeserializer<DoubleSummary> SUMMARY_DESERIALIZER =
+      new DoubleSummaryDeserializer(); 
+  
   @Override
   public Tuple exec(final Tuple input) throws IOException {
     if ((input == null) || (input.size() == 0)) {
@@ -36,7 +41,8 @@ public class DoubleSummarySketchToEstimates extends EvalFunc<Tuple> {
     }
 
     final DataByteArray dba = (DataByteArray) input.get(0);
-    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(dba.get()));
+    final Sketch<DoubleSummary> sketch = Sketches.heapifySketch(
+        Memory.wrap(dba.get()), SUMMARY_DESERIALIZER);
 
     final Tuple output = TupleFactory.getInstance().newTuple(2);
     output.set(0, sketch.getEstimate());

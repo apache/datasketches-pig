@@ -17,8 +17,10 @@ import org.testng.annotations.Test;
 
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.tuple.DoubleSummary;
+import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.Sketch;
+import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
@@ -48,7 +50,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
@@ -92,11 +94,12 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 8.0, 0.0);
 
-    for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 3.0);
+    SketchIterator<DoubleSummary> it = sketch.iterator();
+    while (it.next()) {
+      Assert.assertEquals(it.getSummary().getValue(), 3.0);
     }
   }
 
@@ -115,11 +118,12 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
-    for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 1.0);
+    SketchIterator<DoubleSummary> it = sketch.iterator();
+    while (it.next()) {
+      Assert.assertEquals(it.getSummary().getValue(), 1.0);
     }
   }
 
@@ -148,11 +152,12 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
-    for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 3.0);
+    SketchIterator<DoubleSummary> it = sketch.iterator();
+    while (it.next()) {
+      Assert.assertEquals(it.getSummary().getValue(), 3.0);
     }
 
     // after cleanup, the value should always be 0
@@ -162,7 +167,7 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch2 = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch2 = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch2.getEstimate(), 0.0, 0.0);
   }
 
@@ -223,11 +228,12 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
-    for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 3.0);
+    SketchIterator<DoubleSummary> it = sketch.iterator();
+    while (it.next()) {
+      Assert.assertEquals(it.getSummary().getValue(), 3.0);
     }
   }
 
@@ -249,11 +255,12 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()));
+    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
-    for (DoubleSummary summary: sketch.getSummaries()) {
-      Assert.assertEquals(summary.getValue(), 2.0);
+    SketchIterator<DoubleSummary> it = sketch.iterator();
+    while (it.next()) {
+      Assert.assertEquals(it.getSummary().getValue(), 2.0);
     }
   }
 }
