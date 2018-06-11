@@ -42,6 +42,7 @@ public class ArrayOfTuplesSerDe extends ArrayOfItemsSerDe<Tuple> {
 
   @Override
   public Tuple[] deserializeFromMemory(final Memory mem, final int numItems) {
+    //getArray() is OK for Pig and Hive, where Memory is always backed by a primitive array.
     final byte[] bytes = (byte[]) ((WritableMemory) mem).getArray();
     final int offset = (int) ((WritableMemory) mem).getRegionOffset(0L);
     final int length = (int) mem.getCapacity();
