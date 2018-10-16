@@ -122,7 +122,10 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
           : ItemsUnion.getInstance(comparator_);
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
-        union.update(extractValue(innerTuple.get(0)));
+        Object value = innerTuple.get(0);
+        if(value != null) {
+          union.update(extractValue(value));
+        }
       }
       final ItemsSketch<T> resultSketch = union.getResultAndReset();
       if (resultSketch != null) {
@@ -173,7 +176,10 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
         : ItemsUnion.getInstance(comparator_);
     }
     for (final Tuple innerTuple: bag) {
-      accumUnion_.update(extractValue(innerTuple.get(0)));
+      Object value = innerTuple.get(0);
+      if(value != null) {
+        accumUnion_.update(extractValue(value));
+      }
     }
   }
 
@@ -307,7 +313,10 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
             // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             for (final Tuple innerTuple: innerBag) {
-              union.update(extractValue(innerTuple.get(0)));
+              Object value = innerTuple.get(0);
+              if(value != null) {
+                union.update(extractValue(value));
+              }
             }
           } else if (f0 instanceof DataByteArray) { // inputTuple.bag0.dataTupleN.f0:DBA
             // If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
