@@ -128,7 +128,10 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
       final DoublesUnion union = unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
-        union.update((Double) innerTuple.get(0));
+        Object value = innerTuple.get(0);
+        if(value != null) {
+          union.update((Double) value);
+        }
       }
       final DoublesSketch resultSketch = union.getResultAndReset();
       if (resultSketch != null) {
@@ -176,7 +179,10 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
       accumUnion_ = unionBuilder_.build();
     }
     for (final Tuple innerTuple: bag) {
-      accumUnion_.update((Double) innerTuple.get(0));
+      Object value = innerTuple.get(0);
+        if(value != null) {
+          accumUnion_.update((Double) value);
+      }
     }
   }
 
@@ -317,7 +323,10 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
             // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             for (final Tuple innerTuple: innerBag) {
-              union.update((Double) innerTuple.get(0));
+              Object value = innerTuple.get(0);
+              if(value != null) {
+                union.update((Double) value);
+              }
             }
           } else if (f0 instanceof DataByteArray) { // inputTuple.bag0.dataTupleN.f0:DBA
             // If field 0 of a dataTuple is a DataByteArray we assume it is a sketch

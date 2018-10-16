@@ -66,6 +66,18 @@ public class DataToDoublesSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
+  
+  @Test
+  public void execMixedNullCase() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoublesSketch();
+    DataBag bag = bagFactory.newDefaultBag();
+    bag.add(tupleFactory.newTuple(1.0));
+    bag.add(null);
+    Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
+    DoublesSketch sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 1);
+  }
 
   @Test
   public void accumulator() throws Exception {
@@ -97,6 +109,17 @@ public class DataToDoublesSketchTest {
     // normal case
     DataBag bag = bagFactory.newDefaultBag();
     bag.add(tupleFactory.newTuple(1.0));
+    func.accumulate(tupleFactory.newTuple(bag));
+    func.accumulate(tupleFactory.newTuple(bag));
+    resultTuple = func.getValue();
+    sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 2);
+    
+    // mixed null case
+    bag = bagFactory.newDefaultBag();
+    bag.add(tupleFactory.newTuple(1.0));
+    bag.add(null);
     func.accumulate(tupleFactory.newTuple(bag));
     func.accumulate(tupleFactory.newTuple(bag));
     resultTuple = func.getValue();
@@ -147,6 +170,30 @@ public class DataToDoublesSketchTest {
     { // this is to simulate an output from Initial
       DataBag innerBag = bagFactory.newDefaultBag();
       innerBag.add(tupleFactory.newTuple(1.0));
+      bag.add(tupleFactory.newTuple(innerBag));
+    }
+
+    { // this is to simulate an output from a prior call of IntermediateFinal
+      UpdateDoublesSketch qs = DoublesSketch.builder().build();
+      qs.update(2.0);
+      bag.add(tupleFactory.newTuple(new DataByteArray(qs.toByteArray())));
+    }
+
+    Tuple resultTuple = func.exec(tupleFactory.newTuple(bag));
+    DoublesSketch sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 2);
+  }
+  
+  @Test
+  public void algebraicIntermediateFinalMixedNullCase() throws Exception {
+    EvalFunc<Tuple> func = new DataToDoublesSketch.IntermediateFinal();
+    DataBag bag = bagFactory.newDefaultBag();
+
+    { // this is to simulate an output from Initial
+      DataBag innerBag = bagFactory.newDefaultBag();
+      innerBag.add(tupleFactory.newTuple(1.0));
+      innerBag.add(null);
       bag.add(tupleFactory.newTuple(innerBag));
     }
 

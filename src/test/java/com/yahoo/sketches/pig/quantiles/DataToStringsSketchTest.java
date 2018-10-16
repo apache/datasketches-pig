@@ -73,6 +73,18 @@ public class DataToStringsSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
+  
+  @Test
+  public void execMixedNormalCase() throws Exception {
+    EvalFunc<Tuple> func = new DataToStringsSketch();
+    DataBag bag = BAG_FACTORY.newDefaultBag();
+    bag.add(TUPLE_FACTORY.newTuple("a"));
+    bag.add(null);
+    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(bag));
+    ItemsSketch<String> sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 1);
+  }
 
   @Test
   public void accumulator() throws Exception {
@@ -104,6 +116,17 @@ public class DataToStringsSketchTest {
     // normal case
     DataBag bag = BAG_FACTORY.newDefaultBag();
     bag.add(TUPLE_FACTORY.newTuple("a"));
+    func.accumulate(TUPLE_FACTORY.newTuple(bag));
+    func.accumulate(TUPLE_FACTORY.newTuple(bag));
+    resultTuple = func.getValue();
+    sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 2);
+    
+    // mixed null case
+    bag = BAG_FACTORY.newDefaultBag();
+    bag.add(TUPLE_FACTORY.newTuple("a"));
+    bag.add(null);
     func.accumulate(TUPLE_FACTORY.newTuple(bag));
     func.accumulate(TUPLE_FACTORY.newTuple(bag));
     resultTuple = func.getValue();
@@ -163,6 +186,31 @@ public class DataToStringsSketchTest {
     { // this is to simulate an output from Initial
       DataBag innerBag = BAG_FACTORY.newDefaultBag();
       innerBag.add(TUPLE_FACTORY.newTuple("a"));
+      bag.add(TUPLE_FACTORY.newTuple(innerBag));
+    }
+
+    { // this is to simulate an output from a prior call of IntermediateFinal
+      ItemsSketch<String> qs = ItemsSketch.getInstance(COMPARATOR);
+      qs.update("b");
+      bag.add(TUPLE_FACTORY.newTuple(new DataByteArray(qs.toByteArray(SER_DE))));
+    }
+
+    Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(bag));
+    ItemsSketch<String> sketch = getSketch(resultTuple);
+    Assert.assertFalse(sketch.isEmpty());
+    Assert.assertEquals(sketch.getN(), 2);
+  }
+  
+  @Test
+  public void algebraicIntermediateFinalMixedNullCase() throws Exception {
+    @SuppressWarnings("unchecked")
+    EvalFunc<Tuple> func = (EvalFunc<Tuple>) Class.forName(new DataToStringsSketch().getIntermed()).newInstance();
+    DataBag bag = BAG_FACTORY.newDefaultBag();
+
+    { // this is to simulate an output from Initial
+      DataBag innerBag = BAG_FACTORY.newDefaultBag();
+      innerBag.add(TUPLE_FACTORY.newTuple("a"));
+      innerBag.add(null);
       bag.add(TUPLE_FACTORY.newTuple(innerBag));
     }
 
