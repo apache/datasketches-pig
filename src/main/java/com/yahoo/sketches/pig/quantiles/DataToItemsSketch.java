@@ -116,14 +116,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
   @Override // TOP LEVEL EXEC
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final ItemsUnion<T> union = k_ > 0
           ? ItemsUnion.getInstance(k_, comparator_)
           : ItemsUnion.getInstance(comparator_);
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
-        Object value = innerTuple.get(0);
-        if(value != null) {
+        final Object value = innerTuple.get(0);
+        if (value != null) {
           union.update(extractValue(value));
         }
       }
@@ -167,7 +167,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) { return; }
+    if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
     if (accumUnion_ == null) {
@@ -176,8 +176,8 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
         : ItemsUnion.getInstance(comparator_);
     }
     for (final Tuple innerTuple: bag) {
-      Object value = innerTuple.get(0);
-      if(value != null) {
+      final Object value = innerTuple.get(0);
+      if (value != null) {
         accumUnion_.update(extractValue(value));
       }
     }
@@ -297,7 +297,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
 
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
-      if (inputTuple != null && inputTuple.size() > 0) {
+      if ((inputTuple != null) && (inputTuple.size() > 0)) {
         final ItemsUnion<T> union = k_ > 0
             ? ItemsUnion.getInstance(k_, comparator_)
             : ItemsUnion.getInstance(comparator_);
@@ -313,8 +313,8 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
             // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             for (final Tuple innerTuple: innerBag) {
-              Object value = innerTuple.get(0);
-              if(value != null) {
+              final Object value = innerTuple.get(0);
+              if (value != null) {
                 union.update(extractValue(value));
               }
             }

@@ -124,12 +124,12 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
   @Override // TOP LEVEL EXEC
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DoublesUnion union = unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
-        Object value = innerTuple.get(0);
-        if(value != null) {
+        final Object value = innerTuple.get(0);
+        if (value != null) {
           union.update((Double) value);
         }
       }
@@ -172,15 +172,15 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) { return; }
+    if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
     if (accumUnion_ == null) {
       accumUnion_ = unionBuilder_.build();
     }
     for (final Tuple innerTuple: bag) {
-      Object value = innerTuple.get(0);
-        if(value != null) {
+      final Object value = innerTuple.get(0);
+        if (value != null) {
           accumUnion_.update((Double) value);
       }
     }
@@ -309,7 +309,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
 
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
-      if (inputTuple != null && inputTuple.size() > 0) {
+      if ((inputTuple != null) && (inputTuple.size() > 0)) {
         final DoublesUnion union = unionBuilder_.build();
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
@@ -323,8 +323,8 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
             // It is due to system bagged outputs from multiple mapper Initial functions.
             // The Intermediate stage was bypassed.
             for (final Tuple innerTuple: innerBag) {
-              Object value = innerTuple.get(0);
-              if(value != null) {
+              final Object value = innerTuple.get(0);
+              if (value != null) {
                 union.update((Double) value);
               }
             }
