@@ -1,21 +1,23 @@
 /*
- * Copyright 2016, Yahoo! Inc.
+ * Copyright 2018, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
 package com.yahoo.sketches.pig.theta;
 
-import com.yahoo.memory.Memory;
-import com.yahoo.sketches.theta.Sketch;
+import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
+import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
+
+import java.io.IOException;
+
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import java.io.IOException;
 
-import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
-import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
+import com.yahoo.memory.Memory;
+import com.yahoo.sketches.theta.Sketch;
 
 /**
  * This is a Pig UDF that performs the JaccardSimilarity Operation on two given
@@ -24,6 +26,38 @@ import static com.yahoo.sketches.pig.theta.PigUtil.extractFieldAtIndex;
  * @author eshcar
  */
 public class JaccardSimilarity extends EvalFunc<Tuple> {
+
+  private final long seed;
+
+  //TOP LEVEL API
+  /**
+   * Default constructor to make pig validation happy.  Assumes:
+   * <ul>
+   * <li><a href="{@docRoot}/resources/dictionary.html#defaultUpdateSeed">See Default Update Seed</a></li>
+   * </ul>
+   */
+  public JaccardSimilarity() {
+    this(DEFAULT_UPDATE_SEED);
+  }
+
+  /**
+   * String constructor.
+   *
+   * @param seedStr <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>
+   */
+  public JaccardSimilarity(final String seedStr) {
+    this(Long.parseLong(seedStr));
+  }
+
+  /**
+   * Base constructor.
+   *
+   * @param seed  <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
+   */
+  public JaccardSimilarity(final long seed) {
+    super();
+    this.seed = seed;
+  }
 
   // @formatter:off
   /**
@@ -73,14 +107,14 @@ public class JaccardSimilarity extends EvalFunc<Tuple> {
     if (objA != null) {
       final DataByteArray dbaA = (DataByteArray)objA;
       final Memory srcMem = Memory.wrap(dbaA.get());
-      sketchA = Sketch.wrap(srcMem, DEFAULT_UPDATE_SEED);
+      sketchA = Sketch.wrap(srcMem, seed);
     }
     final Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
       final DataByteArray dbaB = (DataByteArray)objB;
       final Memory srcMem = Memory.wrap(dbaB.get());
-      sketchB = Sketch.wrap(srcMem, DEFAULT_UPDATE_SEED);
+      sketchB = Sketch.wrap(srcMem, seed);
     }
 
     final double[] jaccardTupple =
