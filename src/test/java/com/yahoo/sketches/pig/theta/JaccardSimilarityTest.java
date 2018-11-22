@@ -1,15 +1,19 @@
+/*
+ * Copyright 2018, Yahoo! Inc.
+ * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
+ */
 package com.yahoo.sketches.pig.theta;
+
+import static com.yahoo.sketches.pig.PigTestingUtil.createDbaFromQssRange;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-
-import static com.yahoo.sketches.pig.PigTestingUtil.createDbaFromQssRange;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 /**
  * @author eshcar
@@ -21,7 +25,6 @@ public class JaccardSimilarityTest {
     EvalFunc<Tuple> jaccardFunc = new JaccardSimilarity();
 
     Tuple inputTuple, resultTuple;
-    Double[] est;
     //Two nulls
     inputTuple = TupleFactory.getInstance().newTuple(2);
     resultTuple = jaccardFunc.exec(inputTuple);
