@@ -2,6 +2,7 @@
  * Copyright 2018, Yahoo! Inc.
  * Licensed under the terms of the Apache License 2.0. See LICENSE file at the project root for terms.
  */
+
 package com.yahoo.sketches.pig.theta;
 
 import static com.yahoo.sketches.Util.DEFAULT_UPDATE_SEED;
@@ -14,7 +15,6 @@ import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
 
 import com.yahoo.memory.Memory;
 import com.yahoo.sketches.theta.Sketch;
@@ -129,8 +129,10 @@ public class JaccardSimilarity extends EvalFunc<Tuple> {
    * @return Double Tuple.
    */
   static private Tuple doubleArrayToTuple(final double[] doubleArray) {
-    if(doubleArray == null || doubleArray.length == 0) return null;
-    int arraySize = doubleArray.length;
+    if ((doubleArray == null) || (doubleArray.length == 0)) {
+      return null;
+    }
+    final int arraySize = doubleArray.length;
     final Tuple outputTuple = TupleFactory.getInstance().newTuple(arraySize);
     for (int i = 0; i < arraySize; i++) {
       try {
