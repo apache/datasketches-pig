@@ -4,7 +4,7 @@
  */
 
 /**
- * Hive UDFs for Quantiles sketches.
+ * Pig UDFs for Quantiles sketches.
  * This includes UDFs for generic ItemsSketch and specialized DoublesSketch.
  * 
  * <p>The generic implementation is in the form of abstract classes DataToItemsSketch and
