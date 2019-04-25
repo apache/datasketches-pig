@@ -13,12 +13,12 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.sketches.tuple.DoubleSummary;
-import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 import com.yahoo.sketches.tuple.SummaryDeserializer;
+import com.yahoo.sketches.tuple.adouble.DoubleSummary;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryDeserializer;
 
 /**
  * This UDF converts a Sketch&lt;DoubleSummary&gt; to estimates.

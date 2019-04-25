@@ -7,10 +7,10 @@ package com.yahoo.sketches.pig.tuple;
 
 import org.apache.pig.Algebraic;
 
-import com.yahoo.sketches.tuple.DoubleSummary;
-import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
-import com.yahoo.sketches.tuple.DoubleSummaryFactory;
-import com.yahoo.sketches.tuple.DoubleSummarySetOperations;
+import com.yahoo.sketches.tuple.adouble.DoubleSummary;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryDeserializer;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryFactory;
+import com.yahoo.sketches.tuple.adouble.DoubleSummarySetOperations;
 
 /**
  * This UDF creates a Sketch&lt;DoubleSummary&gt; from raw data.

@@ -17,14 +17,14 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.yahoo.memory.Memory;
-import com.yahoo.sketches.tuple.DoubleSummary;
-import com.yahoo.sketches.tuple.DoubleSummaryDeserializer;
-import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.Sketch;
 import com.yahoo.sketches.tuple.SketchIterator;
 import com.yahoo.sketches.tuple.Sketches;
 import com.yahoo.sketches.tuple.UpdatableSketch;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
+import com.yahoo.sketches.tuple.adouble.DoubleSummary;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryDeserializer;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryFactory;
 
 public class UnionDoubleSummarySketchTest {
 

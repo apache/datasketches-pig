@@ -15,9 +15,9 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
 import com.yahoo.sketches.tuple.UpdatableSketch;
-import com.yahoo.sketches.tuple.DoubleSummary;
-import com.yahoo.sketches.tuple.DoubleSummaryFactory;
 import com.yahoo.sketches.tuple.UpdatableSketchBuilder;
+import com.yahoo.sketches.tuple.adouble.DoubleSummary;
+import com.yahoo.sketches.tuple.adouble.DoubleSummaryFactory;
 
 public class DoubleSummarySketchToPercentileTest {
   @Test
