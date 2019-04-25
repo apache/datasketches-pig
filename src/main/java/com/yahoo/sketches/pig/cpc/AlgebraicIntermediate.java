@@ -21,7 +21,7 @@ import com.yahoo.sketches.cpc.CpcSketch;
  * and from a reducer). It will receive a bag of values returned by either <i>Intermediate</i>
  * or <i>Initial</i> stages, so it needs to be able to differentiate between and
  * interpret both types.
- * 
+ *
  * @author Alexander Saydakov
  */
 abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
@@ -37,7 +37,7 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
    * Constructor with primitives for the intermediate pass of an Algebraic function.
    *
    * @param lgK parameter controlling the sketch size and accuracy
-   * @param seed
+   * @param seed the given seed
    */
   public AlgebraicIntermediate(final int lgK, final long seed) {
     lgK_ = lgK;

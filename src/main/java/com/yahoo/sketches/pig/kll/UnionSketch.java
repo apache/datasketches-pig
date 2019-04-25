@@ -21,9 +21,11 @@ import com.yahoo.sketches.kll.KllFloatsSketch;
 
 /**
  * This UDF is to merge sketches.
- * This class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces for performance optimization.
+ * This class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces for
+ * performance optimization.
  */
-public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<DataByteArray>, Algebraic {
+public class UnionSketch extends EvalFunc<DataByteArray>
+    implements Accumulator<DataByteArray>, Algebraic {
 
   private static final TupleFactory TUPLE_FACTORY_ = TupleFactory.getInstance();
 
@@ -102,7 +104,7 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
     final KllFloatsSketch sketch = new KllFloatsSketch(k_);
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag bag = (DataBag) inputTuple.get(0);
       updateUnion(bag, sketch);
     }
@@ -113,8 +115,8 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
 
   /**
    * An <i>Accumulator</i> version of the standard <i>exec()</i> method. Like <i>exec()</i>,
-   * accumulator is called with a bag of Sketch Tuples. Unlike <i>exec()</i>, it doesn't serialize the
-   * sketch at the end. Instead, it can be called multiple times, each time with another bag of
+   * accumulator is called with a bag of Sketch Tuples. Unlike <i>exec()</i>, it doesn't serialize
+   * the sketch at the end. Instead, it can be called multiple times, each time with another bag of
    * Sketch Tuples to be input to the Union.
    *
    * @param inputTuple A tuple containing a single bag, containing Sketch Tuples.
@@ -124,7 +126,7 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) { return; }
+    if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
     if (accumSketch_ == null) {
@@ -183,7 +185,8 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    * @param bag A bag of sketchTuples.
    * @param union The union to update
    */
-  private static void updateUnion(final DataBag bag, final KllFloatsSketch union) throws ExecException {
+  private static void updateUnion(final DataBag bag, final KllFloatsSketch union)
+        throws ExecException {
     for (Tuple innerTuple: bag) {
       final Object f0 = innerTuple.get(0);
       if (f0 == null) { continue; }
@@ -193,7 +196,8 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
           union.merge(KllFloatsSketch.heapify(Memory.wrap(dba.get())));
         }
       } else {
-        throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + innerTuple.getType(0));
+        throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: "
+              + innerTuple.getType(0));
       }
     }
   }
@@ -322,7 +326,7 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
 
   private static DataByteArray process(final Tuple inputTuple, final int k) throws IOException {
     final KllFloatsSketch union = new KllFloatsSketch(k);
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (final Tuple dataTuple: outerBag) {
         final Object f0 = dataTuple.get(0);

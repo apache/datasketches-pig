@@ -21,7 +21,7 @@ import com.yahoo.sketches.cpc.CpcUnion;
  * operation. It will receive a bag of values returned by either the <i>Intermediate</i>
  * stage or the <i>Initial</i> stages, so it needs to be able to differentiate between and
  * interpret both types.
- * 
+ *
  * @author Alexander Saydakov
  */
 abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
@@ -55,8 +55,9 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
     return dba;
   }
 
-  static DataByteArray process(final Tuple inputTuple, final int lgK, final long seed, boolean isInputRaw) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) {
+  static DataByteArray process(final Tuple inputTuple, final int lgK, final long seed,
+      final boolean isInputRaw) throws IOException {
+    if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
     }
     CpcSketch sketch = null;
@@ -102,7 +103,7 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
             + f0.getClass().getName());
       }
     }
-    if (sketch != null && union != null) {
+    if ((sketch != null) && (union != null)) {
       union.update(sketch);
       sketch = null;
     }

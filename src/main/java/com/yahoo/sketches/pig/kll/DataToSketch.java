@@ -20,7 +20,8 @@ import com.yahoo.sketches.kll.KllFloatsSketch;
 
 /**
  * This UDF is to build sketches from data.
- * This class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces for performance optimization.
+ * This class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces for
+ * performance optimization.
  */
 public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator<DataByteArray>, Algebraic {
 
@@ -111,7 +112,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
     final KllFloatsSketch sketch = new KllFloatsSketch(k_);
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
         sketch.update((Float) innerTuple.get(0));
@@ -134,7 +135,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() == 0) { return; }
+    if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
     if (accumSketch_ == null) {
@@ -312,7 +313,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
 
   private static DataByteArray process(final Tuple inputTuple, final int k) throws IOException {
     final KllFloatsSketch sketch = new KllFloatsSketch(k);
-    if (inputTuple != null && inputTuple.size() > 0) {
+    if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (final Tuple dataTuple: outerBag) {
         final Object f0 = dataTuple.get(0);
