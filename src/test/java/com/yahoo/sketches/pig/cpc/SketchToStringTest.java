@@ -8,11 +8,10 @@ package com.yahoo.sketches.pig.cpc;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.TupleFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.yahoo.sketches.cpc.CpcSketch;
-
-import junit.framework.Assert;
 
 public class SketchToStringTest {
 
