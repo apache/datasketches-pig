@@ -21,10 +21,6 @@ package org.apache.datasketches.pig.tuple;
 
 import java.io.IOException;
 
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataByteArray;
-import org.apache.pig.data.Tuple;
-
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.DoublesSketchBuilder;
@@ -32,6 +28,9 @@ import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketchIterator;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.pig.EvalFunc;
+import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
 
 /**
  * This UDF converts a given column of double values from an ArrayOfDoubles sketch

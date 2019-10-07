@@ -21,6 +21,9 @@ package org.apache.datasketches.pig.hll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.hll.HllSketch;
+import org.apache.datasketches.hll.TgtHllType;
+import org.apache.datasketches.hll.Union;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
@@ -30,10 +33,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.hll.HllSketch;
-import org.apache.datasketches.hll.TgtHllType;
-import org.apache.datasketches.hll.Union;
 
 /**
  * This is a Pig UDF that builds Sketches from data.

@@ -35,6 +35,7 @@ import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
   private static final BagFactory bagFactory = BagFactory.getInstance();
@@ -81,7 +82,7 @@ public class DataToDoublesSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
-  
+
   @Test
   public void execMixedNullCase() throws Exception {
     EvalFunc<Tuple> func = new DataToDoublesSketch();
@@ -130,7 +131,7 @@ public class DataToDoublesSketchTest {
     sketch = getSketch(resultTuple);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
-    
+
     // mixed null case
     bag = bagFactory.newDefaultBag();
     bag.add(tupleFactory.newTuple(1.0));
@@ -199,7 +200,7 @@ public class DataToDoublesSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
   }
-  
+
   @Test
   public void algebraicIntermediateFinalMixedNullCase() throws Exception {
     EvalFunc<Tuple> func = new DataToDoublesSketch.IntermediateFinal();

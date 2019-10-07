@@ -23,16 +23,13 @@ import static org.apache.datasketches.pig.theta.PigUtil.tupleToSketch;
 
 import java.io.IOException;
 
+import org.apache.datasketches.Util;
+import org.apache.datasketches.theta.Sketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.Tuple;
 
-import org.apache.datasketches.Util;
-import org.apache.datasketches.theta.Sketch;
-
 /**
  * Returns the unique count estimate of a sketch as a Double.
- *
- * @author LeeRhodes
  */
 public class Estimate extends EvalFunc<Double> {
   private final long seed_;

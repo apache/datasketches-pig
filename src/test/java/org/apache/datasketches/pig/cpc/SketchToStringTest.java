@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.cpc.CpcSketch;
 
+@SuppressWarnings("javadoc")
 public class SketchToStringTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();

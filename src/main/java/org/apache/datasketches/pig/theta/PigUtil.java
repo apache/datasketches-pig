@@ -21,21 +21,18 @@ package org.apache.datasketches.pig.theta;
 
 import java.io.IOException;
 
+import org.apache.datasketches.ResizeFactor;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.theta.CompactSketch;
+import org.apache.datasketches.theta.Sketch;
+import org.apache.datasketches.theta.UpdateSketch;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ResizeFactor;
-import org.apache.datasketches.theta.CompactSketch;
-import org.apache.datasketches.theta.Sketch;
-import org.apache.datasketches.theta.UpdateSketch;
-
 /**
  * Common methods for the pig classes.
- *
- * @author Lee Rhodes
  */
 class PigUtil {
   static final ResizeFactor RF = ResizeFactor.X8;

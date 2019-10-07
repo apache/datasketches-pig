@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.kll.KllFloatsSketch;
 
+@SuppressWarnings("javadoc")
 public class UnionSketchTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
   private static final BagFactory BAG_FACTORY = BagFactory.getInstance();

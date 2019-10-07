@@ -34,12 +34,16 @@ import org.apache.datasketches.tuple.UpdatableSketchBuilder;
 import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryFactory;
 
+@SuppressWarnings("javadoc")
 public class DoubleSummarySketchToPercentileTest {
+
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<Double> func = new DoubleSummarySketchToPercentile();
-    UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
-    Tuple inputTuple = TupleFactory.getInstance().newTuple(Arrays.asList(new DataByteArray(sketch.compact().toByteArray()), 0.0));
+    UpdatableSketch<Double, DoubleSummary> sketch =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
+    Tuple inputTuple = TupleFactory.getInstance().
+        newTuple(Arrays.asList(new DataByteArray(sketch.compact().toByteArray()), 0.0));
     double result = func.exec(inputTuple);
     Assert.assertEquals(result, Double.NaN);
   }
@@ -47,10 +51,15 @@ public class DoubleSummarySketchToPercentileTest {
   @Test
   public void normalCase() throws Exception {
     EvalFunc<Double> func = new DoubleSummarySketchToPercentile();
-    UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+    UpdatableSketch<Double, DoubleSummary> sketch =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
     int iterations = 100000;
-    for (int i = 0; i < iterations; i++) sketch.update(i, (double) i);
-    for (int i = 0; i < iterations; i++) sketch.update(i, (double) i);
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, (double) i);
+    }
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, (double) i);
+    }
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()), 50.0);
     double result = func.exec(inputTuple);
     Assert.assertEquals(result, iterations, iterations * 0.02);
@@ -65,7 +74,8 @@ public class DoubleSummarySketchToPercentileTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void percentileOutOfRange() throws Exception {
     EvalFunc<Double> func = new DoubleSummarySketchToPercentile();
-    UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+    UpdatableSketch<Double, DoubleSummary> sketch =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
     func.exec(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()), 200.0));
   }
 }

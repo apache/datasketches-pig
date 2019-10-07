@@ -23,6 +23,8 @@ import static org.apache.datasketches.pig.sampling.VarOptCommonImpl.DEFAULT_TARG
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.sampling.VarOptItemsUnion;
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
 import org.apache.pig.data.DataBag;
@@ -30,9 +32,6 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.sampling.VarOptItemsUnion;
 
 /**
  * Accepts binary VarOpt sketch images and unions them into a single binary output sketch.

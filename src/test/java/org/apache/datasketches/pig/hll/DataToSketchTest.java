@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.hll.HllSketch;
 import org.apache.datasketches.hll.TgtHllType;
 
+@SuppressWarnings("javadoc")
 public class DataToSketchTest {
 
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
@@ -307,7 +308,7 @@ public class DataToSketchTest {
   static HllSketch getSketch(DataByteArray dba) throws Exception {
     Assert.assertNotNull(dba);
     Assert.assertTrue(dba.size() > 0);
-    return HllSketch.heapify(dba.get()); 
+    return HllSketch.heapify(dba.get());
   }
 
 }

@@ -38,7 +38,7 @@ import org.apache.datasketches.ArrayOfItemsSerDe;
 import org.apache.datasketches.ArrayOfStringsSerDe;
 import org.apache.datasketches.quantiles.ItemsSketch;
 
-
+@SuppressWarnings("javadoc")
 public class UnionStringsSketchTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();

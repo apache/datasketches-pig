@@ -28,6 +28,11 @@ import static org.apache.datasketches.pig.theta.PigUtil.extractTypeAtIndex;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.theta.CompactSketch;
+import org.apache.datasketches.theta.Intersection;
+import org.apache.datasketches.theta.SetOperation;
+import org.apache.datasketches.theta.Sketch;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -38,17 +43,9 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.theta.CompactSketch;
-import org.apache.datasketches.theta.Intersection;
-import org.apache.datasketches.theta.SetOperation;
-import org.apache.datasketches.theta.Sketch;
-
 /**
  * This is a Pig UDF that performs the Intersection Set Operation on Sketches.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
- *
- * @author Lee Rhodes
  */
 public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
@@ -85,8 +82,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   public Intersect(final long seed) {
     super();
-    this.seed_ = seed;
-    this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+    seed_ = seed;
+    emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
   }
 
   //@formatter:off
@@ -343,8 +340,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(final long seed) {
-      this.mySeed_ = seed;
-      this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+      mySeed_ = seed;
+      myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
     @Override //IntermediateFinal exec

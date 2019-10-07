@@ -28,6 +28,8 @@ import static org.apache.datasketches.pig.sampling.VarOptCommonImpl.unionSketche
 
 import java.io.IOException;
 
+import org.apache.datasketches.sampling.VarOptItemsSketch;
+import org.apache.datasketches.sampling.VarOptItemsUnion;
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -37,15 +39,13 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import org.apache.datasketches.sampling.VarOptItemsSketch;
-import org.apache.datasketches.sampling.VarOptItemsUnion;
-
 /**
  * Applies VarOpt sampling to input tuples. Implements both the <tt>Accumulator</tt> and
  * <tt>Algebraic</tt> interfaces for efficient performance.
  *
  * @author Jon Malkin
  */
+@SuppressWarnings("javadoc")
 public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Algebraic {
   private final int targetK_;
   private final int weightIdx_;
@@ -91,7 +91,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+    if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
       return;
     }
 
@@ -124,7 +124,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
   @Override
   public Schema outputSchema(final Schema input) {
     try {
-      if (input == null || input.size() == 0) {
+      if ((input == null) || (input.size() == 0)) {
         throw new IllegalArgumentException("Degenerate input schema to VarOptSampling");
       }
 
@@ -136,8 +136,8 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
       final Schema record = input.getField(0).schema; // record has a tuple in field 0
       final Schema fields = record.getField(0).schema;
-      if (fields.getField(weightIdx_).type != DataType.DOUBLE
-              && fields.getField(weightIdx_).type != DataType.FLOAT) {
+      if ((fields.getField(weightIdx_).type != DataType.DOUBLE)
+              && (fields.getField(weightIdx_).type != DataType.FLOAT)) {
         throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
                 + "weight (double/float), found " + fields.getField(0).type
                 + ": " + fields.toString());
@@ -214,7 +214,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
     @Override
     public DataBag exec(final Tuple inputTuple) throws IOException {
-      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+      if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
         return null;
       }
 

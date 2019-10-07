@@ -22,13 +22,12 @@ package org.apache.datasketches.pig.quantiles;
 import java.io.IOException;
 import java.util.Comparator;
 
+import org.apache.datasketches.ArrayOfStringsSerDe;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.quantiles.ItemsSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ArrayOfStringsSerDe;
-import org.apache.datasketches.quantiles.ItemsSketch;
 
 /**
  * This UDF is to get the parameter K from a given sketch.

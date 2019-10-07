@@ -23,15 +23,14 @@ import static org.apache.datasketches.pig.theta.PigUtil.tupleToSketch;
 
 import java.io.IOException;
 
+import org.apache.datasketches.Util;
+import org.apache.datasketches.theta.Sketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.Util;
-import org.apache.datasketches.theta.Sketch;
 
 //@formatter:off
 /**
@@ -50,8 +49,6 @@ import org.apache.datasketches.theta.Sketch;
  *     </ul>
  *   </li>
  * </ul>
- *
- * @author Lee Rhodes
  */
 //@formatter:on
 public class ErrorBounds extends EvalFunc<Tuple> {

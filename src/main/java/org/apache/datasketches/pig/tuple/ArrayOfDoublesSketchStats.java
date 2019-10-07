@@ -20,7 +20,6 @@
 package org.apache.datasketches.pig.tuple;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
 import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketchIterator;
 

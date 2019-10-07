@@ -21,12 +21,11 @@ package org.apache.datasketches.pig.quantiles;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.quantiles.DoublesSketch;
 
 /**
  * This UDF is to get a quantile value from a DoublesSketch. A single value for a

@@ -34,6 +34,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetPmfFromStringsSketchTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 
@@ -52,7 +53,9 @@ public class GetPmfFromStringsSketchTest {
   public void normalCase() throws Exception {
     EvalFunc<Tuple> func = new GetPmfFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
-    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(String.format("%02d", i));
+    }
     Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), "02", "07")));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);

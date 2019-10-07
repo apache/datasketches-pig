@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.datasketches.sampling.ReservoirItemsSketch;
+import org.apache.datasketches.sampling.ReservoirItemsUnion;
+import org.apache.datasketches.sampling.SamplingPigUtil;
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -35,16 +38,13 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import org.apache.datasketches.sampling.ReservoirItemsSketch;
-import org.apache.datasketches.sampling.ReservoirItemsUnion;
-import org.apache.datasketches.sampling.SamplingPigUtil;
-
 /**
  * This is a Pig UDF that applies reservoir sampling to input tuples. It implements both
  * the <tt>Accumulator</tt> and <tt>Algebraic</tt> interfaces for efficient performance.
  *
  * @author Jon Malkin
  */
+@SuppressWarnings("javadoc")
 public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Algebraic {
   // defined for test consistency
   static final String N_ALIAS = "n";
@@ -73,7 +73,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+    if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
       return null;
     }
 
@@ -88,7 +88,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+    if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
       return;
     }
 
@@ -122,12 +122,12 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
   @Override
   public Schema outputSchema(final Schema input) {
-    if (input != null && input.size() > 0) {
+    if ((input != null) && (input.size() > 0)) {
       try {
         Schema source = input;
 
         // if we have a bag, grab one level down to get a tuple
-        if (source.size() == 1 && source.getField(0).type == DataType.BAG) {
+        if ((source.size() == 1) && (source.getField(0).type == DataType.BAG)) {
           source = source.getField(0).schema;
         }
 
@@ -200,7 +200,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
     @Override
     public Tuple exec(final Tuple inputTuple) throws IOException {
-      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+      if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
         return null;
       }
 
@@ -253,7 +253,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
     @Override
     public Tuple exec(final Tuple inputTuple) throws IOException {
-      if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
+      if ((inputTuple == null) || (inputTuple.size() < 1) || inputTuple.isNull(0)) {
         return null;
       }
 
@@ -264,7 +264,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
         final long n = (long) reservoir.get(0);
         final int k  = (int) reservoir.get(1);
 
-        if (n <= k && k <= targetK_) {
+        if ((n <= k) && (k <= targetK_)) {
           for (Tuple t : (DataBag) reservoir.get(2)) {
             union.update(t);
           }

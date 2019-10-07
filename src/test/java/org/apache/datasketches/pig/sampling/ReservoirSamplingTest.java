@@ -40,6 +40,7 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ReservoirSamplingTest {
 
   @SuppressWarnings("unused")
@@ -131,7 +132,7 @@ public class ReservoirSamplingTest {
     assertEquals(((DataBag) result.get(2)).size(), n);
 
     // add another n to the bag and repeat
-    for (long i = n; i < 2 * n; ++i) {
+    for (long i = n; i < (2 * n); ++i) {
       final Tuple t = tf.newTuple(2);
       t.set(0, i);
       t.set(1, Long.toString(-i));
@@ -231,7 +232,7 @@ public class ReservoirSamplingTest {
     // check that they're all in the target range
     for (Tuple sample : ((DataBag) result.get(2))) {
       final int val = (int) sample.get(0);
-      if (val < 0 || val >= tgtMaxVal) {
+      if ((val < 0) || (val >= tgtMaxVal)) {
         fail("Found value (" + val + ") outside target range [0, " + tgtMaxVal + "]");
       }
     }

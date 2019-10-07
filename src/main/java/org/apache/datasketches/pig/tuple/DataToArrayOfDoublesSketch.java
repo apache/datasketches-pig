@@ -25,6 +25,7 @@ import org.apache.pig.Algebraic;
  * This UDF creates an ArrayOfDoublesSketch from raw data.
  * It supports all three ways: exec(), Accumulator and Algebraic.
  */
+@SuppressWarnings("javadoc")
 public class DataToArrayOfDoublesSketch extends DataToArrayOfDoublesSketchBase implements Algebraic {
 
   /**

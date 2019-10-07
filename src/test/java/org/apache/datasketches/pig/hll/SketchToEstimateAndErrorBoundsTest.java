@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.hll.HllSketch;
 
+@SuppressWarnings("javadoc")
 public class SketchToEstimateAndErrorBoundsTest {
 
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();

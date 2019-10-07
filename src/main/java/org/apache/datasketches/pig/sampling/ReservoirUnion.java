@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.datasketches.sampling.ReservoirItemsSketch;
+import org.apache.datasketches.sampling.ReservoirItemsUnion;
+import org.apache.datasketches.sampling.SamplingPigUtil;
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.BagFactory;
@@ -31,10 +34,6 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.sampling.ReservoirItemsSketch;
-import org.apache.datasketches.sampling.ReservoirItemsUnion;
-import org.apache.datasketches.sampling.SamplingPigUtil;
 
 /**
  * This is a Pig UDF that unions reservoir samples. It implements

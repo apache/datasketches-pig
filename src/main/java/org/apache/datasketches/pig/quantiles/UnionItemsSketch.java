@@ -22,6 +22,10 @@ package org.apache.datasketches.pig.quantiles;
 import java.io.IOException;
 import java.util.Comparator;
 
+import org.apache.datasketches.ArrayOfItemsSerDe;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.quantiles.ItemsSketch;
+import org.apache.datasketches.quantiles.ItemsUnion;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -33,11 +37,6 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ArrayOfItemsSerDe;
-import org.apache.datasketches.quantiles.ItemsSketch;
-import org.apache.datasketches.quantiles.ItemsUnion;
 
 /**
  * Computes union of ItemsSketch.

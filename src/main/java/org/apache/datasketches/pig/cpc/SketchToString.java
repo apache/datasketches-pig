@@ -23,11 +23,10 @@ import static org.apache.datasketches.Util.DEFAULT_UPDATE_SEED;
 
 import java.io.IOException;
 
+import org.apache.datasketches.cpc.CpcSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.cpc.CpcSketch;
 
 /**
  * This is a User Defined Function (UDF) for printing a human-readable summary of a given CpcSketch

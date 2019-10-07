@@ -31,6 +31,7 @@ import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 import org.apache.commons.math3.stat.inference.TTest;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -39,10 +40,10 @@ import java.util.Random;
 public class ArrayOfDoublesSketchesToPValueEstimatesTest {
     /**
      * Check null input to UDF.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void nullInput() throws Exception {
+    public void nullInput() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         Tuple resultTuple = func.exec(null);
@@ -52,10 +53,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of empty tuple.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void emptyInput() throws Exception {
+    public void emptyInput() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         Tuple resultTuple = func.exec(TupleFactory.getInstance().newTuple());
@@ -65,10 +66,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of single empty sketch.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void oneEmptySketch() throws Exception {
+    public void oneEmptySketch() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -82,10 +83,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check input of two empty sketches.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void twoEmptySketches() throws Exception {
+    public void twoEmptySketches() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         ArrayOfDoublesUpdatableSketch sketchA = new ArrayOfDoublesUpdatableSketchBuilder().build();
@@ -101,10 +102,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for the smoker data set. Single metric.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void smokerDatasetSingleMetric() throws Exception {
+    public void smokerDatasetSingleMetric() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         // Create the two sketches
@@ -146,10 +147,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for a large data set.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void largeDataSet() throws Exception {
+    public void largeDataSet() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         // Create the two sketches
@@ -203,10 +204,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check p-value for two metrics at the same time.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void twoMetrics() throws Exception {
+    public void twoMetrics() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         // Create the two sketches
@@ -249,10 +250,10 @@ public class ArrayOfDoublesSketchesToPValueEstimatesTest {
 
     /**
      * Check with sketch having only one input.
-     * @throws Exception
+     * @throws IOException from EvalFunc<Tuple>.exec(...)
      */
     @Test
-    public void sketchWithSingleValue() throws Exception {
+    public void sketchWithSingleValue() throws IOException {
         EvalFunc<Tuple> func = new ArrayOfDoublesSketchesToPValueEstimates();
 
         // Create the two sketches

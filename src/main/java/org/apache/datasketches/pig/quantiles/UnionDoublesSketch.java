@@ -21,6 +21,10 @@ package org.apache.datasketches.pig.quantiles;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.quantiles.DoublesSketch;
+import org.apache.datasketches.quantiles.DoublesUnion;
+import org.apache.datasketches.quantiles.DoublesUnionBuilder;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -32,11 +36,6 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.quantiles.DoublesSketch;
-import org.apache.datasketches.quantiles.DoublesUnion;
-import org.apache.datasketches.quantiles.DoublesUnionBuilder;
 
 /**
  * This is a Pig UDF that merges Quantiles Sketches.

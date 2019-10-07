@@ -23,6 +23,7 @@ import static org.apache.datasketches.Util.DEFAULT_UPDATE_SEED;
 
 import org.apache.datasketches.cpc.CpcSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToSketchAlgebraicIntermediate extends AlgebraicIntermediate {
 
   /**
@@ -47,7 +48,7 @@ public class DataToSketchAlgebraicIntermediate extends AlgebraicIntermediate {
   /**
    * Constructor for the intermediate pass of an Algebraic function. Pig will call
    * this and pass the same constructor arguments as the base UDF.
-   * 
+   *
    * @param lgK parameter controlling the sketch size and accuracy
    * @param seed for the hash function
    */

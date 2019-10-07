@@ -21,13 +21,12 @@ package org.apache.datasketches.pig.cpc;
 
 import java.io.IOException;
 
+import org.apache.datasketches.cpc.CpcSketch;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.cpc.CpcSketch;
 
 /**
  * Class used to calculate the intermediate combiner pass of an <i>Algebraic</i> sketch

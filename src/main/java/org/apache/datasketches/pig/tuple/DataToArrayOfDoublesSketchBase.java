@@ -23,6 +23,8 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 
 import java.io.IOException;
 
+import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
+import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
@@ -31,9 +33,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
 abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements Accumulator<Tuple> {
   private final int sketchSize_;

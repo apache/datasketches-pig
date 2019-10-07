@@ -37,11 +37,9 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.pig.theta.AexcludeB;
 import org.apache.datasketches.pig.theta.Estimate;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class AexcludeBTest {
-  
+
   @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
@@ -49,12 +47,12 @@ public class AexcludeBTest {
     aNOTb = new AexcludeB("9001");
     aNOTb = new AexcludeB(9001);
   }
-  
+
   @Test
   public void checkNullCombinations() throws IOException {
     EvalFunc<Tuple> aNbFunc = new AexcludeB();
     EvalFunc<Double> estFunc = new Estimate();
-    
+
     Tuple inputTuple, resultTuple;
     Double est;
     //Two nulls
@@ -64,7 +62,7 @@ public class AexcludeBTest {
     assertEquals(resultTuple.size(), 1);
     est = estFunc.exec(resultTuple);
     assertEquals(est, 0.0, 0.0);
-    
+
     //A is null
     inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
@@ -73,7 +71,7 @@ public class AexcludeBTest {
     assertEquals(resultTuple.size(), 1);
     est = estFunc.exec(resultTuple);
     assertEquals(est, 0.0, 0.0);
-    
+
     //A is valid, B is null
     inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
@@ -82,7 +80,7 @@ public class AexcludeBTest {
     assertEquals(resultTuple.size(), 1);
     est = estFunc.exec(resultTuple);
     assertEquals(est, 256.0, 0.0);
-    
+
     //Both valid
     inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
@@ -93,43 +91,43 @@ public class AexcludeBTest {
     est = estFunc.exec(resultTuple);
     assertEquals(est, 128.0, 0.0);
   }
-  
+
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new AexcludeB("512");
-    
+
     Schema inputSchema = null;
-    
+
     Schema nullOutputSchema = null;
-    
+
     Schema outputSchema = null;
     Schema.FieldSchema outputOuterFs0 = null;
-    
+
     Schema outputInnerSchema = null;
     Schema.FieldSchema outputInnerFs0 = null;
-    
+
     inputSchema = Schema.generateNestedSchema(DataType.BAG, DataType.BYTEARRAY);
-    
+
     nullOutputSchema = udf.outputSchema(null);
-        
+
     outputSchema = udf.outputSchema(inputSchema);
     outputOuterFs0 = outputSchema.getField(0);
-    
+
     outputInnerSchema = outputOuterFs0.schema;
     outputInnerFs0 = outputInnerSchema.getField(0);
-    
+
     Assert.assertNull(nullOutputSchema, "Should be null");
     Assert.assertNotNull(outputOuterFs0, "outputSchema.getField(0) schema may not be null");
-    
+
     String expected = "tuple";
     String result = DataType.findTypeName(outputOuterFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     expected = "bytearray";
     Assert.assertNotNull(outputInnerFs0, "innerSchema.getField(0) schema may not be null");
     result = DataType.findTypeName(outputInnerFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     //print schemas
     //@formatter:off
     StringBuilder sb = new StringBuilder();
@@ -144,17 +142,17 @@ public class AexcludeBTest {
     //@formatter:on
     //end print schemas
   }
-  
+
   @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s); //disable here
   }
-  
+
 }

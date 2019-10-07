@@ -21,6 +21,8 @@ package org.apache.datasketches.pig.hll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.hll.HllSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
@@ -28,9 +30,6 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.hll.HllSketch;
 
 /**
  * This is a User Defined Function (UDF) for obtaining the unique count estimate

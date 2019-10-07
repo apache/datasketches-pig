@@ -25,6 +25,11 @@ import static org.apache.datasketches.pig.theta.PigUtil.extractFieldAtIndex;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.theta.AnotB;
+import org.apache.datasketches.theta.CompactSketch;
+import org.apache.datasketches.theta.SetOperation;
+import org.apache.datasketches.theta.Sketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
@@ -33,20 +38,12 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.theta.AnotB;
-import org.apache.datasketches.theta.CompactSketch;
-import org.apache.datasketches.theta.SetOperation;
-import org.apache.datasketches.theta.Sketch;
-
 /**
  * This is a Pig UDF that performs the A-NOT-B Set Operation on two given Sketches. Because this
  * operation is fundamentally asymmetric, it is structured as a single stateless operation rather
  * than stateful as are Union and Intersection UDFs, which can be iterative.
  * The requirement to perform iterative A\B\C\... is rare. If needed, it can be rendered easily by
  * the caller.
- *
- * @author Lee Rhodes
  */
 public class AexcludeB extends EvalFunc<Tuple> {
   private final long seed_;
@@ -78,7 +75,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
    */
   public AexcludeB(final long seed) {
     super();
-    this.seed_ = seed;
+    seed_ = seed;
   }
 
   // @formatter:off

@@ -40,6 +40,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.sampling.VarOptItemsSketch;
 
+@SuppressWarnings("javadoc")
 public class GetVarOptSamplesTest {
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
@@ -83,7 +84,7 @@ public class GetVarOptSamplesTest {
         cumResultWt += (double) sample.get(0);
         final Tuple record = (Tuple) sample.get(1);
         final int id = (int) record.get(1);
-        assertTrue(id >= 1 && id <= n);
+        assertTrue((id >= 1) && (id <= n));
       }
       assertEquals(cumResultWt, cumWt, EPS);
     } catch (final IOException e) {

@@ -21,12 +21,11 @@ package org.apache.datasketches.pig.hll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.hll.HllSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.hll.HllSketch;
 
 /**
  * This is a User Defined Function (UDF) for getting a unique count estimate from an HllSketch

@@ -31,6 +31,7 @@ import org.apache.datasketches.quantiles.DoublesSketch;
 
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class DoublesSketchToStringTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 

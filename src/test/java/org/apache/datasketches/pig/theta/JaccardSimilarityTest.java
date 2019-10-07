@@ -30,9 +30,7 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 
-/**
- * @author eshcar
- */
+@SuppressWarnings("javadoc")
 public class JaccardSimilarityTest {
 
   @Test

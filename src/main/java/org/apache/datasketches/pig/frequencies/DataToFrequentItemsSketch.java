@@ -21,15 +21,14 @@ package org.apache.datasketches.pig.frequencies;
 
 import java.io.IOException;
 
+import org.apache.datasketches.ArrayOfItemsSerDe;
+import org.apache.datasketches.frequencies.ItemsSketch;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.ArrayOfItemsSerDe;
-import org.apache.datasketches.frequencies.ItemsSketch;
 
 /**
  * This is a generic implementation to be specialized in concrete UDFs

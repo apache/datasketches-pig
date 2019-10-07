@@ -22,14 +22,13 @@ package org.apache.datasketches.pig.tuple;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
+import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
 
 /**
  * This is a User Defined Function (UDF) for obtaining the unique count estimate

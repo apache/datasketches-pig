@@ -22,12 +22,12 @@ package org.apache.datasketches.pig.hll;
 import static org.apache.datasketches.pig.hll.DataToSketch.DEFAULT_HLL_TYPE;
 import static org.apache.datasketches.pig.hll.DataToSketch.DEFAULT_LG_K;
 
+import org.apache.datasketches.hll.TgtHllType;
+import org.apache.datasketches.hll.Union;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 
-import org.apache.datasketches.hll.TgtHllType;
-import org.apache.datasketches.hll.Union;
-
+@SuppressWarnings("javadoc")
 public class DataToSketchAlgebraicIntermediate extends AlgebraicIntermediate {
 
   /**
@@ -52,7 +52,7 @@ public class DataToSketchAlgebraicIntermediate extends AlgebraicIntermediate {
   /**
    * Constructor for the intermediate pass of an Algebraic function. Pig will call
    * this and pass the same constructor arguments as the base UDF.
-   * 
+   *
    * @param lgK parameter controlling the sketch size and accuracy
    * @param tgtHllType HLL type of the resulting sketch
    */

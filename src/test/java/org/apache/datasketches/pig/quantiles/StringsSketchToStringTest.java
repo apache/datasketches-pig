@@ -34,6 +34,7 @@ import org.apache.datasketches.quantiles.ItemsSketch;
 
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class StringsSketchToStringTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 

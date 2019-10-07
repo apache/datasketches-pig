@@ -21,6 +21,8 @@ package org.apache.datasketches.pig.kll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.kll.KllFloatsSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -29,9 +31,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.kll.KllFloatsSketch;
 
 /**
  * This UDF is to merge sketches.

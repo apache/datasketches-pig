@@ -48,31 +48,29 @@ import org.apache.datasketches.pig.theta.DataToSketch;
 import org.apache.datasketches.pig.theta.Estimate;
 import org.apache.datasketches.theta.Sketch;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class DataToSketchTest {
   private String udfName = "org.apache.datasketches.pig.theta.DataToSketch";
   private long seed_ = Util.DEFAULT_UPDATE_SEED;
-  
+
   @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions1() {
     DataToSketch test = new DataToSketch("1023");
   }
-  
+
   @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testConstructorExceptions3() {
     DataToSketch test = new DataToSketch("8");
   }
-  
+
   @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
     DataToSketch test = new DataToSketch("1024", "2.0");
   }
-  
+
   @Test
   public void checkNotDBAExcep() throws IOException {
     DataToSketch inter = new DataToSketch();
@@ -80,38 +78,38 @@ public class DataToSketchTest {
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);
-    
+
     Tuple innerTuple = TupleFactory.getInstance().newTuple(1);
     bag.add(innerTuple);
     inter.accumulate(inputTuple); //add empty tuple
-    
+
     innerTuple.set(0, new Double(1.0));  //not a DBA
     inter = new DataToSketch();
     inter.accumulate(inputTuple); //add wrong type
   }
-  
+
   @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
-    
+
     DataToSketch inter = new DataToSketch();
     inter = new DataToSketch("1024");
     inter = new DataToSketch("1024", "1.0");
     inter = new DataToSketch("1024", "1.0", "9001");
     inter = new DataToSketch(1024, (float) 1.0, 9001);
-    
+
     DataToSketch.Initial initial = new DataToSketch.Initial();
     initial = new DataToSketch.Initial("1024");
     initial = new DataToSketch.Initial("1024", "1.0");
     initial = new DataToSketch.Initial("1024", "1.0", "9001");
-    
+
     DataToSketch.IntermediateFinal interFin = new DataToSketch.IntermediateFinal();
     interFin = new DataToSketch.IntermediateFinal("1024");
     interFin = new DataToSketch.IntermediateFinal("1024", "1.0");
     interFin = new DataToSketch.IntermediateFinal("1024", "1.0", "9001");
     interFin = new DataToSketch.IntermediateFinal(1024, (float) 1.0, 9001);
   }
-  
+
   @Test
   public void testTopExec() throws IOException {
     EvalFunc<Tuple> func = new DataToSketch();  //empty constructor, size 4096
@@ -119,9 +117,9 @@ public class DataToSketchTest {
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
     Sketch sketch = tupleToSketch(resultTuple, seed_);
-    
+
     assertTrue(sketch.isEmpty());
-    
+
     inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);
@@ -141,7 +139,7 @@ public class DataToSketchTest {
     sketch = tupleToSketch(resultTuple, seed_);
     assertEquals(sketch.getEstimate(), 64.0, 0.0);
   }
-  
+
   /*
    * DataToSketch <br>
    * Tests all possible data types: NULL, BYTE, INTEGER, LONG, FLOAT, DOUBLE,
@@ -227,13 +225,13 @@ public class DataToSketchTest {
     Sketch sketch = tupleToSketch(resultTuple, seed_);
     assertEquals(sketch.getEstimate(), 8.0, 0.0);
   }
- 
+
   @SuppressWarnings("unchecked") //still triggers unchecked warning
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testRejectionOfNonSimpleType() throws IOException {
     TupleFactory mTupleFactory = TupleFactory.getInstance();
     BagFactory bagFactory = BagFactory.getInstance();
-    
+
     Tuple outerTuple = mTupleFactory.newTuple(1);
     DataBag outerBag = bagFactory.newDefaultBag();
     Tuple innerTuple = mTupleFactory.newTuple(1);
@@ -241,13 +239,13 @@ public class DataToSketchTest {
     innerTuple.set(0, innerBag);
     outerBag.add(innerTuple);
     outerTuple.set(0, outerBag);
-    
+
     String[] ctorArgs = { "128" };
     EvalFunc<Tuple> dataUdf =
         (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(udfName, ctorArgs));
     dataUdf.exec(outerTuple);
   }
-  
+
   @Test
   public void testAccumulate() throws IOException {
     Accumulator<Tuple> func = new DataToSketch("128");
@@ -295,12 +293,12 @@ public class DataToSketchTest {
     sketch = tupleToSketch(resultTuple, seed_);
     assertEquals(sketch.getEstimate(), 0.0, 0.0);
   }
-  
+
   @Test
   public void testInitial() throws IOException {
     EvalFunc<Tuple> func = new DataToSketch.Initial("128");
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
-    
+
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);
 
@@ -318,22 +316,22 @@ public class DataToSketchTest {
     DataBag resultBag = (DataBag) resultTuple.get(0);
     assertEquals(resultBag.size(), 64);
   }
-  
+
   @Test
   public void testIntermediateFinal() throws IOException {
     EvalFunc<Tuple> func = new DataToSketch.IntermediateFinal("128");
-    
+
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
     Sketch sketch = tupleToSketch(resultTuple, seed_);
     assertTrue(sketch.isEmpty());
-    
+
     inputTuple = TupleFactory.getInstance().newTuple(0);
     resultTuple = func.exec(inputTuple);
     sketch = tupleToSketch(resultTuple, seed_);
     assertTrue(sketch.isEmpty());
-    
-    
+
+
     inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);
@@ -364,109 +362,109 @@ public class DataToSketchTest {
     sketch = tupleToSketch(resultTuple, seed_);
     assertEquals(sketch.getEstimate(), 100.0, 0.0);
   }
-  
+
   @Test
   public void checkAlgFinalOuterBagEmptyTuples() throws IOException {
     EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
-    
+
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag); //inputTuple.bag0:null
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     Tuple innerTuple = TupleFactory.getInstance().newTuple(1);
     bag.add(innerTuple);
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
-  
+
   @Test
   public void checkAlgFinalInnerBagEmpty() throws IOException {
     EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
-    
+
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag); //inputTuple.bag0:null
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     Tuple innerTuple = TupleFactory.getInstance().newTuple(1);
     bag.add(innerTuple);
     DataBag bag2 = BagFactory.getInstance().newDefaultBag();
     innerTuple.set(0, bag2);
-    
+
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
-  
+
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkAlgFinalInnerNotDBA() throws IOException {
     EvalFunc<Tuple> interFuncFinal = new DataToSketch.IntermediateFinal("256");
     EvalFunc<Double> estFunc = new Estimate();
-    
+
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1);
     Tuple resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag); //inputTuple.bag0:null
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
-    
+
     Tuple innerTuple = TupleFactory.getInstance().newTuple(1);
     bag.add(innerTuple);
     innerTuple.set(0, new Double(1.0)); //not a DBA
-    
+
     resultTuple = interFuncFinal.exec(inputTuple);
     assertEquals(estFunc.exec(resultTuple), 0.0, 0.0);
   }
-  
+
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new DataToSketch("512");
-    
+
     Schema inputSchema = null;
-    
+
     Schema nullOutputSchema = null;
-    
+
     Schema outputSchema = null;
-    
+
     Schema outputInnerSchema = null;
     Schema.FieldSchema outputOuterFs0 = null;
     Schema.FieldSchema outputInnerFs0 = null;
 
     //CHARARRAY is one of several possible inner types
     inputSchema = Schema.generateNestedSchema(DataType.BAG, DataType.CHARARRAY);
-    
+
     nullOutputSchema = udf.outputSchema(null);
 
     outputSchema = udf.outputSchema(inputSchema);
     outputOuterFs0 = outputSchema.getField(0);
-    
+
     outputInnerSchema = outputOuterFs0.schema;
     outputInnerFs0 = outputInnerSchema.getField(0);
 
     Assert.assertNull(nullOutputSchema, "Should be null");
     Assert.assertNotNull(outputOuterFs0, "outputSchema.getField(0) may not be null");
-    
+
     String expected = "tuple";
     String result = DataType.findTypeName(outputOuterFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     expected = "bytearray";
     Assert.assertNotNull(outputInnerFs0, "innerSchema.getField(0) may not be null");
     result = DataType.findTypeName(outputInnerFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     //print schemas
     //@formatter:off
     StringBuilder sb = new StringBuilder();
@@ -481,7 +479,7 @@ public class DataToSketchTest {
     //@formatter:on
     //end print schemas
   }
-  
+
   @Test
   @SuppressWarnings("unused")
   public void checkMisc() throws IOException  {
@@ -493,9 +491,9 @@ public class DataToSketchTest {
     dts.accumulate(inputTuple);
     Tuple resultTuple = dts.getValue();
     Sketch sketch = tupleToSketch(resultTuple, seed_);
-    assertTrue(sketch.isEmpty());    
+    assertTrue(sketch.isEmpty());
   }
-  
+
   @Test
   public void checkSmall() throws IOException {
     EvalFunc<Tuple> func = new DataToSketch("32");
@@ -503,9 +501,9 @@ public class DataToSketchTest {
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
     Sketch sketch = tupleToSketch(resultTuple, seed_);
-    
+
     assertTrue(sketch.isEmpty());
-    
+
     inputTuple = TupleFactory.getInstance().newTuple(1);
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     inputTuple.set(0, bag);
@@ -526,17 +524,17 @@ public class DataToSketchTest {
     sketch = tupleToSketch(resultTuple, seed_);
     assertEquals(sketch.getEstimate(), u, 0.0);
   }
-  
+
   @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s); //disable here
   }
-  
+
 }

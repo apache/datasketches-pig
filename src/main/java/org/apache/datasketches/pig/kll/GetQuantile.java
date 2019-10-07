@@ -21,12 +21,11 @@ package org.apache.datasketches.pig.kll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.kll.KllFloatsSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.kll.KllFloatsSketch;
 
 /**
  * This UDF is to get a quantile value from a given sketch. A single value for a

@@ -19,9 +19,8 @@
 
 package org.apache.datasketches.pig.frequencies;
 
-import org.apache.pig.Algebraic;
-
 import org.apache.datasketches.ArrayOfStringsSerDe;
+import org.apache.pig.Algebraic;
 
 /**
  * This is to union FrequentItemsSketch&lt;String&gt;.
@@ -52,6 +51,7 @@ public class UnionFrequentStringsSketch extends UnionFrequentItemsSketch<String>
     return IntermediateFinal.class.getName();
   }
 
+  @SuppressWarnings("javadoc")
   public static class Initial extends AlgebraicInitial {
     /**
      * Default constructor to make pig validation happy.
@@ -66,6 +66,7 @@ public class UnionFrequentStringsSketch extends UnionFrequentItemsSketch<String>
     public Initial(final String sketchSize) {}
   }
 
+  @SuppressWarnings("javadoc")
   public static class IntermediateFinal extends UnionFrequentItemsSketchAlgebraicIntermediateFinal<String> {
     /**
      * Default constructor to make pig validation happy.

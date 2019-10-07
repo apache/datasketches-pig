@@ -25,6 +25,8 @@ import static org.apache.datasketches.pig.sampling.VarOptCommonImpl.createDataBa
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.sampling.VarOptItemsSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
@@ -32,9 +34,6 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.sampling.VarOptItemsSketch;
 
 /**
  * This UDF extracts samples from the binary image of a VarOpt&lt;Tuple&gt; sketch. Because the

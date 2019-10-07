@@ -19,9 +19,8 @@
 
 package org.apache.datasketches.pig.frequencies;
 
-import org.apache.pig.Algebraic;
-
 import org.apache.datasketches.ArrayOfStringsSerDe;
+import org.apache.pig.Algebraic;
 
 /**
  * This UDF creates a FrequentItemsSketch&lt;String&gt; from raw data.
@@ -52,6 +51,7 @@ public class DataToFrequentStringsSketch extends DataToFrequentItemsSketch<Strin
     return IntermediateFinal.class.getName();
   }
 
+  @SuppressWarnings("javadoc")
   public static class Initial extends AlgebraicInitial {
     /**
      * Constructor for the initial pass of an Algebraic function. This will be passed the same
@@ -66,6 +66,7 @@ public class DataToFrequentStringsSketch extends DataToFrequentItemsSketch<Strin
     public Initial() {}
   }
 
+  @SuppressWarnings("javadoc")
   public static class IntermediateFinal extends DataToFrequentItemsSketchAlgebraicIntermediateFinal<String> {
     /**
      * Constructor for the intermediate and final passes of an Algebraic function. This will be

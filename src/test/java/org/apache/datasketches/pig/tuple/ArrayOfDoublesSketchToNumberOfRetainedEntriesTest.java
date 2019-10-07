@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
+@SuppressWarnings("javadoc")
 public class ArrayOfDoublesSketchToNumberOfRetainedEntriesTest {
 
   static final TupleFactory tupleFactory = TupleFactory.getInstance();

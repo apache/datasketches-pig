@@ -32,6 +32,7 @@ import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
+@SuppressWarnings("javadoc")
 public class ArrayOfDoublesSketchToQuantilesSketchTest {
 
   static final TupleFactory tupleFactory = TupleFactory.getInstance();

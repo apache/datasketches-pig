@@ -22,14 +22,13 @@ package org.apache.datasketches.pig.kll;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.datasketches.kll.KllFloatsSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.kll.KllFloatsSketch;
 
 /**
  * This UDF is to get a list of quantile values from a given sketch and a list of

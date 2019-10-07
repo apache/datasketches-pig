@@ -24,6 +24,7 @@ import static org.apache.datasketches.pig.sampling.VarOptCommonImpl.DEFAULT_WEIG
 
 import java.io.IOException;
 
+import org.apache.datasketches.sampling.VarOptItemsSketch;
 import org.apache.pig.AccumulatorEvalFunc;
 import org.apache.pig.Algebraic;
 import org.apache.pig.data.DataBag;
@@ -32,8 +33,6 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.sampling.VarOptItemsSketch;
 
 /**
  * Creates a binary version of a VarOpt sampling over input tuples. The resulting

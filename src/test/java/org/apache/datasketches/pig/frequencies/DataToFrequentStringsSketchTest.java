@@ -34,7 +34,9 @@ import org.apache.datasketches.ArrayOfStringsSerDe;
 import org.apache.datasketches.frequencies.ItemsSketch;
 import org.apache.datasketches.pig.tuple.PigUtil;
 
+@SuppressWarnings("javadoc")
 public class DataToFrequentStringsSketchTest {
+
   @Test
   public void execNullInputTuple() throws Exception {
     EvalFunc<Tuple> func = new DataToFrequentStringsSketch("8");
@@ -189,7 +191,7 @@ public class DataToFrequentStringsSketchTest {
     bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("a"))));
 
     // this is to simulate the output from a prior call of IntermediateFinal
-    ItemsSketch<String> s = new ItemsSketch<String>(8);
+    ItemsSketch<String> s = new ItemsSketch<>(8);
     s.update("b", 1L);
     s.update("a", 2L);
     s.update("b", 3L);

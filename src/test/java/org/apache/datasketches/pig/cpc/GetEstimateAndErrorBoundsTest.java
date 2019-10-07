@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.cpc.CpcSketch;
 
+@SuppressWarnings("javadoc")
 public class GetEstimateAndErrorBoundsTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();

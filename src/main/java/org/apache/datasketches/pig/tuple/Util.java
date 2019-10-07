@@ -19,16 +19,15 @@
 
 package org.apache.datasketches.pig.tuple;
 
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.DataByteArray;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
-
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.tuple.Sketch;
 import org.apache.datasketches.tuple.Sketches;
 import org.apache.datasketches.tuple.Summary;
 import org.apache.datasketches.tuple.SummaryDeserializer;
+import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 
 final class Util {
 

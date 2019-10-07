@@ -35,6 +35,7 @@ import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 
+@SuppressWarnings("javadoc")
 public class UnionDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
   private static final BagFactory bagFactory = BagFactory.getInstance();

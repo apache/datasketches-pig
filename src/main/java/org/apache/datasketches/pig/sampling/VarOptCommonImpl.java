@@ -21,6 +21,10 @@ package org.apache.datasketches.pig.sampling;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.sampling.VarOptItemsSamples;
+import org.apache.datasketches.sampling.VarOptItemsSketch;
+import org.apache.datasketches.sampling.VarOptItemsUnion;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.BagFactory;
@@ -28,11 +32,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.sampling.VarOptItemsSamples;
-import org.apache.datasketches.sampling.VarOptItemsSketch;
-import org.apache.datasketches.sampling.VarOptItemsUnion;
 
 /**
  * A collection of methods and constants used across VarOpt UDFs.

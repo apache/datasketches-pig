@@ -19,14 +19,13 @@
 
 package org.apache.datasketches.pig.frequencies;
 
+import org.apache.datasketches.ArrayOfItemsSerDe;
+import org.apache.datasketches.frequencies.ItemsSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ArrayOfItemsSerDe;
-import org.apache.datasketches.frequencies.ItemsSketch;
 
 final class Util {
 

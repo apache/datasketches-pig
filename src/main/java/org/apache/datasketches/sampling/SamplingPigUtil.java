@@ -24,8 +24,11 @@ import java.util.ArrayList;
 /**
  * @author Jon Malkin
  */
+@SuppressWarnings("javadoc")
 public final class SamplingPigUtil {
+
   public static <T> ArrayList<T> getRawSamplesAsList(final ReservoirItemsSketch<T> sketch) {
     return sketch.getRawSamplesAsList();
   }
+
 }

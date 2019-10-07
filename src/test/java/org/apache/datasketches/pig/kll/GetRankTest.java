@@ -31,6 +31,7 @@ import org.apache.datasketches.kll.KllFloatsSketch;
 
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetRankTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 

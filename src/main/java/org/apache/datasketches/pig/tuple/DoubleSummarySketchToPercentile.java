@@ -21,10 +21,6 @@ package org.apache.datasketches.pig.tuple;
 
 import java.io.IOException;
 
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataByteArray;
-import org.apache.pig.data.Tuple;
-
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.UpdateDoublesSketch;
@@ -34,6 +30,9 @@ import org.apache.datasketches.tuple.Sketches;
 import org.apache.datasketches.tuple.SummaryDeserializer;
 import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryDeserializer;
+import org.apache.pig.EvalFunc;
+import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
 
 /**
  * This UDF is to get a percentile value from a Sketch&lt;DoubleSummary&gt;.

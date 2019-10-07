@@ -30,35 +30,35 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.theta.CompactSketch;
 import org.apache.datasketches.theta.UpdateSketch;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class PigUtilTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkCompOrdSketchToTuple() {
     UpdateSketch usk = UpdateSketch.builder().setNominalEntries(16).build();
-    for (int i=0; i<16; i++) usk.update(i);
+    for (int i=0; i<16; i++) {
+      usk.update(i);
+    }
     CompactSketch csk = usk.compact(false, null);
     compactOrderedSketchToTuple(csk);
   }
-  
+
   @Test
   public void checkExtractTypeAtIndex() {
     Tuple tuple = TupleFactory.getInstance().newTuple(0);
     assertNull(extractTypeAtIndex(tuple, 0));
   }
-  
+
   @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s); //disable here
   }
-  
+
 }

@@ -37,6 +37,7 @@ import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
+@SuppressWarnings("javadoc")
 public class UnionArrayOfDoublesSketchTest {
 
   @Test
@@ -268,7 +269,9 @@ public class UnionArrayOfDoublesSketchTest {
     // this is to simulate the output from Initial
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 20000; i++) sketch.update(value++, new double[] {1.0});
+      for (int i = 0; i < 20000; i++) {
+        sketch.update(value++, new double[] {1.0});
+      }
       DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       bag.add(PigUtil.objectsToTuple(innerBag));
     }
@@ -276,7 +279,9 @@ public class UnionArrayOfDoublesSketchTest {
     // this is to simulate the output from a prior call of IntermediateFinal
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 20000; i++) sketch.update(value++, new double[] {1.0});
+      for (int i = 0; i < 20000; i++) {
+        sketch.update(value++, new double[] {1.0});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
 
@@ -301,7 +306,9 @@ public class UnionArrayOfDoublesSketchTest {
     // this is to simulate the output from a prior call of IntermediateFinal
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(1024).build();
-      for (int i = 0; i < 10000; i++) sketch.update(value++, new double[] {1.0});
+      for (int i = 0; i < 10000; i++) {
+        sketch.update(value++, new double[] {1.0});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
 
@@ -329,7 +336,9 @@ public class UnionArrayOfDoublesSketchTest {
     // this is to simulate the output from a prior call of IntermediateFinal
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
@@ -337,7 +346,9 @@ public class UnionArrayOfDoublesSketchTest {
     key -= 20000; // overlap
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
@@ -345,7 +356,9 @@ public class UnionArrayOfDoublesSketchTest {
     key -= 20000; // overlap
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
@@ -353,21 +366,27 @@ public class UnionArrayOfDoublesSketchTest {
     key -= 20000; // overlap
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
     }
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
     }
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
@@ -375,7 +394,9 @@ public class UnionArrayOfDoublesSketchTest {
     key -= 20000; // overlap
     {
       ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, new double[] {rnd.nextDouble() * 20});
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;

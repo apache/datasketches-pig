@@ -31,6 +31,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetQuantileFromDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
 

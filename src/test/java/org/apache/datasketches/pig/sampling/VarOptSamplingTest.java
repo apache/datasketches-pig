@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.sampling.VarOptItemsSketch;
 
+@SuppressWarnings("javadoc")
 public class VarOptSamplingTest {
   static final double EPS = 1e-10;
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
@@ -149,7 +150,7 @@ public class VarOptSamplingTest {
         assertEquals(sample.size(), 3);
 
         final int id = (int) sample.get(1);
-        assertTrue(id  > 0 && id < k);
+        assertTrue((id  > 0) && (id < k));
       }
       assertEquals(cumResultWeight, 2 * cumWeight, EPS); // called accumulate() twice
     } catch (final IOException e) {

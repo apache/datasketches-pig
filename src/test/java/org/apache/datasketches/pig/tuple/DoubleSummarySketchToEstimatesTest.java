@@ -31,6 +31,7 @@ import org.apache.datasketches.tuple.UpdatableSketchBuilder;
 import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryFactory;
 
+@SuppressWarnings("javadoc")
 public class DoubleSummarySketchToEstimatesTest {
   @Test
   public void nullInput() throws Exception {
@@ -49,7 +50,8 @@ public class DoubleSummarySketchToEstimatesTest {
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
-    UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+    UpdatableSketch<Double, DoubleSummary> sketch =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()));
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);
@@ -61,10 +63,15 @@ public class DoubleSummarySketchToEstimatesTest {
   @Test
   public void normalCase() throws Exception {
     EvalFunc<Tuple> func = new DoubleSummarySketchToEstimates();
-    UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+    UpdatableSketch<Double, DoubleSummary> sketch =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
     int iterations = 100000;
-    for (int i = 0; i < iterations; i++) sketch.update(i, 1.0);
-    for (int i = 0; i < iterations; i++) sketch.update(i, 1.0);
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, 1.0);
+    }
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, 1.0);
+    }
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()));
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);

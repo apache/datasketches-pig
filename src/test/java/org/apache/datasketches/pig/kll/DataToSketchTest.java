@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.kll.KllFloatsSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToSketchTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
   private static final BagFactory BAG_FACTORY = BagFactory.getInstance();
@@ -78,7 +79,7 @@ public class DataToSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
-  
+
   @Test
   public void execMixedNullCase() throws Exception {
     final EvalFunc<DataByteArray> func = new DataToSketch();
@@ -127,7 +128,7 @@ public class DataToSketchTest {
     sketch = getSketch(result);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
-    
+
     // mixed null case
     bag = BAG_FACTORY.newDefaultBag();
     bag.add(TUPLE_FACTORY.newTuple(Float.valueOf(1)));
@@ -208,7 +209,7 @@ public class DataToSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
   }
-  
+
   @Test
   public void algebraicIntermediateMixedNullCase() throws Exception {
     @SuppressWarnings("unchecked")
@@ -288,7 +289,7 @@ public class DataToSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
   }
-  
+
   @Test
   public void algebraicFinalMixedNullCase() throws Exception {
     @SuppressWarnings("unchecked")

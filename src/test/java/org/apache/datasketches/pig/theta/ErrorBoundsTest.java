@@ -40,9 +40,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.pig.theta.ErrorBounds;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class ErrorBoundsTest {
 
   @Test
@@ -51,24 +49,24 @@ public class ErrorBoundsTest {
     Tuple dataTuple = null;
     Tuple result = func.exec(dataTuple);
     assertNull(result);
-    
+
     dataTuple = TupleFactory.getInstance().newTuple(0);
     result = func.exec(dataTuple);
     assertNull(result);
   }
-  
+
   @Test
   public void testExactModeBounds() throws IOException {
     EvalFunc<Tuple> func = new ErrorBounds();
     int nomEntries = 128;
-    
+
     Tuple dataTuple = TupleFactory.getInstance().newTuple(1);
     dataTuple.set(0, createDbaFromQssRange(nomEntries, 0, 64));
 
     Tuple result = func.exec(dataTuple);
     assertNotNull(result);
     assertEquals(result.size(), 3);
-    
+
     assertEquals(((Double) result.get(0)).doubleValue(), 64.0, 0.0);
     assertEquals(((Double) result.get(1)).doubleValue(), 64.0, 0.0);
     assertEquals(((Double) result.get(2)).doubleValue(), 64.0, 0.0);
@@ -97,7 +95,7 @@ public class ErrorBoundsTest {
     assertTrue(Math.abs((ub / (est + (epsilon2SD * est))) - 1) < .01);
     assertTrue(Math.abs((lb / (est - (epsilon2SD * est))) - 1) < .01);
   }
-  
+
   @Test
   public void testEstModeBoundsWithSeed() throws IOException {
     EvalFunc<Tuple> func = new ErrorBounds(Long.toString(DEFAULT_UPDATE_SEED));
@@ -121,11 +119,11 @@ public class ErrorBoundsTest {
     assertTrue(Math.abs((ub / (est + (epsilon2SD * est))) - 1) < .01);
     assertTrue(Math.abs((lb / (est - (epsilon2SD * est))) - 1) < .01);
   }
-  
+
   @Test
   public void outputSchemaTest() throws IOException {
     EvalFunc<Tuple> udf = new ErrorBounds();
-    
+
     Schema inputSchema = null;
     Schema.FieldSchema inputFieldSchema = new Schema.FieldSchema("Sketch", DataType.BYTEARRAY);
 
@@ -133,16 +131,16 @@ public class ErrorBoundsTest {
 
     Schema outputSchema = null;
     Schema.FieldSchema outputOuterFs0 = null;
-    
+
     Schema outputInnerSchema = null;
     Schema.FieldSchema outputInnerFs0 = null;
     Schema.FieldSchema outputInnerFs1 = null;
     Schema.FieldSchema outputInnerFs2 = null;
 
     inputSchema = new Schema(inputFieldSchema);
-    
+
     nullOutputSchema = udf.outputSchema(null);
-    
+
     outputSchema = udf.outputSchema(inputSchema);
     outputOuterFs0 = outputSchema.getField(0);
     outputInnerSchema = outputOuterFs0.schema;
@@ -151,27 +149,27 @@ public class ErrorBoundsTest {
     outputInnerFs2 = outputInnerSchema.getField(2);
 
     Assert.assertNull(nullOutputSchema, "Should be null");
-    
+
     Assert.assertNotNull(outputOuterFs0, "outputSchema.getField(0) schema may not be null");
-    
+
     String expected = "tuple";
     String result = DataType.findTypeName(outputOuterFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     expected = "double";
-    
+
     Assert.assertNotNull(outputInnerFs0, "innerSchema.getField(0) schema may not be null");
     result = DataType.findTypeName(outputInnerFs0.type);
     Assert.assertEquals(result, expected);
-    
+
     Assert.assertNotNull(outputInnerFs1, "innerSchema.getField(1) schema may not be null");
     result = DataType.findTypeName(outputInnerFs1.type);
     Assert.assertEquals(result, expected);
-    
+
     Assert.assertNotNull(outputInnerFs2, "innerSchema.getField(2) schema may not be null");
     result = DataType.findTypeName(outputInnerFs2.type);
     Assert.assertEquals(result, expected);
-    
+
     //print schemas
     //@formatter:off
     StringBuilder sb = new StringBuilder();
@@ -190,17 +188,17 @@ public class ErrorBoundsTest {
     //@formatter:on
     //end print schemas
   }
-  
+
   @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s); //disable here
   }
-  
+
 }

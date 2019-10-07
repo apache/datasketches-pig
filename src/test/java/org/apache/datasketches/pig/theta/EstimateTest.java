@@ -34,9 +34,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.pig.theta.Estimate;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class EstimateTest {
 
   @Test
@@ -45,12 +43,12 @@ public class EstimateTest {
     Tuple inputTuple = null;
     Double returnValue = func.exec(inputTuple);
     assertNull(returnValue);
-    
+
     inputTuple = TupleFactory.getInstance().newTuple(0);
     returnValue = func.exec(inputTuple);
     assertNull(returnValue);
   }
-  
+
   @Test
   public void testExact() throws IOException {
     EvalFunc<Double> func = new Estimate();
@@ -62,7 +60,7 @@ public class EstimateTest {
     assertNotNull(result);
     assertEquals(result, 64.0, 0.0);
   }
-  
+
   @Test
   public void testExactWithSeed() throws IOException {
     EvalFunc<Double> func = new Estimate(Long.toString(DEFAULT_UPDATE_SEED));
@@ -74,17 +72,17 @@ public class EstimateTest {
     assertNotNull(result);
     assertEquals(result, 64.0, 0.0);
   }
-  
+
   @Test
   public void printlnTest() {
     println(this.getClass().getSimpleName());
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s); //disable here
   }
-  
+
 }

@@ -39,6 +39,7 @@ import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.sampling.VarOptItemsSketch;
 import org.apache.datasketches.sampling.VarOptItemsUnion;
 
+@SuppressWarnings("javadoc")
 public class VarOptUnionTest {
   @SuppressWarnings("unused")
   @Test
@@ -69,7 +70,7 @@ public class VarOptUnionTest {
     try {
       final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.newInstance(k);
       final VarOptItemsUnion<Tuple> union = VarOptItemsUnion.newInstance(k);
-      for (int i = 1; i < k / 2; ++i) {
+      for (int i = 1; i < (k / 2); ++i) {
         sketch.reset();
         final Tuple t = TupleFactory.getInstance().newTuple(3);
         t.set(0, 1.0 * i);

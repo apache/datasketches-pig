@@ -21,14 +21,13 @@ package org.apache.datasketches.pig.frequencies;
 
 import java.io.IOException;
 
+import org.apache.datasketches.ArrayOfItemsSerDe;
+import org.apache.datasketches.frequencies.ItemsSketch;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.ArrayOfItemsSerDe;
-import org.apache.datasketches.frequencies.ItemsSketch;
 
 /**
  * This is to calculate the intermediate pass (combiner) or the final pass
@@ -49,6 +48,7 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
    */
   public UnionFrequentItemsSketchAlgebraicIntermediateFinal() {}
 
+  @SuppressWarnings("javadoc")
   public UnionFrequentItemsSketchAlgebraicIntermediateFinal(
       final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     sketchSize_ = sketchSize;
@@ -62,7 +62,7 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
       Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final ItemsSketch<T> sketch = new ItemsSketch<T>(sketchSize_);
+    final ItemsSketch<T> sketch = new ItemsSketch<>(sketchSize_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {

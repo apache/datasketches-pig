@@ -21,13 +21,12 @@ package org.apache.datasketches.pig.tuple;
 
 import java.io.IOException;
 
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.DataByteArray;
-import org.apache.pig.data.Tuple;
-
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.pig.EvalFunc;
+import org.apache.pig.data.DataByteArray;
+import org.apache.pig.data.Tuple;
 
 /**
  * This is a User Defined Function (UDF) for obtaining the number of retained entries

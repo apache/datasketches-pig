@@ -41,6 +41,7 @@ import org.apache.datasketches.sampling.VarOptItemsSamples;
 import org.apache.datasketches.sampling.VarOptItemsSketch;
 import org.apache.datasketches.sampling.VarOptItemsUnion;
 
+@SuppressWarnings("javadoc")
 public class VarOptCommonAlgebraicTest {
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
@@ -167,7 +168,7 @@ public class VarOptCommonAlgebraicTest {
 
     final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
     try {
-      for (int i = 0; i < k + 1; ++i) {
+      for (int i = 0; i < (k + 1); ++i) {
         final Tuple t = TupleFactory.getInstance().newTuple(2);
         t.set(0, Character.toString(id));
         t.set(1, wt);

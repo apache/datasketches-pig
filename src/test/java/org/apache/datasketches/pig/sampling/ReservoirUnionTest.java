@@ -39,6 +39,7 @@ import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ReservoirUnionTest {
 
   @SuppressWarnings("unused")
@@ -139,7 +140,7 @@ public class ReservoirUnionTest {
       for (Tuple t : outputSamples) {
         // expected format: (i:int, -i:chararray)
         final int i = (int) t.get(0);
-        assertTrue(i >= 0 && i < k);
+        assertTrue((i >= 0) && (i < k));
         assertEquals((String) t.get(1), Integer.toString(-i));
       }
     } catch (final IOException e) {

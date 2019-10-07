@@ -27,16 +27,14 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.datasketches.Family;
 import org.apache.datasketches.theta.UpdateSketch;
 
-/**
- * @author Lee Rhodes
- */
+@SuppressWarnings("javadoc")
 public class PigTestingUtil {
   public static final String LS = System.getProperty("line.separator");
-  
-  
+
+
   /**
    * Returns a tuple constructed from the given array of objects.
-   * 
+   *
    * @param in Array of objects.
    * @throws ExecException this is thrown by Pig
    * @return tuple
@@ -49,11 +47,11 @@ public class PigTestingUtil {
     }
     return tuple;
   }
-  
+
   /**
    * Returns a Pig DataByteArray constructed from a QuickSelectSketch.
-   * 
-   * @param nomSize of the Sketch. Note, minimum size is 16. 
+   *
+   * @param nomSize of the Sketch. Note, minimum size is 16.
    * Cache size will autoscale from a minimum of 16.
    * @param start start value
    * @param numValues number of values in the range
@@ -67,11 +65,11 @@ public class PigTestingUtil {
     byte[] byteArr = skA.compact(true, null).toByteArray();
     return new DataByteArray(byteArr);
   }
-  
+
   /**
    * Returns a Pig DataByteArray constructed from a AlphaSketch.
-   * 
-   * @param nomSize of the Sketch. Note, minimum nominal size is 512.  
+   *
+   * @param nomSize of the Sketch. Note, minimum nominal size is 512.
    * Cache size will autoscale from a minimum of 512.
    * @param start start value
    * @param numValues number of values in the range
@@ -86,12 +84,12 @@ public class PigTestingUtil {
     byte[] byteArr = skA.compact(true, null).toByteArray();
     return new DataByteArray(byteArr);
   }
-  
+
   /**
-   * @param s value to print 
+   * @param s value to print
    */
   static void println(String s) {
     //System.out.println(s);
   }
-  
+
 }

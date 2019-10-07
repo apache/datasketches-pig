@@ -32,6 +32,10 @@ import static org.apache.datasketches.pig.theta.PigUtil.extractTypeAtIndex;
 
 import java.io.IOException;
 
+import org.apache.datasketches.Util;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.theta.CompactSketch;
+import org.apache.datasketches.theta.SetOperation;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
@@ -42,16 +46,9 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.Util;
-import org.apache.datasketches.theta.CompactSketch;
-import org.apache.datasketches.theta.SetOperation;
-
 /**
  * This is a Pig UDF that performs the Union Set Operation on Sketches.
  * To assist Pig, this class implements both the <i>Accumulator</i> and <i>Algebraic</i> interfaces.
- *
- * @author Lee Rhodes
  */
 public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebraic {
   //With the single exception of the Accumulator interface, UDFs are stateless.
@@ -130,10 +127,10 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   public Union(final int nomEntries, final float p, final long seed) {
     super();
-    this.nomEntries_ = nomEntries;
-    this.p_ = p;
-    this.seed_ = seed;
-    this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+    nomEntries_ = nomEntries;
+    p_ = p;
+    seed_ = seed;
+    emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
@@ -463,10 +460,10 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(final int nomEntries, final float p, final long seed) {
-      this.myNomEntries_ = nomEntries;
-      this.myP_ = p;
-      this.mySeed_ = seed;
-      this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+      myNomEntries_ = nomEntries;
+      myP_ = p;
+      mySeed_ = seed;
+      myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
     @Override //IntermediateFinal exec

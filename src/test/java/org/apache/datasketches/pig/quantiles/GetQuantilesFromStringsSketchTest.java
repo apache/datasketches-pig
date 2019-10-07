@@ -34,6 +34,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetQuantilesFromStringsSketchTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
@@ -81,7 +82,9 @@ public class GetQuantilesFromStringsSketchTest {
   public void oneFraction() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
-    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(String.format("%02d", i));
+    }
     Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.5)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
@@ -92,7 +95,9 @@ public class GetQuantilesFromStringsSketchTest {
   public void severalFractions() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
-    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(String.format("%02d", i));
+    }
     Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 0.0, 0.5, 1.0)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);
@@ -105,7 +110,9 @@ public class GetQuantilesFromStringsSketchTest {
   public void numberOfEvenlySpacedIntervals() throws Exception {
     EvalFunc<Tuple> func = new GetQuantilesFromStringsSketch();
     ItemsSketch<String> sketch = ItemsSketch.getInstance(COMPARATOR);
-    for (int i = 1; i <= 10; i++) sketch.update(String.format("%02d", i));
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(String.format("%02d", i));
+    }
     Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray(SER_DE)), 3)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);

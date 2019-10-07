@@ -21,17 +21,16 @@ package org.apache.datasketches.pig.hll;
 
 import java.io.IOException;
 
+import org.apache.datasketches.hll.HllSketch;
+import org.apache.datasketches.hll.TgtHllType;
+import org.apache.datasketches.hll.Union;
+import org.apache.datasketches.memory.Memory;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.hll.HllSketch;
-import org.apache.datasketches.hll.TgtHllType;
-import org.apache.datasketches.hll.Union;
 
 /**
  * Class used to calculate the final pass of an <i>Algebraic</i> sketch

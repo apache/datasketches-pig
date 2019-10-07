@@ -23,6 +23,8 @@ import static org.apache.datasketches.Util.DEFAULT_UPDATE_SEED;
 
 import java.io.IOException;
 
+import org.apache.datasketches.cpc.CpcSketch;
+import org.apache.datasketches.cpc.CpcUnion;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.Algebraic;
@@ -32,9 +34,6 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.cpc.CpcSketch;
-import org.apache.datasketches.cpc.CpcUnion;
 
 /**
  * This is a Pig UDF that performs the Union operation on CpcSketches.

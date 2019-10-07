@@ -19,11 +19,11 @@
 
 package org.apache.datasketches.pig.hash;
 
+import static java.lang.Math.min;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.datasketches.hash.MurmurHash3.hash;
 import static org.apache.datasketches.hash.MurmurHash3Adaptor.hashToLongs;
 import static org.apache.datasketches.hash.MurmurHash3Adaptor.modulo;
-import static java.lang.Math.min;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 
@@ -41,8 +41,6 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
  * parameter can be a positive Integer modulus divisor. If the divisor is provided, the Integer
  * modulus remainder is computed on the entire 128-bit hash output treated as if it were a 128-bit
  * positive value.
- *
- * @author Lee Rhodes
  */
 public class MurmurHash3 extends EvalFunc<Tuple> {
   private static final TupleFactory mTupleFactory = TupleFactory.getInstance();

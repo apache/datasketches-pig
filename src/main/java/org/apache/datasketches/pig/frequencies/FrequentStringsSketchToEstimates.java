@@ -21,6 +21,10 @@ package org.apache.datasketches.pig.frequencies;
 
 import java.io.IOException;
 
+import org.apache.datasketches.ArrayOfStringsSerDe;
+import org.apache.datasketches.frequencies.ErrorType;
+import org.apache.datasketches.frequencies.ItemsSketch;
+import org.apache.datasketches.memory.Memory;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
@@ -30,11 +34,6 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ArrayOfStringsSerDe;
-import org.apache.datasketches.frequencies.ErrorType;
-import org.apache.datasketches.frequencies.ItemsSketch;
 
 /**
  * This UDF converts a FrequentItemsSketch&lt;String&gt; to estimates:

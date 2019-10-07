@@ -23,11 +23,10 @@ import static org.apache.datasketches.pig.theta.PigUtil.tupleToSketch;
 
 import java.io.IOException;
 
-import org.apache.pig.EvalFunc;
-import org.apache.pig.data.Tuple;
-
 import org.apache.datasketches.Util;
 import org.apache.datasketches.theta.Sketch;
+import org.apache.pig.EvalFunc;
+import org.apache.pig.data.Tuple;
 
 /**
  * This is a User Defined Function (UDF) for "pretty printing" the summary of a sketch
@@ -36,7 +35,6 @@ import org.apache.datasketches.theta.Sketch;
  * <p>
  * Refer to {@link DataToSketch#exec(Tuple)} for the definition of a Sketch Tuple.
  * </p>
- * @author Lee Rhodes
  */
 public class SketchToString extends EvalFunc<String> {
   private boolean detailOut = false;

@@ -41,6 +41,7 @@ import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryDeserializer;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryFactory;
 
+@SuppressWarnings("javadoc")
 public class UnionDoubleSummarySketchTest {
 
   @Test
@@ -62,13 +63,15 @@ public class UnionDoubleSummarySketchTest {
     EvalFunc<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -78,7 +81,8 @@ public class UnionDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
     SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
@@ -91,13 +95,15 @@ public class UnionDoubleSummarySketchTest {
     EvalFunc<Tuple> func = new UnionDoubleSummarySketch("4096", "Max");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 3.0);
       sketch.update(2, 3.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -198,7 +204,8 @@ public class UnionDoubleSummarySketchTest {
     Accumulator<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
     func.accumulate(PigUtil.objectsToTuple(bag));
@@ -207,7 +214,8 @@ public class UnionDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
@@ -216,7 +224,8 @@ public class UnionDoubleSummarySketchTest {
     Accumulator<Tuple> func = new UnionDoubleSummarySketch("4096");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -225,7 +234,8 @@ public class UnionDoubleSummarySketchTest {
 
     bag = BagFactory.getInstance().newDefaultBag();
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -237,7 +247,8 @@ public class UnionDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
     SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
@@ -267,7 +278,8 @@ public class UnionDoubleSummarySketchTest {
 
     // this is to simulate the output from Initial
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 1.0);
       sketch.update(2, 1.0);
       DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -276,7 +288,8 @@ public class UnionDoubleSummarySketchTest {
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
       sketch.update(1, 3.0);
       sketch.update(2, 3.0);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
@@ -303,16 +316,24 @@ public class UnionDoubleSummarySketchTest {
     long value = 1;
     // this is to simulate the output from Initial
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 20000; i++) sketch.update(value++, 1.0);
-      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 20000; i++) {
+        sketch.update(value++, 1.0);
+      }
+      DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(
+          new DataByteArray(sketch.compact().toByteArray())));
       bag.add(PigUtil.objectsToTuple(innerBag));
     }
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 20000; i++) sketch.update(value++, 1.0);
+      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<>(
+          new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 20000; i++) {
+        sketch.update(value++, 1.0);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
 
@@ -321,7 +342,8 @@ public class UnionDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 40000.0, 40000.0 * 0.01);
     SketchIterator<DoubleSummary> it = sketch.iterator();
     while (it.next()) {
@@ -337,8 +359,12 @@ public class UnionDoubleSummarySketchTest {
     long value = 1;
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(1024).build();
-      for (int i = 0; i < 10000; i++) sketch.update(value++, 1.0);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(1024).build();
+      for (int i = 0; i < 10000; i++) {
+        sketch.update(value++, 1.0);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
     }
 
@@ -366,54 +392,81 @@ public class UnionDoubleSummarySketchTest {
     long updates = 0;
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
     }
     key -= 20000; // overlap
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
     }
     key -= 20000; // overlap
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
     }
     key -= 20000; // overlap
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
     }
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
     }
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 40000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 40000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 40000;
     }
     key -= 20000; // overlap
     {
-      UpdatableSketch<Double, DoubleSummary> sketch = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).setNominalEntries(16384).build();
-      for (int i = 0; i < 60000; i++) sketch.update(key++, rnd.nextDouble() * 20);
+      UpdatableSketch<Double, DoubleSummary> sketch =
+          new UpdatableSketchBuilder<>(
+              new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).setNominalEntries(16384).build();
+      for (int i = 0; i < 60000; i++) {
+        sketch.update(key++, rnd.nextDouble() * 20);
+      }
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray())));
       uniques += 40000;
       updates += 60000;
@@ -424,7 +477,8 @@ public class UnionDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), uniques, uniques * 0.01);
     double sum = 0;
     SketchIterator<DoubleSummary> it = sketch.iterator();
@@ -432,6 +486,7 @@ public class UnionDoubleSummarySketchTest {
       sum += it.getSummary().getValue();
     }
     // each update added 10 to the total on average
-    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02); // there is a slight chance of failing here
+    // there is a slight chance of failing here
+    Assert.assertEquals(sum / sketch.getTheta(), updates * 10.0, updates * 10.0 * 0.02);
   }
 }

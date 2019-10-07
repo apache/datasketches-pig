@@ -39,6 +39,7 @@ import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryDeserializer;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryFactory;
 
+@SuppressWarnings("javadoc")
 public class DataToDoubleSummarySketchTest {
 
   @Test
@@ -64,7 +65,8 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 0.0);
   }
 
@@ -166,7 +168,8 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     SketchIterator<DoubleSummary> it = sketch.iterator();
@@ -181,7 +184,8 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch2 = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch2 =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch2.getEstimate(), 0.0, 0.0);
   }
 
@@ -230,7 +234,8 @@ public class DataToDoubleSummarySketchTest {
     bag.add(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple("a", 1.0))));
 
     // this is to simulate the output from a prior call of IntermediateFinal
-    UpdatableSketch<Double, DoubleSummary> ts = new UpdatableSketchBuilder<Double, DoubleSummary>(new DoubleSummaryFactory()).build();
+    UpdatableSketch<Double, DoubleSummary> ts =
+        new UpdatableSketchBuilder<>(new DoubleSummaryFactory(DoubleSummary.Mode.Sum)).build();
     ts.update("b", 1.0);
     ts.update("a", 2.0);
     ts.update("b", 2.0);
@@ -242,7 +247,8 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     SketchIterator<DoubleSummary> it = sketch.iterator();
@@ -269,7 +275,8 @@ public class DataToDoubleSummarySketchTest {
     Assert.assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     Assert.assertTrue(bytes.size() > 0);
-    Sketch<DoubleSummary> sketch = Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
+    Sketch<DoubleSummary> sketch =
+        Sketches.heapifySketch(Memory.wrap(bytes.get()), new DoubleSummaryDeserializer());
     Assert.assertEquals(sketch.getEstimate(), 2.0, 0.0);
 
     SketchIterator<DoubleSummary> it = sketch.iterator();

@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.hll.HllSketch;
 
+@SuppressWarnings("javadoc")
 public class SketchToStringTest {
 
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();

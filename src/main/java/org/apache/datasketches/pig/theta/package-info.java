@@ -19,7 +19,5 @@
 
 /**
  * Pig UDFs for Theta sketch.
- * 
- * @author Lee Rhodes
  */
 package org.apache.datasketches.pig.theta;

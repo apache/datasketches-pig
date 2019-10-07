@@ -35,7 +35,9 @@ import org.apache.datasketches.frequencies.ErrorType;
 import org.apache.datasketches.frequencies.ItemsSketch;
 import org.apache.datasketches.pig.tuple.PigUtil;
 
+@SuppressWarnings("javadoc")
 public class UnionFrequentStringsSketchTest {
+
   @Test
   public void execNullInput() throws Exception {
     EvalFunc<Tuple> func = new UnionFrequentStringsSketch("8");
@@ -55,13 +57,13 @@ public class UnionFrequentStringsSketchTest {
     EvalFunc<Tuple> func = new UnionFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("b");
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("b");
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
@@ -166,7 +168,7 @@ public class UnionFrequentStringsSketchTest {
     Accumulator<Tuple> func = new UnionFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
     }
     func.accumulate(PigUtil.objectsToTuple(bag));
@@ -185,7 +187,7 @@ public class UnionFrequentStringsSketchTest {
     Accumulator<Tuple> func = new UnionFrequentStringsSketch("8");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("b");
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
@@ -194,7 +196,7 @@ public class UnionFrequentStringsSketchTest {
 
     bag = BagFactory.getInstance().newDefaultBag();
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("b");
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
@@ -235,7 +237,7 @@ public class UnionFrequentStringsSketchTest {
 
     // this is to simulate the output from Initial
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("b");
       DataBag innerBag = PigUtil.tuplesToBag(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
@@ -244,7 +246,7 @@ public class UnionFrequentStringsSketchTest {
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a", 2L);
       sketch.update("b", 3L);
       bag.add(PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe()))));
@@ -269,7 +271,7 @@ public class UnionFrequentStringsSketchTest {
 
     // this is to simulate the output from Initial
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a", 10);
       sketch.update("b");
       sketch.update("c");
@@ -284,7 +286,7 @@ public class UnionFrequentStringsSketchTest {
 
     // this is to simulate the output from a prior call of IntermediateFinal
     {
-      ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+      ItemsSketch<String> sketch = new ItemsSketch<>(8);
       sketch.update("a");
       sketch.update("a");
       sketch.update("g", 5);
@@ -310,7 +312,9 @@ public class UnionFrequentStringsSketchTest {
     // only 2 items ("a" and "g") should have counts more than 1
     int count = 0;
     for (ItemsSketch.Row<String> item: items) {
-      if (item.getLowerBound() > 1) count++;
+      if (item.getLowerBound() > 1) {
+        count++;
+      }
     }
     Assert.assertEquals(count, 2);
   }

@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.hll.HllSketch;
 import org.apache.datasketches.hll.TgtHllType;
 
+@SuppressWarnings("javadoc")
 public class UnionSketchTest {
 
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();

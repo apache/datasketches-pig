@@ -23,16 +23,15 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
+import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
-import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
 
 /**
  * This is to calculate the intermediate pass (combiner) or the final pass

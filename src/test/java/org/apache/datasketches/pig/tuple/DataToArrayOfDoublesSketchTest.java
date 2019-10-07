@@ -35,6 +35,7 @@ import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
+@SuppressWarnings("javadoc")
 public class DataToArrayOfDoublesSketchTest {
 
   @Test
@@ -117,7 +118,9 @@ public class DataToArrayOfDoublesSketchTest {
     EvalFunc<Tuple> func = new DataToArrayOfDoublesSketch("1024", "0.5", "1");
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     int uniques = 10000;
-    for (int i = 0; i < uniques; i++) bag.add(PigUtil.objectsToTuple(i, 1.0));
+    for (int i = 0; i < uniques; i++) {
+      bag.add(PigUtil.objectsToTuple(i, 1.0));
+    }
     Tuple resultTuple = func.exec(PigUtil.objectsToTuple(bag));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
@@ -225,7 +228,9 @@ public class DataToArrayOfDoublesSketchTest {
 
     DataBag bag = BagFactory.getInstance().newDefaultBag();
     int uniques = 10000;
-    for (int i = 0; i < uniques; i++) bag.add(PigUtil.objectsToTuple(i, 1.0));
+    for (int i = 0; i < uniques; i++) {
+      bag.add(PigUtil.objectsToTuple(i, 1.0));
+    }
 
     Tuple resultTuple = func.exec(PigUtil.objectsToTuple(PigUtil.tuplesToBag(PigUtil.objectsToTuple(bag))));
     Assert.assertNotNull(resultTuple);

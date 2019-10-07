@@ -29,7 +29,9 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
 import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
 
+@SuppressWarnings("javadoc")
 public class ArrayOfDoublesSketchToEstimatesTest {
+
   @Test
   public void nullInput() throws Exception {
     EvalFunc<Tuple> func = new ArrayOfDoublesSketchToEstimates();
@@ -61,8 +63,12 @@ public class ArrayOfDoublesSketchToEstimatesTest {
     EvalFunc<Tuple> func = new ArrayOfDoublesSketchToEstimates();
     ArrayOfDoublesUpdatableSketch sketch = new ArrayOfDoublesUpdatableSketchBuilder().build();
     int iterations = 100000;
-    for (int i = 0; i < iterations; i++) sketch.update(i, new double[] {1});
-    for (int i = 0; i < iterations; i++) sketch.update(i, new double[] {1});
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, new double[] {1});
+    }
+    for (int i = 0; i < iterations; i++) {
+      sketch.update(i, new double[] {1});
+    }
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.compact().toByteArray()));
     Tuple resultTuple = func.exec(inputTuple);
     Assert.assertNotNull(resultTuple);

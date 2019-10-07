@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 
 import org.apache.datasketches.cpc.CpcSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToSketchTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
@@ -334,7 +335,7 @@ public class DataToSketchTest {
   static CpcSketch getSketch(final DataByteArray dba, final long seed) throws Exception {
     Assert.assertNotNull(dba);
     Assert.assertTrue(dba.size() > 0);
-    return CpcSketch.heapify(dba.get(), seed); 
+    return CpcSketch.heapify(dba.get(), seed);
   }
 
 }

@@ -25,6 +25,7 @@ import org.apache.pig.Algebraic;
  * This is to union ArrayOfDoublesSketches.
  * It supports all three ways: exec(), Accumulator and Algebraic
  */
+@SuppressWarnings("javadoc")
 public class UnionArrayOfDoublesSketch extends UnionArrayOfDoublesSketchBase implements Algebraic {
   /**
    * Constructor with default sketch size and default number of values of 1.

@@ -38,7 +38,9 @@ import org.testng.annotations.Test;
 import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.sampling.VarOptItemsSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToVarOptSketchTest {
+
   @Test
   @SuppressWarnings("unused")
   public void checkConstructors() {
@@ -85,7 +87,7 @@ public class DataToVarOptSketchTest {
     // calling accumulate() twice, but keep in exact mode so reference sketch has same values
     try {
       final VarOptItemsSketch<Tuple> sketch = VarOptItemsSketch.newInstance(k);
-      for (int i = 1; i < k / 2; ++i) {
+      for (int i = 1; i < (k / 2); ++i) {
         final Tuple t = TupleFactory.getInstance().newTuple(3);
         t.set(0, 1.0 * i);
         t.set(1, i);

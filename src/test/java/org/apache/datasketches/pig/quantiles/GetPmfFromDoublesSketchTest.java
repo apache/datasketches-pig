@@ -32,6 +32,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetPmfFromDoublesSketchTest {
   private static final TupleFactory tupleFactory = TupleFactory.getInstance();
 
@@ -47,7 +48,9 @@ public class GetPmfFromDoublesSketchTest {
   public void normalCase() throws Exception {
     EvalFunc<Tuple> func = new GetPmfFromDoublesSketch();
     UpdateDoublesSketch sketch = DoublesSketch.builder().build();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(i);
+    }
     Tuple resultTuple = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 2.0, 7.0)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);

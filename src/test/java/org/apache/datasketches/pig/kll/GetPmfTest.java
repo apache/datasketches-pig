@@ -32,6 +32,7 @@ import org.apache.datasketches.kll.KllFloatsSketch;
 
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetPmfTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 
@@ -47,7 +48,9 @@ public class GetPmfTest {
   public void normalCase() throws Exception {
     final EvalFunc<Tuple> func = new GetPmf();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(i);
+    }
     final Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 2f, 7f)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);

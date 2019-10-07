@@ -28,6 +28,7 @@ import org.apache.datasketches.ArrayOfStringsSerDe;
  * Computes union of ItemsSketch&lt;String&gt;.
  * It supports all three ways: exec(), Accumulator and Algebraic
  */
+@SuppressWarnings("javadoc")
 public class UnionStringsSketch extends UnionItemsSketch<String> {
 
   private static final Comparator<String> COMPARATOR = Comparator.naturalOrder();

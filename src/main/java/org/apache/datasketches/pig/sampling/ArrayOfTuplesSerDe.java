@@ -24,13 +24,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.apache.datasketches.ArrayOfItemsSerDe;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.memory.WritableMemory;
 import org.apache.pig.data.DataReaderWriter;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.WritableByteArray;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.memory.WritableMemory;
-import org.apache.datasketches.ArrayOfItemsSerDe;
 
 /**
  * This <tt>ArrayOfItemsSerDe</tt> implementation takes advantage of the Pig methods used in

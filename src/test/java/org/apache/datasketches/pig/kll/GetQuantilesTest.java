@@ -32,6 +32,7 @@ import org.apache.datasketches.kll.KllFloatsSketch;
 
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetQuantilesTest {
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
 
@@ -75,7 +76,9 @@ public class GetQuantilesTest {
   public void oneFraction() throws Exception {
     final EvalFunc<Tuple> func = new GetQuantiles();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(i);
+    }
     final Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 1);
@@ -86,7 +89,9 @@ public class GetQuantilesTest {
   public void severalFractions() throws Exception {
     final EvalFunc<Tuple> func = new GetQuantiles();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(i);
+    }
     final Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0, 0.5, 1.0)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);
@@ -99,7 +104,9 @@ public class GetQuantilesTest {
   public void numberOfEvenlySpacedIntervals() throws Exception {
     final EvalFunc<Tuple> func = new GetQuantiles();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    for (int i = 1; i <= 10; i++) sketch.update(i);
+    for (int i = 1; i <= 10; i++) {
+      sketch.update(i);
+    }
     final Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);

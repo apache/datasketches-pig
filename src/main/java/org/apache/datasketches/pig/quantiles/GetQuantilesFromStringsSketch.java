@@ -23,14 +23,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.apache.datasketches.ArrayOfStringsSerDe;
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.quantiles.ItemsSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.ArrayOfStringsSerDe;
-import org.apache.datasketches.quantiles.ItemsSketch;
 
 /**
  * This UDF is to get a list of quantile values from an ItemsSketch&lt;String&gt; given a list of

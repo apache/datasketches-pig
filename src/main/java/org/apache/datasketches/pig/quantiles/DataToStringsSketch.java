@@ -28,6 +28,7 @@ import org.apache.datasketches.ArrayOfStringsSerDe;
  * Creates an ItemsSketch&lt;String&gt; from raw data.
  * It supports all three ways: exec(), Accumulator and Algebraic.
  */
+@SuppressWarnings("javadoc")
 public class DataToStringsSketch extends DataToItemsSketch<String> {
 
   private static final Comparator<String> COMPARATOR = Comparator.naturalOrder();

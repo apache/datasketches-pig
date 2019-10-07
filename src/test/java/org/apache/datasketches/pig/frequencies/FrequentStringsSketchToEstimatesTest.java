@@ -36,7 +36,9 @@ import org.apache.datasketches.ArrayOfStringsSerDe;
 import org.apache.datasketches.frequencies.ItemsSketch;
 import org.apache.datasketches.pig.tuple.PigUtil;
 
+@SuppressWarnings("javadoc")
 public class FrequentStringsSketchToEstimatesTest {
+
   @Test
   public void nullInput() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
@@ -54,7 +56,7 @@ public class FrequentStringsSketchToEstimatesTest {
   @Test
   public void emptySketch() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
-    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+    ItemsSketch<String> sketch = new ItemsSketch<>(8);
     Tuple inputTuple = PigUtil.objectsToTuple(new DataByteArray(sketch.toByteArray(new ArrayOfStringsSerDe())));
     DataBag bag = func.exec(inputTuple);
     Assert.assertNotNull(bag);
@@ -64,7 +66,7 @@ public class FrequentStringsSketchToEstimatesTest {
   @Test
   public void exact() throws Exception {
     EvalFunc<DataBag> func = new FrequentStringsSketchToEstimates();
-    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+    ItemsSketch<String> sketch = new ItemsSketch<>(8);
     sketch.update("a");
     sketch.update("a");
     sketch.update("b");
@@ -91,7 +93,7 @@ public class FrequentStringsSketchToEstimatesTest {
 
   @Test
   public void estimation() throws Exception {
-    ItemsSketch<String> sketch = new ItemsSketch<String>(8);
+    ItemsSketch<String> sketch = new ItemsSketch<>(8);
     sketch.update("1", 1000);
     sketch.update("2", 500);
     sketch.update("3", 200);

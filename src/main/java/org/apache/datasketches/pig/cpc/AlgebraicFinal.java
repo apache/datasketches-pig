@@ -21,14 +21,13 @@ package org.apache.datasketches.pig.cpc;
 
 import java.io.IOException;
 
+import org.apache.datasketches.cpc.CpcSketch;
+import org.apache.datasketches.cpc.CpcUnion;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
-
-import org.apache.datasketches.cpc.CpcSketch;
-import org.apache.datasketches.cpc.CpcUnion;
 
 /**
  * Class used to calculate the final pass of an <i>Algebraic</i> sketch

@@ -38,6 +38,7 @@ import org.apache.datasketches.ArrayOfItemsSerDe;
 import org.apache.datasketches.ArrayOfStringsSerDe;
 import org.apache.datasketches.quantiles.ItemsSketch;
 
+@SuppressWarnings("javadoc")
 public class DataToStringsSketchTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();
@@ -88,7 +89,7 @@ public class DataToStringsSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 1);
   }
-  
+
   @Test
   public void execMixedNormalCase() throws Exception {
     EvalFunc<Tuple> func = new DataToStringsSketch();
@@ -137,7 +138,7 @@ public class DataToStringsSketchTest {
     sketch = getSketch(resultTuple);
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
-    
+
     // mixed null case
     bag = BAG_FACTORY.newDefaultBag();
     bag.add(TUPLE_FACTORY.newTuple("a"));
@@ -215,7 +216,7 @@ public class DataToStringsSketchTest {
     Assert.assertFalse(sketch.isEmpty());
     Assert.assertEquals(sketch.getN(), 2);
   }
-  
+
   @Test
   public void algebraicIntermediateFinalMixedNullCase() throws Exception {
     @SuppressWarnings("unchecked")

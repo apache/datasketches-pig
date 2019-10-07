@@ -19,23 +19,23 @@
 
 package org.apache.datasketches.pig.tuple;
 
-import org.apache.pig.Algebraic;
-
 import org.apache.datasketches.tuple.adouble.DoubleSummary;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryDeserializer;
 import org.apache.datasketches.tuple.adouble.DoubleSummaryFactory;
 import org.apache.datasketches.tuple.adouble.DoubleSummarySetOperations;
+import org.apache.pig.Algebraic;
 
 /**
  * This UDF creates a Sketch&lt;DoubleSummary&gt; from raw data.
  * It supports all three ways: exec(), Accumulator and Algebraic.
  */
+@SuppressWarnings("javadoc")
 public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummary> implements Algebraic {
   /**
    * Constructor with default sketch size and default mode (sum)
    */
   public DataToDoubleSummarySketch() {
-    super(new DoubleSummaryFactory());
+    super(new DoubleSummaryFactory(DoubleSummary.Mode.Sum));
   }
 
   /**
@@ -43,7 +43,7 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
    * @param sketchSize String representation of sketch size
    */
   public DataToDoubleSummarySketch(final String sketchSize) {
-    super(Integer.parseInt(sketchSize), new DoubleSummaryFactory());
+    super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.Sum));
   }
 
   /**
@@ -102,7 +102,8 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * Default sketch size and default mode
      */
     public IntermediateFinal() {
-      super(new DoubleSummaryFactory(), new DoubleSummarySetOperations(), new DoubleSummaryDeserializer());
+      super(new DoubleSummaryFactory(DoubleSummary.Mode.Sum),
+          new DoubleSummarySetOperations(DoubleSummary.Mode.Sum), new DoubleSummaryDeserializer());
     }
 
     /**
@@ -111,7 +112,8 @@ public class DataToDoubleSummarySketch extends DataToSketch<Double, DoubleSummar
      * @param sketchSize String representation of sketch size
      */
     public IntermediateFinal(final String sketchSize) {
-      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(), new DoubleSummarySetOperations(),
+      super(Integer.parseInt(sketchSize), new DoubleSummaryFactory(DoubleSummary.Mode.Sum),
+          new DoubleSummarySetOperations(DoubleSummary.Mode.Sum),
           new DoubleSummaryDeserializer());
     }
 

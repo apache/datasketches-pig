@@ -33,6 +33,7 @@ import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
+@SuppressWarnings("javadoc")
 public class GetKFromStringsSketchTest {
 
   private static final TupleFactory TUPLE_FACTORY = TupleFactory.getInstance();

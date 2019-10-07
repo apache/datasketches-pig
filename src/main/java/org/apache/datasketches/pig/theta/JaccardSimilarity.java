@@ -24,14 +24,13 @@ import static org.apache.datasketches.pig.theta.PigUtil.extractFieldAtIndex;
 
 import java.io.IOException;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.theta.Sketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.theta.Sketch;
 
 /**
  * This is a Pig UDF that performs the JaccardSimilarity Operation on two given

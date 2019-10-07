@@ -26,6 +26,7 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
+@SuppressWarnings("javadoc")
 public class PigUtil {
   /**
    * Wraps input Objects in a Tuple
