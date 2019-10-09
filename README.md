@@ -91,8 +91,6 @@ This has the following top-level dependencies:
 * org.apache.datasketches : datasketches-java
 * org.apache.pig : pig
 * org.apache.hadoop : hadoop-common
-* org.apache.hadoop : hadoop-mapreduce-client-core
-* org.apache.hadoop : hadoop-mapreduce-client-common
 * org.apache.commons : commons-math3
 
 #### Testing
