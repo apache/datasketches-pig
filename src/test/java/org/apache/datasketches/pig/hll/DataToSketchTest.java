@@ -80,11 +80,11 @@ public class DataToSketchTest {
     Tuple tupleWithNull = tupleFactory.newTuple(1);
     tupleWithNull.set(0, null);
     bag.add(tupleWithNull);
-    bag.add(tupleFactory.newTuple(new Byte((byte) 1)));
-    bag.add(tupleFactory.newTuple(new Integer(2)));
-    bag.add(tupleFactory.newTuple(new Long(3)));
-    bag.add(tupleFactory.newTuple(new Float(1)));
-    bag.add(tupleFactory.newTuple(new Double(2)));
+    bag.add(tupleFactory.newTuple(Byte.valueOf((byte) 1)));
+    bag.add(tupleFactory.newTuple(Integer.valueOf(2)));
+    bag.add(tupleFactory.newTuple(Long.valueOf(3)));
+    bag.add(tupleFactory.newTuple(Float.valueOf(1)));
+    bag.add(tupleFactory.newTuple(Double.valueOf(2)));
     bag.add(tupleFactory.newTuple(new DataByteArray(new byte[] {(byte) 1})));
     bag.add(tupleFactory.newTuple("a"));
     DataByteArray result = func.exec(tupleFactory.newTuple(bag));

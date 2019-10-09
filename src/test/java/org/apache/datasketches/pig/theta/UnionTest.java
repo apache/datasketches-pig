@@ -48,22 +48,22 @@ public class UnionTest {
 //  private String udfName = "org.apache.datasketches.pig.theta.SketchUnions";
 //  private long seed_ = Util.DEFAULT_UPDATE_SEED;
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void checkConstructorExceptions1() {
     Union test = new Union("1023");
+    assertNotNull(test);
   }
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkConstructorExceptions3() {
     Union test = new Union("8");
+    assertNotNull(test);
   }
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
     Union test = new Union("1024", "2.0");
+    assertNotNull(test);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

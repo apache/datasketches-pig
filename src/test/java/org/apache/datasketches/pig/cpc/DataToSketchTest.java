@@ -79,11 +79,11 @@ public class DataToSketchTest {
     final Tuple tupleWithNull = TUPLE_FACTORY.newTuple(1);
     tupleWithNull.set(0, null);
     bag.add(tupleWithNull);
-    bag.add(TUPLE_FACTORY.newTuple(new Byte((byte) 1)));
-    bag.add(TUPLE_FACTORY.newTuple(new Integer(2)));
-    bag.add(TUPLE_FACTORY.newTuple(new Long(3)));
-    bag.add(TUPLE_FACTORY.newTuple(new Float(1)));
-    bag.add(TUPLE_FACTORY.newTuple(new Double(2)));
+    bag.add(TUPLE_FACTORY.newTuple(Byte.valueOf((byte) 1)));
+    bag.add(TUPLE_FACTORY.newTuple(Integer.valueOf(2)));
+    bag.add(TUPLE_FACTORY.newTuple(Long.valueOf(3L)));
+    bag.add(TUPLE_FACTORY.newTuple(Float.valueOf(1.0f)));
+    bag.add(TUPLE_FACTORY.newTuple(Double.valueOf(2.0)));
     bag.add(TUPLE_FACTORY.newTuple(new DataByteArray(new byte[] {(byte) 1})));
     bag.add(TUPLE_FACTORY.newTuple("a"));
     final CpcSketch sketch = getSketch(func.exec(TUPLE_FACTORY.newTuple(bag)));

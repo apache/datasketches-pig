@@ -40,12 +40,12 @@ import org.apache.datasketches.pig.theta.Estimate;
 @SuppressWarnings("javadoc")
 public class AexcludeBTest {
 
-  @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
     AexcludeB aNOTb = new AexcludeB();
     aNOTb = new AexcludeB("9001");
     aNOTb = new AexcludeB(9001);
+    assertNotNull(aNOTb);
   }
 
   @Test

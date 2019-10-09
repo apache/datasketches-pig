@@ -20,6 +20,7 @@
 package org.apache.datasketches.pig.hash;
 
 import static org.apache.datasketches.pig.PigTestingUtil.LS;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -61,9 +62,10 @@ public class MurmurHash3Test {
     Tuple in, out;
     //seed must be INTEGER or LONG
     in = mTupleFactory.newTuple(2);
-    in.set(0, new String("ABC"));
-    in.set(1, new Double(9001));
+    in.set(0, "ABC");
+    in.set(1, Double.valueOf(9001));
     out = hashUdf.exec(in);
+    assertNotNull(out);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -75,6 +77,7 @@ public class MurmurHash3Test {
     in = mTupleFactory.newTuple(1);
     in.set(0, in);
     out = hashUdf.exec(in);
+    assertNotNull(out);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -84,10 +87,11 @@ public class MurmurHash3Test {
     Tuple in, out;
     //divisor must be INTEGER
     in = mTupleFactory.newTuple(3);
-    in.set(0, new String("ABC"));
+    in.set(0, "ABC");
     in.set(1, 0);
-    in.set(2, new Long(8));
+    in.set(2, Long.valueOf(8));
     out = hashUdf.exec(in);
+    assertNotNull(out);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -97,10 +101,11 @@ public class MurmurHash3Test {
     Tuple in, out;
     //divisor must be INTEGER > 0
     in = mTupleFactory.newTuple(3);
-    in.set(0, new String("ABC"));
+    in.set(0, "ABC");
     in.set(1, 0);
-    in.set(2, new Integer(0));
+    in.set(2, Integer.valueOf(0));
     out = hashUdf.exec(in);
+    assertNotNull(out);
   }
 
   @Test
@@ -118,23 +123,23 @@ public class MurmurHash3Test {
     Assert.assertNull(out.get(1));
     Assert.assertNull(out.get(2));
 
-    in.set(0, new Integer(1));
+    in.set(0, Integer.valueOf(1));
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new Long(1));
+    in.set(0, Long.valueOf(1));
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new Float(1));
+    in.set(0, Float.valueOf(1.0f));
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new Double(0.0));
+    in.set(0, Double.valueOf(0.0));
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new Double( -0.0));
+    in.set(0, Double.valueOf( -0.0));
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
@@ -142,11 +147,11 @@ public class MurmurHash3Test {
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("")); //empty
+    in.set(0, ""); //empty
     out = hashUdf.exec(in);
     Assert.assertNull(out.get(0));
     Assert.assertNull(out.get(1));
@@ -176,17 +181,17 @@ public class MurmurHash3Test {
     //test String, seed
     in = mTupleFactory.newTuple(2);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     //2nd is null
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     in.set(1, 9001);
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     in.set(1, 9001L);
     out = hashUdf.exec(in);
     checkOutput(out, false);
@@ -201,19 +206,19 @@ public class MurmurHash3Test {
     //test String, seed
     in = mTupleFactory.newTuple(3);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     //2nd is null
     //3rd is null
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     in.set(1, 9001);
     //3rd is null
     out = hashUdf.exec(in);
     checkOutput(out, false);
 
-    in.set(0, new String("1"));
+    in.set(0, "1");
     in.set(1, 9001);
     in.set(2, 7);
     out = hashUdf.exec(in);

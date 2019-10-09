@@ -69,8 +69,6 @@ public class IntersectTest {
     inter.accumulate(inputTuple); //add wrong type
   }
 
-
-  @SuppressWarnings("unused")
   @Test
   public void checkConstructors() {
     Intersect inter = new Intersect();
@@ -82,6 +80,8 @@ public class IntersectTest {
     Intersect.IntermediateFinal interFin = new Intersect.IntermediateFinal();
     interFin = new Intersect.IntermediateFinal("9001");
     interFin = new Intersect.IntermediateFinal(9001);
+    assertNotNull(initial);
+    assertNotNull(interFin);
     inter.cleanup();
   }
 

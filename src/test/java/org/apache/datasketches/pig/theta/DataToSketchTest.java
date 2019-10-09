@@ -53,22 +53,22 @@ public class DataToSketchTest {
   private String udfName = "org.apache.datasketches.pig.theta.DataToSketch";
   private long seed_ = Util.DEFAULT_UPDATE_SEED;
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions1() {
     DataToSketch test = new DataToSketch("1023");
+    assertNotNull(test);
   }
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testConstructorExceptions3() {
     DataToSketch test = new DataToSketch("8");
+    assertNotNull(test);
   }
 
-  @SuppressWarnings("unused")
   @Test(expectedExceptions = SketchesArgumentException.class)
   public void testConstructorExceptions4() {
     DataToSketch test = new DataToSketch("1024", "2.0");
+    assertNotNull(test);
   }
 
   @Test
@@ -481,12 +481,13 @@ public class DataToSketchTest {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void checkMisc() throws IOException  {
     DataToSketch dts = new DataToSketch("512", "1.0");
     dts = new DataToSketch("512", "1.0", "9001");
     DataToSketch.Initial dtsi = new DataToSketch.Initial("512", "1.0");
     DataToSketch.IntermediateFinal dtsif = new DataToSketch.IntermediateFinal("512", "1.0");
+    assertNotNull(dtsi);
+    assertNotNull(dtsif);
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //null bag
     dts.accumulate(inputTuple);
     Tuple resultTuple = dts.getValue();

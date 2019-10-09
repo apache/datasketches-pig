@@ -54,9 +54,9 @@ public class GetCdfTest {
     final Tuple resultTuple = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 2f, 7f)));
     Assert.assertNotNull(resultTuple);
     Assert.assertEquals(resultTuple.size(), 3);
-    Assert.assertEquals(((double) resultTuple.get(0)), 0.1);
-    Assert.assertEquals(((double) resultTuple.get(1)), 0.6);
-    Assert.assertEquals(((double) resultTuple.get(2)), 1.0);
+    Assert.assertEquals((resultTuple.get(0)), 0.1);
+    Assert.assertEquals((resultTuple.get(1)), 0.6);
+    Assert.assertEquals((resultTuple.get(2)), 1.0);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
