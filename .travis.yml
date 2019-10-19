@@ -22,7 +22,7 @@ sudo: false # faster builds
 dist: trusty
 
 jdk:
- - oraclejdk8
+ - openjdk8
 
 install:
  - mvn clean install -q -Dmaven.javadoc.skip=true -Dsource.skip=true -DskipTests=true -Dgpg.skip=true
@@ -32,9 +32,9 @@ before_script:
 
 script:
  - mvn clean compile test -q -Dgpg.skip=true
- 
+
 after_success: 
-  - mvn clean test jacoco:report coveralls:report -DrepoToken=$coveralls_token
+ - mvn clean test jacoco:report coveralls:report -q -DrepoToken=$coveralls_token
 
 notifications:
   email: false
