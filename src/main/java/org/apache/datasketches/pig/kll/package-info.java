@@ -19,8 +19,8 @@
 
 /**
  * Pig UDFs for KLL quantiles sketches.
- * See https://datasketches.github.io/docs/Quantiles/KLLSketch.html
- * 
+ * See https://datasketches.apache.org/docs/Quantiles/KLLSketch.html
+ *
  * @author Alexander Saydakov
  */
 package org.apache.datasketches.pig.kll;
