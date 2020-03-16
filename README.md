@@ -21,7 +21,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.datasketches/datasketches-pig/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.datasketches/datasketches-pig)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/apache/incubator-datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/incubator-datasketches-pig/context:java)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/apache/incubator-datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/incubator-datasketches-pig/alerts/)
-[![Coverage Status](https://coveralls.io/repos/github/apache/incubator-datasketches-pig/badge.svg?branch=master&service=github)](https://coveralls.io/github/apache/incubator-datasketches-pig?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/apache/incubator-datasketches-pig/badge.svg?branch=master)](https://coveralls.io/github/apache/incubator-datasketches-pig?branch=master)
 
 =================
 
