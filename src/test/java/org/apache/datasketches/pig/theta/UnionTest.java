@@ -27,6 +27,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.datasketches.SketchesArgumentException;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.BagFactory;
@@ -38,10 +39,6 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import org.apache.datasketches.SketchesArgumentException;
-import org.apache.datasketches.pig.theta.Estimate;
-import org.apache.datasketches.pig.theta.Union;
 
 @SuppressWarnings("javadoc")
 public class UnionTest {
