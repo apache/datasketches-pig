@@ -34,9 +34,6 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.apache.datasketches.pig.theta.AexcludeB;
-import org.apache.datasketches.pig.theta.Estimate;
-
 @SuppressWarnings("javadoc")
 public class AexcludeBTest {
 

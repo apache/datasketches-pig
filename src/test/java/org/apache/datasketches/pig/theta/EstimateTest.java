@@ -32,8 +32,6 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
 
-import org.apache.datasketches.pig.theta.Estimate;
-
 @SuppressWarnings("javadoc")
 public class EstimateTest {
 

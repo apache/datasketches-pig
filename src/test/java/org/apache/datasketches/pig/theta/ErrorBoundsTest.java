@@ -38,8 +38,6 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.apache.datasketches.pig.theta.ErrorBounds;
-
 @SuppressWarnings("javadoc")
 public class ErrorBoundsTest {
 
@@ -91,9 +89,9 @@ public class ErrorBoundsTest {
     double epsilon2SD = 2.0 / Math.sqrt(2 * nomEntries);
 
     //System.out.println(lb+"\t"+est+"\t"+ub);
-    assertTrue(((2 * nomEntries) < ub) && ((2 * nomEntries) > lb));
-    assertTrue(Math.abs((ub / (est + (epsilon2SD * est))) - 1) < .01);
-    assertTrue(Math.abs((lb / (est - (epsilon2SD * est))) - 1) < .01);
+    assertTrue(2 * nomEntries < ub && 2 * nomEntries > lb);
+    assertTrue(Math.abs(ub / (est + epsilon2SD * est) - 1) < .01);
+    assertTrue(Math.abs(lb / (est - epsilon2SD * est) - 1) < .01);
   }
 
   @Test
@@ -115,9 +113,9 @@ public class ErrorBoundsTest {
     double epsilon2SD = 2.0 / Math.sqrt(2 * nomEntries);
 
     //System.out.println(lb+"\t"+est+"\t"+ub);
-    assertTrue(((2 * nomEntries) < ub) && ((2 * nomEntries) > lb));
-    assertTrue(Math.abs((ub / (est + (epsilon2SD * est))) - 1) < .01);
-    assertTrue(Math.abs((lb / (est - (epsilon2SD * est))) - 1) < .01);
+    assertTrue(2 * nomEntries < ub && 2 * nomEntries > lb);
+    assertTrue(Math.abs(ub / (est + epsilon2SD * est) - 1) < .01);
+    assertTrue(Math.abs(lb / (est - epsilon2SD * est) - 1) < .01);
   }
 
   @Test
