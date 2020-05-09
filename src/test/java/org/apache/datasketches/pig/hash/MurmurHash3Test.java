@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 /**
  * Tests the MurmurHash3 class.
  */
-@SuppressWarnings({ "unused", "unchecked", "javadoc" })
+@SuppressWarnings({"unchecked", "javadoc" })
 public class MurmurHash3Test {
   private static final TupleFactory mTupleFactory = TupleFactory.getInstance();
 
