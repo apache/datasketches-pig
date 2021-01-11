@@ -19,17 +19,15 @@
 
 package org.apache.datasketches.pig.quantiles;
 
-import org.apache.datasketches.quantiles.DoublesSketch;
-import org.apache.datasketches.quantiles.UpdateDoublesSketch;
-
 import java.util.Arrays;
 
+import org.apache.datasketches.quantiles.DoublesSketch;
+import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.TupleFactory;
-
-import org.testng.annotations.Test;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 @SuppressWarnings("javadoc")
 public class GetQuantileFromDoublesSketchTest {
@@ -39,8 +37,9 @@ public class GetQuantileFromDoublesSketchTest {
   public void emptySketch() throws Exception {
     EvalFunc<Double> func = new GetQuantileFromDoublesSketch();
     DoublesSketch sketch = DoublesSketch.builder().build();
-    Double result = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0)));
-    Assert.assertEquals(result, Double.NaN);
+    Double result =
+        func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0)));
+    Assert.assertEquals((double)result, Double.NaN);
   }
 
   @Test
@@ -48,8 +47,9 @@ public class GetQuantileFromDoublesSketchTest {
     EvalFunc<Double> func = new GetQuantileFromDoublesSketch();
     UpdateDoublesSketch sketch = DoublesSketch.builder().build();
     sketch.update(1.0);
-    Double result = func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
-    Assert.assertEquals(result, 1.0);
+    Double result =
+        func.exec(tupleFactory.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
+    Assert.assertEquals((double)result, 1.0);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

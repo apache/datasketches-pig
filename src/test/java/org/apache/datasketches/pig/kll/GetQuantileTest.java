@@ -21,15 +21,12 @@ package org.apache.datasketches.pig.kll;
 
 import java.util.Arrays;
 
+import org.apache.datasketches.kll.KllFloatsSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.TupleFactory;
-
-import org.testng.annotations.Test;
-
-import org.apache.datasketches.kll.KllFloatsSketch;
-
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 @SuppressWarnings("javadoc")
 public class GetQuantileTest {
@@ -39,8 +36,9 @@ public class GetQuantileTest {
   public void emptySketch() throws Exception {
     final EvalFunc<Float> func = new GetQuantile();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    Float result = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0)));
-    Assert.assertEquals(result, Float.NaN);
+    Float result =
+        func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.0)));
+    Assert.assertEquals((float)result, Float.NaN);
   }
 
   @Test
@@ -48,8 +46,9 @@ public class GetQuantileTest {
     final EvalFunc<Float> func = new GetQuantile();
     final KllFloatsSketch sketch = new KllFloatsSketch();
     sketch.update(1);
-    final Float result = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
-    Assert.assertEquals(result, 1f);
+    final Float result =
+        func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0.5)));
+    Assert.assertEquals((float)result, 1f);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

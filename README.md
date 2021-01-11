@@ -17,11 +17,11 @@
     under the License.
 -->
 
-[![Build Status](https://travis-ci.org/apache/incubator-datasketches-pig.svg?branch=master)](https://travis-ci.org/apache/incubator-datasketches-pig)
+[![Build Status](https://travis-ci.org/apache/datasketches-pig.svg?branch=master)](https://travis-ci.org/apache/datasketches-pig)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.datasketches/datasketches-pig/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.datasketches/datasketches-pig)
-[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/apache/incubator-datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/incubator-datasketches-pig/context:java)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/apache/incubator-datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/incubator-datasketches-pig/alerts/)
-[![Coverage Status](https://coveralls.io/repos/github/apache/incubator-datasketches-pig/badge.svg?branch=master)](https://coveralls.io/github/apache/incubator-datasketches-pig?branch=master)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/apache/datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/datasketches-pig/context:java)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/apache/datasketches-pig.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/apache/datasketches-pig/alerts/)
+[![Coverage Status](https://coveralls.io/repos/github/apache/datasketches-pig/badge.svg?branch=master)](https://coveralls.io/github/apache/datasketches-pig?branch=master)
 
 =================
 
@@ -59,11 +59,11 @@ To install jars built from the downloaded source:
 
 This will create the following jars:
 
-* datasketches-pig-X.Y.Z-incubating.jar The compiled main class files.
-* datasketches-pig-X.Y.Z-incubating-tests.jar The compiled test class files.
-* datasketches-pig-X.Y.Z-incubating-sources.jar The main source files.
-* datasketches-pig-X.Y.Z-incubating-test-sources.jar The test source files
-* datasketches-pig-X.Y.Z-incubating-javadoc.jar  The compressed Javadocs.
+* datasketches-pig-X.Y.Z.jar The compiled main class files.
+* datasketches-pig-X.Y.Z-tests.jar The compiled test class files.
+* datasketches-pig-X.Y.Z-sources.jar The main source files.
+* datasketches-pig-X.Y.Z-test-sources.jar The test source files
+* datasketches-pig-X.Y.Z-javadoc.jar  The compressed Javadocs.
 
 ### Dependencies
 
@@ -78,6 +78,3 @@ This has the following top-level dependencies:
 #### Testing
 See the pom.xml file for test dependencies.
 
-----
-
-Disclaimer: Apache DataSketches is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
