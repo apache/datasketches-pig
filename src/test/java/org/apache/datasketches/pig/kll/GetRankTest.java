@@ -21,15 +21,12 @@ package org.apache.datasketches.pig.kll;
 
 import java.util.Arrays;
 
+import org.apache.datasketches.kll.KllFloatsSketch;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.TupleFactory;
-
-import org.testng.annotations.Test;
-
-import org.apache.datasketches.kll.KllFloatsSketch;
-
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 @SuppressWarnings("javadoc")
 public class GetRankTest {
@@ -39,8 +36,9 @@ public class GetRankTest {
   public void emptySketch() throws Exception {
     final EvalFunc<Double> func = new GetRank();
     final KllFloatsSketch sketch = new KllFloatsSketch();
-    final Double result = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0f)));
-    Assert.assertEquals(result, Double.NaN);
+    final Double result =
+        func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 0f)));
+    Assert.assertEquals((double)result, Double.NaN);
   }
 
   @Test
@@ -51,8 +49,9 @@ public class GetRankTest {
     sketch.update(2);
     sketch.update(3);
     sketch.update(4);
-    final Double result = func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3f)));
-    Assert.assertEquals(result, 0.5);
+    final Double result =
+        func.exec(TUPLE_FACTORY.newTuple(Arrays.asList(new DataByteArray(sketch.toByteArray()), 3f)));
+    Assert.assertEquals((double)result, 0.5);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)

@@ -28,6 +28,10 @@ import static org.testng.Assert.fail;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.datasketches.memory.Memory;
+import org.apache.datasketches.sampling.VarOptItemsSamples;
+import org.apache.datasketches.sampling.VarOptItemsSketch;
+import org.apache.datasketches.sampling.VarOptItemsUnion;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
@@ -35,11 +39,6 @@ import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.testng.annotations.Test;
-
-import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.sampling.VarOptItemsSamples;
-import org.apache.datasketches.sampling.VarOptItemsSketch;
-import org.apache.datasketches.sampling.VarOptItemsUnion;
 
 @SuppressWarnings("javadoc")
 public class VarOptCommonAlgebraicTest {
@@ -168,7 +167,7 @@ public class VarOptCommonAlgebraicTest {
 
     final DataBag inputBag = BagFactory.getInstance().newDefaultBag();
     try {
-      for (int i = 0; i < (k + 1); ++i) {
+      for (int i = 0; i < k + 1; ++i) {
         final Tuple t = TupleFactory.getInstance().newTuple(2);
         t.set(0, Character.toString(id));
         t.set(1, wt);
@@ -210,7 +209,7 @@ public class VarOptCommonAlgebraicTest {
       for (VarOptItemsSamples<Tuple>.WeightedSample ws : vis.getSketchSamples()) {
         final Tuple t = ws.getItem();
         assertTrue((double) t.get(wtIdx) >= 1.0);
-        assertTrue((double) t.get(wtIdx) <= (k + 1.0));
+        assertTrue((double) t.get(wtIdx) <= k + 1.0);
       }
     } catch (final IOException e) {
       fail("Unexpected IOException calling exec()");
@@ -333,7 +332,7 @@ public class VarOptCommonAlgebraicTest {
     }
 
     for (VarOptItemsSamples<Tuple>.WeightedSample ws : s2.getSketchSamples()) {
-      assertEquals(items.get(ws.getItem()), ws.getWeight());
+      assertEquals((double)items.get(ws.getItem()), ws.getWeight());
     }
   }
 
