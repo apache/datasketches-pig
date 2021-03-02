@@ -104,6 +104,11 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    *   <li>DataByteArray: BYTEARRAY</li>
    * </ul>
    *
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @return serialized CpcSketch
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"

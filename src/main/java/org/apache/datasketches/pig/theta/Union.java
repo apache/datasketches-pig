@@ -71,7 +71,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * </ul>
    */
   public Union() {
-    this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(DEFAULT_NOMINAL_ENTRIES, (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -85,7 +85,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
   public Union(final String nomEntriesStr) {
-    this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(Integer.parseInt(nomEntriesStr), (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -134,7 +134,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
-    if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
+    if (nomEntries < 1 << Util.MIN_LG_NOM_LONGS) {
       throw new IllegalArgumentException("NomEntries too small: " + nomEntries
           + ", required: " + (1 << Util.MIN_LG_NOM_LONGS));
     }
@@ -308,7 +308,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
       if (type == DataType.BYTEARRAY) {
         final DataByteArray dba = (DataByteArray) f0;
         if (dba.size() > 0) {
-          union.update(Memory.wrap(dba.get()));
+          union.union(Memory.wrap(dba.get()));
         }
       } else {
         throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);
@@ -503,7 +503,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = (DataByteArray) f0;
           final Memory srcMem = Memory.wrap(dba.get());
-          union.update(srcMem);
+          union.union(srcMem);
 
         }
         else { // we should never get here.

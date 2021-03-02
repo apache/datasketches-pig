@@ -81,7 +81,7 @@ public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> e
       Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
+    final Union<S> union = new Union<>(sketchSize_, summarySetOps_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -94,13 +94,13 @@ public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> e
         // this is from a prior call to the initial function, so there is a nested bag.
         for (Tuple innerTuple: (DataBag) item) {
           final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, summaryDeserializer_);
-          union.update(incomingSketch);
+          union.union(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function
         // Add it to the current union.
         final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, summaryDeserializer_);
-        union.update(incomingSketch);
+        union.union(incomingSketch);
       } else {
         // we should never get here.
         throw new IllegalArgumentException(

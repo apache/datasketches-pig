@@ -37,7 +37,13 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 
 /**
- * This is a generic implementation to be specialized in concrete UDFs
+ * This is a generic implementation to be specialized in concrete UDFs.
+ *
+ * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+ * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+ * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+ * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
+ *
  * @param <U> Update type
  * @param <S> Summary type
  */
@@ -80,7 +86,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   public DataToSketch(final int sketchSize, final float samplingProbability,
       final SummaryFactory<S> summaryFactory) {
     super();
-    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+    sketchBuilder_ = new UpdatableSketchBuilder<>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
 
@@ -121,7 +127,7 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
       Logger.getLogger(getClass()).info("exec is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     if (inputTuple.size() != 1) {

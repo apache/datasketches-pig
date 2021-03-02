@@ -23,9 +23,11 @@ import static org.apache.datasketches.pig.PigTestingUtil.LS;
 import static org.apache.datasketches.pig.PigTestingUtil.createDbaFromQssRange;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 
+import org.apache.datasketches.SketchesArgumentException;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
@@ -54,29 +56,26 @@ public class AexcludeBTest {
     Double est;
     //Two nulls
     inputTuple = TupleFactory.getInstance().newTuple(2);
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
+    try {
+      resultTuple = aNbFunc.exec(inputTuple);
+      fail();
+    } catch (SketchesArgumentException e) {}
 
     //A is null
     inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
+    try {
+      resultTuple = aNbFunc.exec(inputTuple);
+      fail();
+    } catch (SketchesArgumentException e) {}
 
     //A is valid, B is null
     inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 256.0, 0.0);
+    try {
+      resultTuple = aNbFunc.exec(inputTuple);
+      fail();
+    } catch (SketchesArgumentException e) {}
 
     //Both valid
     inputTuple = TupleFactory.getInstance().newTuple(2);

@@ -99,7 +99,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
     sketchSize_ = sketchSize;
     summarySetOps_ = summarySetOps;
     summaryDeserializer_ = summaryDeserializer;
-    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+    sketchBuilder_ = new UpdatableSketchBuilder<>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
 
@@ -110,7 +110,7 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
       Logger.getLogger(getClass()).info("algebraic is used");
       isFirstCall_ = false;
     }
-    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
+    final Union<S> union = new Union<>(sketchSize_, summarySetOps_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -124,13 +124,13 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
         // just insert each item of the tuple into the sketch
         final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
         DataToSketch.updateSketch((DataBag) item, sketch);
-        union.update(sketch);
+        union.union(sketch);
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
         final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, summaryDeserializer_);
-        union.update(incomingSketch);
+        union.union(incomingSketch);
       } else {
         // we should never get here.
         throw new IllegalArgumentException(

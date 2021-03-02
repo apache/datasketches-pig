@@ -72,7 +72,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * </ul>
    */
   public DataToSketch() {
-    this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(DEFAULT_NOMINAL_ENTRIES, (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -86,7 +86,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
   public DataToSketch(final String nomEntriesStr) {
-    this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(Integer.parseInt(nomEntriesStr), (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -129,7 +129,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
-    if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
+    if (nomEntries < 1 << Util.MIN_LG_NOM_LONGS) {
       throw new IllegalArgumentException("NomEntries too small: " + nomEntries
           + ", required: " + (1 << Util.MIN_LG_NOM_LONGS));
     }
@@ -180,6 +180,11 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    *     </ul>
    *   </li>
    * </ul>
+   *
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
    *
    * <b>Sketch Tuple</b>
    * <ul>
@@ -313,6 +318,10 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * Updates a union with the data from the given bag.
    *
    * @param bag A bag of tuples to insert.
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
    * @param union the union to update
    */
   private static void updateUnion(final DataBag bag, final Union union) {
@@ -543,8 +552,8 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
           // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
-          final DataByteArray dba = ((DataByteArray) f0);
-          union.update(Memory.wrap(dba.get()));
+          final DataByteArray dba = (DataByteArray) f0;
+          union.union(Memory.wrap(dba.get()));
 
         }
         else { // we should never get here.

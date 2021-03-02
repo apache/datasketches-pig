@@ -193,7 +193,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   @Override
   public Tuple getValue() {
-    if ((accumIntersection_ == null) || !accumIntersection_.hasResult()) {
+    if (accumIntersection_ == null || !accumIntersection_.hasResult()) {
       throw new IllegalStateException(""
           + "The accumulate(Tuple) method must be called at least once with "
           + "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
@@ -254,7 +254,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
       final DataByteArray dba = (DataByteArray) f0;
       final Memory srcMem = Memory.wrap(dba.get());
       final Sketch sketch = Sketch.wrap(srcMem, seed);
-      intersection.update(sketch);
+      intersection.intersect(sketch);
     }
     else {
       throw new IllegalArgumentException(
@@ -380,7 +380,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           final DataByteArray dba = (DataByteArray) f0;
           final Memory srcMem = Memory.wrap(dba.get());
           final Sketch sketch = Sketch.wrap(srcMem, mySeed_);
-          intersection.update(sketch);
+          intersection.intersect(sketch);
         }
         else { // we should never get here.
           throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "

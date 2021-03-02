@@ -81,11 +81,11 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
       Logger.getLogger(getClass()).info("exec is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
+    final Union<S> union = new Union<>(sketchSize_, summarySetOps_);
     updateUnion(bag, union, summaryDeserializer_);
     return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));
   }
@@ -97,13 +97,13 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
       Logger.getLogger(getClass()).info("accumulator is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() != 1)) {
+    if (inputTuple == null || inputTuple.size() != 1) {
       return;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null || bag.size() == 0) { return; }
     if (union_ == null) {
-      union_ = new Union<S>(sketchSize_, summarySetOps_);
+      union_ = new Union<>(sketchSize_, summarySetOps_);
     }
     updateUnion(bag, union_, summaryDeserializer_);
   }
@@ -124,11 +124,11 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   private static <S extends Summary> void updateUnion(final DataBag bag, final Union<S> union,
       final SummaryDeserializer<S> summaryDeserializer) throws ExecException {
     for (final Tuple innerTuple: bag) {
-      if ((innerTuple.size() != 1) || (innerTuple.get(0) == null)) {
+      if (innerTuple.size() != 1 || innerTuple.get(0) == null) {
         continue;
       }
       final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, summaryDeserializer);
-      union.update(incomingSketch);
+      union.union(incomingSketch);
     }
   }
 
