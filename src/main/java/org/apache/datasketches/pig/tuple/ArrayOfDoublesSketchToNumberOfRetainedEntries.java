@@ -22,8 +22,8 @@ package org.apache.datasketches.pig.tuple;
 import java.io.IOException;
 
 import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
@@ -40,7 +40,7 @@ public class ArrayOfDoublesSketchToNumberOfRetainedEntries extends EvalFunc<Inte
 
   @Override
   public Integer exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 

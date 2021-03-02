@@ -19,20 +19,18 @@
 
 package org.apache.datasketches.pig.tuple;
 
-import org.testng.annotations.Test;
-import org.testng.Assert;
+import java.io.IOException;
+import java.util.Random;
+
+import org.apache.commons.math3.stat.inference.TTest;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
-
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
-
-import org.apache.commons.math3.stat.inference.TTest;
-
-import java.io.IOException;
-import java.util.Random;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Test p-value estimation of two ArrayOfDoublesSketch.

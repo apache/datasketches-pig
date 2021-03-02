@@ -24,10 +24,10 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import java.io.IOException;
 
 import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
-import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSetOperationBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUnion;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
@@ -63,7 +63,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       Logger.getLogger(getClass()).info("exec is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -81,7 +81,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       Logger.getLogger(getClass()).info("accumulator is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() != 1)) {
+    if (inputTuple == null || inputTuple.size() != 1) {
       return;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -112,11 +112,11 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   private static void updateUnion(final DataBag bag, final ArrayOfDoublesUnion union)
       throws ExecException {
     for (final Tuple innerTuple: bag) {
-      if ((innerTuple.size() != 1) || (innerTuple.get(0) == null)) {
+      if (innerTuple.size() != 1 || innerTuple.get(0) == null) {
         continue;
       }
       final DataByteArray dba = (DataByteArray) innerTuple.get(0);
-      union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
+      union.union(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
     }
   }
 

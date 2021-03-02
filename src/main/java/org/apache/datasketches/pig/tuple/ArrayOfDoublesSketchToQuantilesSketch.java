@@ -25,9 +25,9 @@ import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.DoublesSketchBuilder;
 import org.apache.datasketches.quantiles.UpdateDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketchIterator;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketchIterator;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
@@ -59,7 +59,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
 
   @Override
   public DataByteArray exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 
@@ -69,7 +69,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
     int column = 1;
     if (input.size() > 1) {
       column = (int) input.get(1);
-      if ((column < 1) || (column > sketch.getNumValues())) {
+      if (column < 1 || column > sketch.getNumValues()) {
         throw new IllegalArgumentException("Column number out of range. The given sketch has "
           + sketch.getNumValues() + " columns");
       }

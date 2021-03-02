@@ -23,8 +23,8 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 
 import java.io.IOException;
 
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
@@ -101,7 +101,7 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
       Logger.getLogger(getClass()).info("exec is used");
       isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     if (inputTuple.size() != 1) {
