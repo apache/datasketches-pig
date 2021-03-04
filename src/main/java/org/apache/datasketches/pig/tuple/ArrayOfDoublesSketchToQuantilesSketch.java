@@ -59,7 +59,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
 
   @Override
   public DataByteArray exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 
@@ -69,7 +69,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
     int column = 1;
     if (input.size() > 1) {
       column = (int) input.get(1);
-      if ((column < 1) || (column > sketch.getNumValues())) {
+      if (column < 1 || column > sketch.getNumValues()) {
         throw new IllegalArgumentException("Column number out of range. The given sketch has "
           + sketch.getNumValues() + " columns");
       }

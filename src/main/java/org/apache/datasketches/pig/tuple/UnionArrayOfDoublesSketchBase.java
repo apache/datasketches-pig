@@ -63,7 +63,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       Logger.getLogger(getClass()).info("exec is used");
       this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -81,7 +81,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
       Logger.getLogger(getClass()).info("accumulator is used");
       this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() != 1)) {
+    if (inputTuple == null || inputTuple.size() != 1) {
       return;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
@@ -112,7 +112,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
   private static void updateUnion(final DataBag bag, final ArrayOfDoublesUnion union)
       throws ExecException {
     for (final Tuple innerTuple: bag) {
-      if ((innerTuple.size() != 1) || (innerTuple.get(0) == null)) {
+      if (innerTuple.size() != 1 || innerTuple.get(0) == null) {
         continue;
       }
       final DataByteArray dba = (DataByteArray) innerTuple.get(0);

@@ -40,7 +40,7 @@ public class ArrayOfDoublesSketchToNumberOfRetainedEntries extends EvalFunc<Inte
 
   @Override
   public Integer exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 

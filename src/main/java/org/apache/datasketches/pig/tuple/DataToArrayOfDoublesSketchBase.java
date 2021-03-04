@@ -101,7 +101,7 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
       Logger.getLogger(getClass()).info("exec is used");
       this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     if (inputTuple.size() != 1) {
