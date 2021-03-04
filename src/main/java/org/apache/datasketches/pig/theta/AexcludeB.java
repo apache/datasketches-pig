@@ -75,7 +75,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
    */
   public AexcludeB(final long seed) {
     super();
-    seed_ = seed;
+    this.seed_ = seed;
   }
 
   // @formatter:off
@@ -123,21 +123,22 @@ public class AexcludeB extends EvalFunc<Tuple> {
     if (objA != null) {
       final DataByteArray dbaA = (DataByteArray)objA;
       final Memory srcMem = Memory.wrap(dbaA.get());
-      sketchA = Sketch.wrap(srcMem, seed_);
+      sketchA = Sketch.wrap(srcMem, this.seed_);
     }
     final Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
       final DataByteArray dbaB = (DataByteArray)objB;
       final Memory srcMem = Memory.wrap(dbaB.get());
-      sketchB = Sketch.wrap(srcMem, seed_);
+      sketchB = Sketch.wrap(srcMem, this.seed_);
     }
 
-    final AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
+    final AnotB aNOTb = SetOperation.builder().setSeed(this.seed_).buildANotB();
     final CompactSketch compactSketch = aNOTb.aNotB(sketchA, sketchB, true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {

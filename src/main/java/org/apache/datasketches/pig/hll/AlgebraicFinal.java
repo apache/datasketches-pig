@@ -54,20 +54,20 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
    * @param tgtHllType HLL type of the resulting sketch
    */
   public AlgebraicFinal(final int lgK, final TgtHllType tgtHllType) {
-    lgK_ = lgK;
-    tgtHllType_ = tgtHllType;
+    this.lgK_ = lgK;
+    this.tgtHllType_ = tgtHllType;
   }
 
   @Override
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) {
       return getEmptySketch();
     }
-    final Union union = new Union(lgK_);
+    final Union union = new Union(this.lgK_);
     final DataBag outerBag = (DataBag) inputTuple.get(0);
     if (outerBag == null) {
       return getEmptySketch();
@@ -96,17 +96,17 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
             + f0.getClass().getName());
       }
     }
-    return new DataByteArray(union.getResult(tgtHllType_).toCompactByteArray());
+    return new DataByteArray(union.getResult(this.tgtHllType_).toCompactByteArray());
   }
 
   abstract void updateUnion(DataBag bag, Union union) throws ExecException;
 
   private DataByteArray getEmptySketch() {
-    if (emptySketch_ == null) {
-      emptySketch_ = new DataByteArray(
-          new HllSketch(lgK_, tgtHllType_).toCompactByteArray());
+    if (this.emptySketch_ == null) {
+      this.emptySketch_ = new DataByteArray(
+          new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray());
     }
-    return emptySketch_;
+    return this.emptySketch_;
   }
 
 }

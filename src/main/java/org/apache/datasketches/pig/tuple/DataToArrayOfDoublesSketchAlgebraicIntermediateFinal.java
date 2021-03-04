@@ -24,11 +24,11 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import java.io.IOException;
 
 import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
-import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSetOperationBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUnion;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
@@ -62,21 +62,21 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
 
   DataToArrayOfDoublesSketchAlgebraicIntermediateFinal(
       final int sketchSize, final float samplingProbability, final int numValues) {
-    sketchSize_ = sketchSize;
-    samplingProbability_ = samplingProbability;
-    numValues_ = numValues;
+    this.sketchSize_ = sketchSize;
+    this.samplingProbability_ = samplingProbability;
+    this.numValues_ = numValues;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("algebraic is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     final ArrayOfDoublesUnion union =
-        new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_)
-          .setNumberOfValues(numValues_).buildUnion();
+        new ArrayOfDoublesSetOperationBuilder().setNominalEntries(this.sketchSize_)
+          .setNumberOfValues(this.numValues_).buildUnion();
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -89,16 +89,16 @@ abstract class DataToArrayOfDoublesSketchAlgebraicIntermediateFinal extends Eval
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
         final ArrayOfDoublesUpdatableSketch sketch =
-            new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
-              .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
-        DataToArrayOfDoublesSketchBase.updateSketch((DataBag) item, sketch, numValues_);
-        union.update(sketch);
+            new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(this.sketchSize_)
+              .setSamplingProbability(this.samplingProbability_).setNumberOfValues(this.numValues_).build();
+        DataToArrayOfDoublesSketchBase.updateSketch((DataBag) item, sketch, this.numValues_);
+        union.union(sketch);
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
         final DataByteArray dba = (DataByteArray) item;
-        union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
+        union.union(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
       } else {
         // we should never get here.
         throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: "

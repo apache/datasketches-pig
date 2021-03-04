@@ -120,14 +120,14 @@ public class JaccardSimilarity extends EvalFunc<Tuple> {
     if (objA != null) {
       final DataByteArray dbaA = (DataByteArray)objA;
       final Memory srcMem = Memory.wrap(dbaA.get());
-      sketchA = Sketch.wrap(srcMem, seed);
+      sketchA = Sketch.wrap(srcMem, this.seed);
     }
     final Object objB = extractFieldAtIndex(inputTuple, 1);
     Sketch sketchB = null;
     if (objB != null) {
       final DataByteArray dbaB = (DataByteArray)objB;
       final Memory srcMem = Memory.wrap(dbaB.get());
-      sketchB = Sketch.wrap(srcMem, seed);
+      sketchB = Sketch.wrap(srcMem, this.seed);
     }
 
     final double[] jaccardTupple =

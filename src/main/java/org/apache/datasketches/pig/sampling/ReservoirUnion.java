@@ -57,15 +57,15 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
    * @param kStr String indicating the maximum number of desired entries in the reservoir.
    */
   public ReservoirUnion(final String kStr) {
-    maxK_ = Integer.parseInt(kStr);
+    this.maxK_ = Integer.parseInt(kStr);
 
-    if (maxK_ < 2) {
+    if (this.maxK_ < 2) {
       throw new IllegalArgumentException("ReservoirUnion requires max reservoir size >= 2: "
-              + maxK_);
+              + this.maxK_);
     }
   }
 
-  ReservoirUnion() { maxK_ = DEFAULT_TARGET_K; }
+  ReservoirUnion() { this.maxK_ = DEFAULT_TARGET_K; }
 
   // We could overload exec() for easy cases, but we still need to compare the incoming
   // reservoir's k vs max k and possibly downsample.
@@ -77,8 +77,8 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
 
     final DataBag reservoirs = (DataBag) inputTuple.get(0);
 
-    if (union_ == null) {
-      union_ = ReservoirItemsUnion.newInstance(maxK_);
+    if (this.union_ == null) {
+      this.union_ = ReservoirItemsUnion.newInstance(this.maxK_);
     }
 
     try {
@@ -88,7 +88,7 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
         final int k = (int) t.get(1);
         final DataBag sampleBag = (DataBag) t.get(2);
         final ArrayList<Tuple> samples = ReservoirSampling.dataBagToArrayList(sampleBag);
-        union_.update(n, k, samples);
+        this.union_.update(n, k, samples);
       }
     } catch (final IndexOutOfBoundsException e) {
       throw new ExecException("Cannot update union with given reservoir", e);
@@ -97,12 +97,12 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
 
   @Override
   public Tuple getValue() {
-    if (union_ == null) {
+    if (this.union_ == null) {
       return null;
     }
 
     // newDefaultBag(List<Tuple>) does *not* copy values
-    final ReservoirItemsSketch<Tuple> resultSketch = union_.getResult();
+    final ReservoirItemsSketch<Tuple> resultSketch = this.union_.getResult();
     final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(resultSketch);
     final DataBag sampleBag = BagFactory.getInstance().newDefaultBag(data);
 
@@ -111,7 +111,7 @@ public class ReservoirUnion extends AccumulatorEvalFunc<Tuple> {
 
   @Override
   public void cleanup() {
-    union_ = null;
+    this.union_ = null;
   }
 
   /**

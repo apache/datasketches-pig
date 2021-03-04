@@ -53,6 +53,7 @@ public class ReservoirUnionTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void accumulateTest() {
     try {
@@ -112,6 +113,7 @@ public class ReservoirUnionTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void checkMaxKLimit() {
     try {
@@ -148,6 +150,7 @@ public class ReservoirUnionTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void checkDegenerateInput() {
     // using default max k value

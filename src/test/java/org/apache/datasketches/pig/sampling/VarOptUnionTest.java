@@ -59,6 +59,7 @@ public class VarOptUnionTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void checkExecution() {
     final int k = 5;
@@ -105,6 +106,7 @@ public class VarOptUnionTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void degenerateExecInput() {
     final VarOptUnion udf = new VarOptUnion();

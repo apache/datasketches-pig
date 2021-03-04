@@ -83,8 +83,8 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   public DataToSketch(final int lgK, final long seed) {
     super();
-    lgK_ = lgK;
-    seed_ = seed;
+    this.lgK_ = lgK;
+    this.seed_ = seed;
   }
 
   /**
@@ -117,17 +117,17 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
 
   @Override
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Exec was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(new CpcSketch(lgK_, seed_).toByteArray());
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = new DataByteArray(new CpcSketch(this.lgK_, this.seed_).toByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    final CpcSketch sketch = new CpcSketch(lgK_, seed_);
+    final CpcSketch sketch = new CpcSketch(this.lgK_, this.seed_);
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, sketch);
     return new DataByteArray(sketch.toByteArray());
@@ -146,17 +146,17 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Accumulator was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumSketch_ == null) {
-      accumSketch_ = new CpcSketch(lgK_);
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = new CpcSketch(this.lgK_);
     }
-    updateSketch(bag, accumSketch_);
+    updateSketch(bag, this.accumSketch_);
   }
 
   /**
@@ -167,13 +167,13 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public DataByteArray getValue() {
-    if (accumSketch_ == null) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(new CpcSketch(lgK_, seed_).toByteArray());
+    if (this.accumSketch_ == null) {
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = new DataByteArray(new CpcSketch(this.lgK_, this.seed_).toByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    return new DataByteArray(accumSketch_.toByteArray());
+    return new DataByteArray(this.accumSketch_.toByteArray());
   }
 
   /**
@@ -183,7 +183,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   @Override

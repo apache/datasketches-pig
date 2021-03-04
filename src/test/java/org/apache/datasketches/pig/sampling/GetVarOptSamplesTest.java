@@ -44,6 +44,7 @@ import org.apache.datasketches.sampling.VarOptItemsSketch;
 public class GetVarOptSamplesTest {
   private static final ArrayOfTuplesSerDe serDe_ = new ArrayOfTuplesSerDe();
 
+  @SuppressWarnings("unused")
   @Test
   public void checkDegenerateInput() {
     final GetVarOptSamples udf = new GetVarOptSamples();
@@ -117,6 +118,7 @@ public class GetVarOptSamplesTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void badOutputSchemaTest() {
     final GetVarOptSamples udf = new GetVarOptSamples();

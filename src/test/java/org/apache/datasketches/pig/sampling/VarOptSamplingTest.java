@@ -116,6 +116,7 @@ public class VarOptSamplingTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void standardAccumulate() {
     final int k = 10;
@@ -158,6 +159,7 @@ public class VarOptSamplingTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void degenerateExecInput() {
     final VarOptSampling udf = new VarOptSampling();
@@ -174,6 +176,7 @@ public class VarOptSamplingTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void algebraicDegenerateInput() {
     try {
@@ -196,6 +199,7 @@ public class VarOptSamplingTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void algebraicFinal() {
     final int k = 87;
@@ -256,6 +260,7 @@ public class VarOptSamplingTest {
     assertEquals(output.getField(0).type, DataType.BAG);
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void badOutputSchemaTest() throws IOException {
     final Schema recordSchema = new Schema();

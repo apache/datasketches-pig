@@ -154,6 +154,7 @@ public class VarOptCommonAlgebraicTest {
   }
 
   // exec: sketches generally in sampling mode
+  @SuppressWarnings("unused")
   @Test
   public void rawTuplesToSketchTupleExec() {
     final int k = 5;
@@ -216,6 +217,7 @@ public class VarOptCommonAlgebraicTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesDegenerateInput() {
     try {
@@ -253,6 +255,7 @@ public class VarOptCommonAlgebraicTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void unionSketchesExec() {
     // Only difference between UnionSketchesAsTuple and UnionSketchesAsByteArray is that one wraps

@@ -25,9 +25,9 @@ import org.apache.datasketches.memory.Memory;
 import org.apache.datasketches.quantiles.DoublesSketch;
 import org.apache.datasketches.quantiles.DoublesSketchBuilder;
 import org.apache.datasketches.quantiles.UpdateDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketchIterator;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketchIterator;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataByteArray;
 import org.apache.pig.data.Tuple;
@@ -45,7 +45,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
    * Constructor with default parameter k for quantiles sketch
    */
   public ArrayOfDoublesSketchToQuantilesSketch() {
-    k = 0;
+    this.k = 0;
   }
 
   /**
@@ -76,8 +76,8 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
     }
 
     final DoublesSketchBuilder builder = DoublesSketch.builder();
-    if (k > 0) {
-      builder.setK(k);
+    if (this.k > 0) {
+      builder.setK(this.k);
     }
     final UpdateDoublesSketch qs = builder.build();
     final ArrayOfDoublesSketchIterator it = sketch.iterator();

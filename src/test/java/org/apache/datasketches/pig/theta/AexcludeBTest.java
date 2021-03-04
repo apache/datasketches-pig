@@ -47,7 +47,8 @@ public class AexcludeBTest {
     assertNotNull(aNOTb);
   }
 
-  @Test
+  @SuppressWarnings("unused")
+@Test
   public void checkNullCombinations() throws IOException {
     EvalFunc<Tuple> aNbFunc = new AexcludeB();
     EvalFunc<Double> estFunc = new Estimate();

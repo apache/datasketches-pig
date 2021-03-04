@@ -54,15 +54,15 @@ public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements A
    * @param kStr String indicating the maximum number of desired entries in the sample.
    */
   public VarOptUnion(final String kStr) {
-    maxK_ = Integer.parseInt(kStr);
+    this.maxK_ = Integer.parseInt(kStr);
 
-    if (maxK_ < 1) {
+    if (this.maxK_ < 1) {
       throw new IllegalArgumentException("VarOptUnion requires max sample size >= 1: "
-              + maxK_);
+              + this.maxK_);
     }
   }
 
-  VarOptUnion() { maxK_ = DEFAULT_TARGET_K; }
+  VarOptUnion() { this.maxK_ = DEFAULT_TARGET_K; }
 
   // We could overload exec() for easy cases, but we still need to compare the incoming
   // reservoir's k vs max k and possibly downsample.
@@ -74,25 +74,25 @@ public class VarOptUnion extends AccumulatorEvalFunc<DataByteArray> implements A
 
     final DataBag sketches = (DataBag) inputTuple.get(0);
 
-    if (union_ == null) {
-      union_ = VarOptItemsUnion.newInstance(maxK_);
+    if (this.union_ == null) {
+      this.union_ = VarOptItemsUnion.newInstance(this.maxK_);
     }
 
     for (Tuple t : sketches) {
       final DataByteArray dba = (DataByteArray) t.get(0);
       final Memory sketch = Memory.wrap(dba.get());
-      union_.update(sketch, SERDE);
+      this.union_.update(sketch, SERDE);
     }
   }
 
   @Override
   public DataByteArray getValue() {
-    return union_ == null ? null : new DataByteArray(union_.getResult().toByteArray(SERDE));
+    return this.union_ == null ? null : new DataByteArray(this.union_.getResult().toByteArray(SERDE));
   }
 
   @Override
   public void cleanup() {
-    union_ = null;
+    this.union_ = null;
   }
 
   @Override

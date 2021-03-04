@@ -127,10 +127,10 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   public Union(final int nomEntries, final float p, final long seed) {
     super();
-    nomEntries_ = nomEntries;
-    p_ = p;
-    seed_ = seed;
-    emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+    this.nomEntries_ = nomEntries;
+    this.p_ = p;
+    this.seed_ = seed;
+    this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
@@ -187,11 +187,11 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
     final org.apache.datasketches.theta.Union union =
-        SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF)
-                .setNominalEntries(nomEntries_).buildUnion();
+        SetOperation.builder().setP(this.p_).setSeed(this.seed_).setResizeFactor(RF)
+                .setNominalEntries(this.nomEntries_).buildUnion();
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
+      return this.emptyCompactOrderedSketchTuple_; //Configured with parent
     }
 
     updateUnion(bag, union);
@@ -199,6 +199,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     return compactOrderedSketchToTuple(compactSketch);
   }
 
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {
@@ -230,15 +231,15 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
-    if (accumUnion_ == null) {
-      accumUnion_ =
-          SetOperation.builder().setP(p_).setSeed(seed_).setResizeFactor(RF)
-                  .setNominalEntries(nomEntries_).buildUnion();
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ =
+          SetOperation.builder().setP(this.p_).setSeed(this.seed_).setResizeFactor(RF)
+                  .setNominalEntries(this.nomEntries_).buildUnion();
     }
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) { return; }
 
-    updateUnion(bag, accumUnion_);
+    updateUnion(bag, this.accumUnion_);
   }
 
   /**
@@ -249,10 +250,10 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    if (this.accumUnion_ == null) {
+      return this.emptyCompactOrderedSketchTuple_; //Configured with parent
     }
-    final CompactSketch compactSketch = accumUnion_.getResult(true, null);
+    final CompactSketch compactSketch = this.accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
@@ -263,7 +264,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   //ALGEBRAIC INTERFACE
@@ -460,21 +461,22 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(final int nomEntries, final float p, final long seed) {
-      myNomEntries_ = nomEntries;
-      myP_ = p;
-      mySeed_ = seed;
-      myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+      this.myNomEntries_ = nomEntries;
+      this.myP_ = p;
+      this.mySeed_ = seed;
+      this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
-    @Override //IntermediateFinal exec
+    @SuppressWarnings("synthetic-access")
+	@Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
 
       final org.apache.datasketches.theta.Union union =
-          SetOperation.builder().setP(myP_).setSeed(mySeed_).setResizeFactor(RF)
-                  .setNominalEntries(myNomEntries_).buildUnion();
+          SetOperation.builder().setP(this.myP_).setSeed(this.mySeed_).setResizeFactor(RF)
+                  .setNominalEntries(this.myNomEntries_).buildUnion();
       final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
-        return myEmptyCompactOrderedSketchTuple_;
+        return this.myEmptyCompactOrderedSketchTuple_;
       }
       //Bag is not empty.
 

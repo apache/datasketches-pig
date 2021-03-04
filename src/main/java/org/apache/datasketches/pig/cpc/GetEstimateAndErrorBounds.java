@@ -79,8 +79,8 @@ public class GetEstimateAndErrorBounds extends EvalFunc<Tuple> {
    * @param seed parameter for the hash function
    */
   GetEstimateAndErrorBounds(final int kappa, final long seed) {
-    kappa_ = kappa;
-    seed_ = seed;
+    this.kappa_ = kappa;
+    this.seed_ = seed;
   }
 
   @Override
@@ -89,11 +89,11 @@ public class GetEstimateAndErrorBounds extends EvalFunc<Tuple> {
       return null;
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
-    final CpcSketch sketch = CpcSketch.heapify(dba.get(), seed_);
+    final CpcSketch sketch = CpcSketch.heapify(dba.get(), this.seed_);
     final Tuple outputTuple = TupleFactory.getInstance().newTuple(3);
     outputTuple.set(0, Double.valueOf(sketch.getEstimate()));
-    outputTuple.set(1, Double.valueOf(sketch.getLowerBound(kappa_)));
-    outputTuple.set(2, Double.valueOf(sketch.getUpperBound(kappa_)));
+    outputTuple.set(1, Double.valueOf(sketch.getLowerBound(this.kappa_)));
+    outputTuple.set(2, Double.valueOf(sketch.getUpperBound(this.kappa_)));
     return outputTuple;
   }
 

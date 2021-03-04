@@ -23,8 +23,8 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 
 import java.io.IOException;
 
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketch;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketch;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
@@ -55,51 +55,51 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
 
   DataToArrayOfDoublesSketchBase(final int sketchSize, final float samplingProbability, final int numValues) {
     super();
-    sketchSize_ = sketchSize;
-    samplingProbability_ = samplingProbability;
-    numValues_ = numValues;
+    this.sketchSize_ = sketchSize;
+    this.samplingProbability_ = samplingProbability;
+    this.numValues_ = numValues;
   }
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("accumulate is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if (accumSketch_ == null) {
-      accumSketch_ =
-          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
-            .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ =
+          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(this.sketchSize_)
+            .setSamplingProbability(this.samplingProbability_).setNumberOfValues(this.numValues_).build();
     }
     if (inputTuple.size() != 1) {
       throw new IllegalArgumentException("Input tuple must have 1 bag");
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    updateSketch(bag, accumSketch_, numValues_);
+    updateSketch(bag, this.accumSketch_, this.numValues_);
   }
 
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   @Override
   public Tuple getValue() {
-    if (accumSketch_ == null) {
-      accumSketch_ =
-          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
-            .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ =
+          new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(this.sketchSize_)
+            .setSamplingProbability(this.samplingProbability_).setNumberOfValues(this.numValues_).build();
     }
-    return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
+    return Util.tupleFactory.newTuple(new DataByteArray(this.accumSketch_.compact().toByteArray()));
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
@@ -109,10 +109,10 @@ abstract class DataToArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements
     }
 
     final ArrayOfDoublesUpdatableSketch sketch =
-        new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(sketchSize_)
-          .setSamplingProbability(samplingProbability_).setNumberOfValues(numValues_).build();
+        new ArrayOfDoublesUpdatableSketchBuilder().setNominalEntries(this.sketchSize_)
+          .setSamplingProbability(this.samplingProbability_).setNumberOfValues(this.numValues_).build();
     final DataBag bag = (DataBag) inputTuple.get(0);
-    updateSketch(bag, sketch, numValues_);
+    updateSketch(bag, sketch, this.numValues_);
     return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));
   }
 
