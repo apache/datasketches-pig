@@ -170,7 +170,9 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple>
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
     if (this.accumUnion_ == null) {
-      this.accumUnion_ = this.k_ > 0 ? ItemsUnion.getInstance(this.k_, this.comparator_) : ItemsUnion.getInstance(this.comparator_);
+      this.accumUnion_ = this.k_ > 0 
+          ? ItemsUnion.getInstance(this.k_, this.comparator_) 
+          : ItemsUnion.getInstance(this.comparator_);
     }
     updateUnion(bag, this.accumUnion_, this.comparator_, this.serDe_);
   }
@@ -292,7 +294,7 @@ public abstract class UnionItemsSketch<T> extends EvalFunc<Tuple>
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override // IntermediateFinal exec
+    @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple != null && inputTuple.size() > 0) {
         final ItemsUnion<T> union = this.k_ > 0

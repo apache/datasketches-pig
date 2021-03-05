@@ -129,7 +129,8 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
-        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, this.summaryDeserializer_);
+        final Sketch<S> incomingSketch = 
+            Util.deserializeSketchFromTuple(dataTuple, this.summaryDeserializer_);
         union.union(incomingSketch);
       } else {
         // we should never get here.

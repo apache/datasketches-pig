@@ -287,7 +287,7 @@ public class UnionSketch extends EvalFunc<DataByteArray>
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override
+    @Override
     public Tuple exec(final Tuple inputTuple) throws IOException {
       return TUPLE_FACTORY_.newTuple(process(inputTuple, this.k_));
     }
@@ -333,7 +333,7 @@ public class UnionSketch extends EvalFunc<DataByteArray>
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override
+    @Override
     public DataByteArray exec(final Tuple inputTuple) throws IOException {
       return process(inputTuple, this.k_);
     }

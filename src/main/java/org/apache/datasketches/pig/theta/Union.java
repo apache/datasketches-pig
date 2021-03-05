@@ -468,7 +468,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override //IntermediateFinal exec
+    @Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
 
       final org.apache.datasketches.theta.Union union =

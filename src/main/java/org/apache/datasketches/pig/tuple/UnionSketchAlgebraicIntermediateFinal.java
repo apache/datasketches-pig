@@ -93,13 +93,15 @@ public abstract class UnionSketchAlgebraicIntermediateFinal<S extends Summary> e
       if (item instanceof DataBag) {
         // this is from a prior call to the initial function, so there is a nested bag.
         for (Tuple innerTuple: (DataBag) item) {
-          final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, this.summaryDeserializer_);
+          final Sketch<S> incomingSketch = 
+              Util.deserializeSketchFromTuple(innerTuple, this.summaryDeserializer_);
           union.union(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function
         // Add it to the current union.
-        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, this.summaryDeserializer_);
+        final Sketch<S> incomingSketch = 
+            Util.deserializeSketchFromTuple(dataTuple, this.summaryDeserializer_);
         union.union(incomingSketch);
       } else {
         // we should never get here.

@@ -63,11 +63,11 @@ public class DataToStringsSketch extends DataToItemsSketch<String> {
   public static class DataToStringsSketchIntermediateFinal
       extends DataToItemsSketchIntermediateFinal<String> {
 
-	public DataToStringsSketchIntermediateFinal() {
+    public DataToStringsSketchIntermediateFinal() {
       super(0, COMPARATOR, SER_DE);
     }
 
-	public DataToStringsSketchIntermediateFinal(final String kStr) {
+    public DataToStringsSketchIntermediateFinal(final String kStr) {
       super(Integer.parseInt(kStr), COMPARATOR, SER_DE);
     }
 

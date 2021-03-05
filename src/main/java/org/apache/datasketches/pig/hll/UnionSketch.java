@@ -112,7 +112,8 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
     }
     if (inputTuple == null || inputTuple.size() == 0) {
       if (this.emptySketch_ == null) {
-        this.emptySketch_ = new DataByteArray(new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray());
+        this.emptySketch_ = 
+          new DataByteArray(new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray());
       }
       return this.emptySketch_;
     }

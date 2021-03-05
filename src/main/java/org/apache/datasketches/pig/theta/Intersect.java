@@ -346,7 +346,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override //IntermediateFinal exec
+    @Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
 
       final Intersection intersection = SetOperation.builder().setSeed(this.mySeed_).buildIntersection();

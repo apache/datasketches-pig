@@ -272,7 +272,7 @@ class VarOptCommonImpl {
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override
+    @Override
     public DataByteArray exec(final Tuple inputTuple) throws IOException {
       if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
         return null;

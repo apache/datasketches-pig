@@ -309,7 +309,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override // IntermediateFinal exec
+    @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       if ((inputTuple != null) && (inputTuple.size() > 0)) {
         final ItemsUnion<T> union = this.k_ > 0

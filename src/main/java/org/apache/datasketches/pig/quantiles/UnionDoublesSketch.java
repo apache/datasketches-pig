@@ -138,7 +138,8 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
+    return tupleFactory_.newTuple(
+        new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   @Override
@@ -193,7 +194,8 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
+    return tupleFactory_.newTuple(
+        new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   /**
@@ -321,7 +323,7 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override // IntermediateFinal exec
+    @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException {
       if (inputTuple != null && inputTuple.size() > 0) {
         final DoublesUnion union = this.unionBuilder_.build();
@@ -354,7 +356,8 @@ public class UnionDoublesSketch extends EvalFunc<Tuple> implements Accumulator<T
         }
       }
       // return empty sketch
-      return tupleFactory_.newTuple(new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
+      return tupleFactory_.newTuple(
+          new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
     }
   } // end IntermediateFinal
 

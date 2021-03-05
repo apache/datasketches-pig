@@ -524,7 +524,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     }
 
     @SuppressWarnings("synthetic-access")
-	@Override //IntermediateFinal exec
+    @Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       final Union union = newUnion(this.myNomEntries_, this.myP_, this.mySeed_);
       final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
