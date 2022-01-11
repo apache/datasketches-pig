@@ -46,46 +46,18 @@ public class AexcludeBTest {
   }
 
   @Test
-  public void checkNullCombinations() throws IOException {
+  public void test() throws IOException {
     EvalFunc<Tuple> aNbFunc = new AexcludeB();
     EvalFunc<Double> estFunc = new Estimate();
 
-    Tuple inputTuple, resultTuple;
-    Double est;
-    //Two nulls
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
-
-    //A is null
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 0.0, 0.0);
-
-    //A is valid, B is null
-    inputTuple = TupleFactory.getInstance().newTuple(2);
-    inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
-    resultTuple = aNbFunc.exec(inputTuple);
-    assertNotNull(resultTuple);
-    assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
-    assertEquals(est, 256.0, 0.0);
-
     //Both valid
-    inputTuple = TupleFactory.getInstance().newTuple(2);
+    Tuple inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
     inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
+    Tuple resultTuple = aNbFunc.exec(inputTuple);
     assertNotNull(resultTuple);
     assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
+    Double est = estFunc.exec(resultTuple);
     assertEquals(est, 128.0, 0.0);
   }
 

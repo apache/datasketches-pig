@@ -128,7 +128,7 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
         continue;
       }
       final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, summaryDeserializer);
-      union.update(incomingSketch);
+      union.union(incomingSketch);
     }
   }
 

@@ -544,7 +544,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = ((DataByteArray) f0);
-          union.update(Memory.wrap(dba.get()));
+          union.union(Memory.wrap(dba.get()));
 
         }
         else { // we should never get here.
