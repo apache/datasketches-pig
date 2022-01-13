@@ -24,10 +24,10 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import java.io.IOException;
 
 import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
-import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
-import org.apache.datasketches.tuple.ArrayOfDoublesUpdatableSketchBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSetOperationBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUnion;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUpdatableSketchBuilder;
 import org.apache.log4j.Logger;
 import org.apache.pig.Accumulator;
 import org.apache.pig.EvalFunc;
@@ -116,7 +116,7 @@ abstract class UnionArrayOfDoublesSketchBase extends EvalFunc<Tuple> implements 
         continue;
       }
       final DataByteArray dba = (DataByteArray) innerTuple.get(0);
-      union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
+      union.union(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
     }
   }
 

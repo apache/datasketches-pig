@@ -134,8 +134,7 @@ public class AexcludeB extends EvalFunc<Tuple> {
     }
 
     final AnotB aNOTb = SetOperation.builder().setSeed(seed_).buildANotB();
-    aNOTb.update(sketchA, sketchB);
-    final CompactSketch compactSketch = aNOTb.getResult(true, null);
+    final CompactSketch compactSketch = aNOTb.aNotB(sketchA, sketchB);
     return compactOrderedSketchToTuple(compactSketch);
   }
 

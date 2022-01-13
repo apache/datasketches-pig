@@ -24,9 +24,9 @@ import static org.apache.datasketches.Util.DEFAULT_NOMINAL_ENTRIES;
 import java.io.IOException;
 
 import org.apache.datasketches.memory.Memory;
-import org.apache.datasketches.tuple.ArrayOfDoublesSetOperationBuilder;
-import org.apache.datasketches.tuple.ArrayOfDoublesSketches;
-import org.apache.datasketches.tuple.ArrayOfDoublesUnion;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSetOperationBuilder;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesSketches;
+import org.apache.datasketches.tuple.arrayofdoubles.ArrayOfDoublesUnion;
 import org.apache.log4j.Logger;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataBag;
@@ -81,13 +81,13 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
         // this is from a prior call to the initial function, so there is a nested bag.
         for (final Tuple innerTuple: (DataBag) item) {
           final DataByteArray dba = (DataByteArray) innerTuple.get(0);
-          union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
+          union.union(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function
         // Add it to the current union
         final DataByteArray dba = (DataByteArray) item;
-        union.update(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
+        union.union(ArrayOfDoublesSketches.wrapSketch(Memory.wrap(dba.get())));
       } else {
         // we should never get here.
         throw new IllegalArgumentException("InputTuple.Field0: Bag contains unrecognized types: "

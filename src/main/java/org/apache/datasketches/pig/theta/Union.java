@@ -308,7 +308,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
       if (type == DataType.BYTEARRAY) {
         final DataByteArray dba = (DataByteArray) f0;
         if (dba.size() > 0) {
-          union.update(Memory.wrap(dba.get()));
+          union.union(Memory.wrap(dba.get()));
         }
       } else {
         throw new IllegalArgumentException("Field type was not DataType.BYTEARRAY: " + type);
@@ -503,7 +503,7 @@ public class Union extends EvalFunc<Tuple> implements Accumulator<Tuple>, Algebr
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = (DataByteArray) f0;
           final Memory srcMem = Memory.wrap(dba.get());
-          union.update(srcMem);
+          union.union(srcMem);
 
         }
         else { // we should never get here.
