@@ -85,7 +85,7 @@ under the License.
 
   <properties>
     <!-- UNIQUE FOR THIS JAVA COMPONENT -->
-    <datasketches-java.version>3.0.0</datasketches-java.version>
+    <datasketches-java.version>3.1.0</datasketches-java.version>
     <pig.version>0.17.0</pig.version>
     <hadoop-common.version>3.3.1</hadoop-common.version>
     <commons-math3.version>3.6.1</commons-math3.version>
