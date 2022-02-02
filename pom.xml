@@ -92,7 +92,7 @@ under the License.
     <!-- END:UNIQUE FOR THIS JAVA COMPONENT -->
 
     <!-- Test -->
-    <testng.version>7.1.0</testng.version>
+    <testng.version>7.5</testng.version>
 
     <!-- System-wide properties -->
     <maven.version>3.5.0</maven.version>
@@ -128,7 +128,7 @@ under the License.
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <!-- other -->
     <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-    <git-commit-id-plugin.version>3.0.0</git-commit-id-plugin.version>
+    <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
   </properties>
 
   <dependencies>
@@ -489,9 +489,9 @@ under the License.
         <pluginManagement>
           <plugins>
             <plugin>
-              <groupId>pl.project13.maven</groupId>
-              <artifactId>git-commit-id-plugin</artifactId>
-              <version>${git-commit-id-plugin.version}</version>
+              <groupId>io.github.git-commit-id</groupId>
+              <artifactId>git-commit-id-maven-plugin</artifactId>
+              <version>${git-commit-id-maven-plugin.version}</version>
               <executions>
                 <execution>
                   <goals>
@@ -598,7 +598,7 @@ under the License.
         <plugins>
           <plugin>
             <groupId>pl.project13.maven</groupId>
-            <artifactId>git-commit-id-plugin</artifactId>
+            <artifactId>git-commit-id-maven-plugin</artifactId>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

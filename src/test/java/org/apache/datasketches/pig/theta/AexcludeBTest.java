@@ -79,13 +79,13 @@ public class AexcludeBTest {
     } catch (SketchesArgumentException e) {}
 
     //Both valid
-    inputTuple = TupleFactory.getInstance().newTuple(2);
+    Tuple inputTuple = TupleFactory.getInstance().newTuple(2);
     inputTuple.set(0, createDbaFromQssRange(256, 0, 256));
     inputTuple.set(1, createDbaFromQssRange(256, 0, 128));
-    resultTuple = aNbFunc.exec(inputTuple);
+    Tuple resultTuple = aNbFunc.exec(inputTuple);
     assertNotNull(resultTuple);
     assertEquals(resultTuple.size(), 1);
-    est = estFunc.exec(resultTuple);
+    Double est = estFunc.exec(resultTuple);
     assertEquals(est, 128.0, 0.0);
   }
 
