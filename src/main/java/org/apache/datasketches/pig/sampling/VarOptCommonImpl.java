@@ -122,8 +122,8 @@ class VarOptCommonImpl {
     private final int weightIdx_;
 
     public RawTuplesToSketchTuple() {
-      targetK_ = DEFAULT_TARGET_K;
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = DEFAULT_TARGET_K;
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -131,12 +131,12 @@ class VarOptCommonImpl {
      * @param kStr String indicating the maximum number of desired samples to return.
      */
     public RawTuplesToSketchTuple(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target reservoir size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -146,16 +146,16 @@ class VarOptCommonImpl {
      * @param weightIdxStr String indicating column index (0-based) of weight values
      */
     public RawTuplesToSketchTuple(final String kStr, final String weightIdxStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = Integer.parseInt(weightIdxStr);
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = Integer.parseInt(weightIdxStr);
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
-      if (weightIdx_ < 0) {
+      if (this.weightIdx_ < 0) {
         throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
-                + weightIdx_);
+                + this.weightIdx_);
       }
     }
 
@@ -165,7 +165,7 @@ class VarOptCommonImpl {
         return null;
       }
 
-      final VarOptItemsSketch<Tuple> sketch = rawTuplesToSketch(inputTuple, targetK_, weightIdx_);
+      final VarOptItemsSketch<Tuple> sketch = rawTuplesToSketch(inputTuple, this.targetK_, this.weightIdx_);
       return wrapSketchInTuple(sketch);
     }
   }
@@ -178,8 +178,8 @@ class VarOptCommonImpl {
     private final int weightIdx_;
 
     public UnionSketchesAsTuple() {
-      targetK_ = DEFAULT_TARGET_K;
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = DEFAULT_TARGET_K;
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -187,12 +187,12 @@ class VarOptCommonImpl {
      * @param kStr String indicating the maximum number of desired samples to return.
      */
     public UnionSketchesAsTuple(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -202,16 +202,16 @@ class VarOptCommonImpl {
      * @param weightIdxStr String indicating column index (0-based) of weight values
      */
     public UnionSketchesAsTuple(final String kStr, final String weightIdxStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = Integer.parseInt(weightIdxStr);
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = Integer.parseInt(weightIdxStr);
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
-      if (weightIdx_ < 0) {
+      if (this.weightIdx_ < 0) {
         throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
-                + weightIdx_);
+                + this.weightIdx_);
       }
     }
 
@@ -221,7 +221,7 @@ class VarOptCommonImpl {
         return null;
       }
 
-      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, targetK_);
+      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, this.targetK_);
       return wrapSketchInTuple(union.getResult());
     }
   }
@@ -234,8 +234,8 @@ class VarOptCommonImpl {
     private final int weightIdx_;
 
     public UnionSketchesAsByteArray() {
-      targetK_ = DEFAULT_TARGET_K;
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = DEFAULT_TARGET_K;
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -243,12 +243,12 @@ class VarOptCommonImpl {
      * @param kStr String indicating the maximum number of desired samples to return.
      */
     public UnionSketchesAsByteArray(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOpt requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -258,26 +258,27 @@ class VarOptCommonImpl {
      * @param weightIdxStr String indicating column index (0-based) of weight values
      */
     public UnionSketchesAsByteArray(final String kStr, final String weightIdxStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = Integer.parseInt(weightIdxStr);
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = Integer.parseInt(weightIdxStr);
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
-      if (weightIdx_ < 0) {
+      if (this.weightIdx_ < 0) {
         throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
-                + weightIdx_);
+                + this.weightIdx_);
       }
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override
     public DataByteArray exec(final Tuple inputTuple) throws IOException {
       if (inputTuple == null || inputTuple.size() < 1 || inputTuple.isNull(0)) {
         return null;
       }
 
-      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, targetK_);
+      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, this.targetK_);
       return new DataByteArray(union.getResult().toByteArray(SERDE));
     }
   }

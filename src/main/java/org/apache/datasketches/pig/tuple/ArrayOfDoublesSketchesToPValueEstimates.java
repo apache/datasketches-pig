@@ -40,7 +40,7 @@ public class ArrayOfDoublesSketchesToPValueEstimates extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() != 2)) {
+    if (input == null || input.size() != 2) {
       return null;
     }
 

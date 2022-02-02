@@ -37,7 +37,13 @@ import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 
 /**
- * This is a generic implementation to be specialized in concrete UDFs
+ * This is a generic implementation to be specialized in concrete UDFs.
+ *
+ * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+ * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+ * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+ * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
+ *
  * @param <U> Update type
  * @param <S> Summary type
  */
@@ -80,55 +86,55 @@ public abstract class DataToSketch<U, S extends UpdatableSummary<U>> extends Eva
   public DataToSketch(final int sketchSize, final float samplingProbability,
       final SummaryFactory<S> summaryFactory) {
     super();
-    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+    this.sketchBuilder_ = new UpdatableSketchBuilder<>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("accumulate is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if (accumSketch_ == null) {
-      accumSketch_ = sketchBuilder_.build();
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = this.sketchBuilder_.build();
     }
     if (inputTuple.size() != 1) {
       throw new IllegalArgumentException("Input tuple must have 1 bag");
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    updateSketch(bag, accumSketch_);
+    updateSketch(bag, this.accumSketch_);
   }
 
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   @Override
   public Tuple getValue() {
-    if (accumSketch_ == null) {
-      accumSketch_ = sketchBuilder_.build();
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = this.sketchBuilder_.build();
     }
-    return Util.tupleFactory.newTuple(new DataByteArray(accumSketch_.compact().toByteArray()));
+    return Util.tupleFactory.newTuple(new DataByteArray(this.accumSketch_.compact().toByteArray()));
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     if (inputTuple.size() != 1) {
       throw new IllegalArgumentException("Input tuple must have 1 bag");
     }
 
-    final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
+    final UpdatableSketch<U, S> sketch = this.sketchBuilder_.build();
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateSketch(bag, sketch);
     return Util.tupleFactory.newTuple(new DataByteArray(sketch.compact().toByteArray()));

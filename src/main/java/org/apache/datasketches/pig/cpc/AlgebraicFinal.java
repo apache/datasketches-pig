@@ -51,17 +51,17 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
    * @param seed for the hash function
    */
   public AlgebraicFinal(final int lgK, final long seed) {
-    lgK_ = lgK;
-    seed_ = seed;
+    this.lgK_ = lgK;
+    this.seed_ = seed;
   }
 
   @Override
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    final DataByteArray dba = process(inputTuple, lgK_, seed_, isInputRaw());
+    final DataByteArray dba = process(inputTuple, this.lgK_, this.seed_, isInputRaw());
     if (dba == null) {
       return getEmptySketch();
     }
@@ -131,10 +131,10 @@ abstract class AlgebraicFinal extends EvalFunc<DataByteArray> {
   abstract boolean isInputRaw();
 
   private DataByteArray getEmptySketch() {
-    if (emptySketch_ == null) {
-      emptySketch_ = new DataByteArray(new CpcSketch(lgK_, seed_).toByteArray());
+    if (this.emptySketch_ == null) {
+      this.emptySketch_ = new DataByteArray(new CpcSketch(this.lgK_, this.seed_).toByteArray());
     }
-    return emptySketch_;
+    return this.emptySketch_;
   }
 
 }

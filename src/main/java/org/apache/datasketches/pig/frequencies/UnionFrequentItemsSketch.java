@@ -47,16 +47,16 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
    */
   public UnionFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     super();
-    sketchSize_ = sketchSize;
-    serDe_ = serDe;
+    this.sketchSize_ = sketchSize;
+    this.serDe_ = serDe;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;
@@ -69,10 +69,10 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("accumulator is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() != 1)) {
       return;
@@ -86,31 +86,31 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
       return;
     }
 
-    if (sketch_ == null) {
-      sketch_ = new ItemsSketch<T>(sketchSize_);
+    if (this.sketch_ == null) {
+      this.sketch_ = new ItemsSketch<>(this.sketchSize_);
     }
     for (final Tuple innerTuple: bag) {
       final int sz = innerTuple.size();
       if ((sz != 1) || (innerTuple.get(0) == null)) {
         continue;
       }
-      final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
-      sketch_.merge(incomingSketch);
+      final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, this.serDe_);
+      this.sketch_.merge(incomingSketch);
     }
   }
 
   @Override
   public Tuple getValue() {
-    if (sketch_ == null) { //return an empty sketch
+    if (this.sketch_ == null) { //return an empty sketch
       try {
-        return Util.serializeSketchToTuple(new ItemsSketch<T>(sketchSize_), serDe_);
+        return Util.serializeSketchToTuple(new ItemsSketch<T>(this.sketchSize_), this.serDe_);
       } catch (final ExecException ex) {
         throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
       }
     }
 
     try {
-      return Util.serializeSketchToTuple(sketch_, serDe_);
+      return Util.serializeSketchToTuple(this.sketch_, this.serDe_);
     } catch (final ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }
@@ -118,8 +118,8 @@ public abstract class UnionFrequentItemsSketch<T> extends EvalFunc<Tuple> implem
 
   @Override
   public void cleanup() {
-    if (sketch_ != null) {
-      sketch_.reset();
+    if (this.sketch_ != null) {
+      this.sketch_.reset();
     }
   }
 

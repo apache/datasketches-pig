@@ -61,9 +61,9 @@ public class AlgebraicInitial extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     return inputTuple;
   }

@@ -70,7 +70,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   private DataToSketch(final int k) {
     super();
-    k_ = k;
+    this.k_ = k;
   }
 
   //@formatter:off
@@ -124,7 +124,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
   @Override // TOP LEVEL EXEC
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
-    final KllFloatsSketch sketch = new KllFloatsSketch(k_);
+    final KllFloatsSketch sketch = new KllFloatsSketch(this.k_);
     if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
@@ -151,11 +151,11 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
     if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumSketch_ == null) {
-      accumSketch_ = new KllFloatsSketch(k_);
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = new KllFloatsSketch(this.k_);
     }
     for (final Tuple innerTuple: bag) {
-      accumSketch_.update((Float) innerTuple.get(0));
+      this.accumSketch_.update((Float) innerTuple.get(0));
     }
   }
 
@@ -167,11 +167,11 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public DataByteArray getValue() {
-    if (accumSketch_ != null) {
-      return new DataByteArray(accumSketch_.toByteArray());
+    if (this.accumSketch_ != null) {
+      return new DataByteArray(this.accumSketch_.toByteArray());
     }
     // return empty sketch
-    return new DataByteArray(new KllFloatsSketch(k_).toByteArray());
+    return new DataByteArray(new KllFloatsSketch(this.k_).toByteArray());
   }
 
   /**
@@ -181,7 +181,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   // ALGEBRAIC INTERFACE
@@ -269,12 +269,13 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     private Intermediate(final int k) {
-      k_ = k;
+      this.k_ = k;
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
-      return TUPLE_FACTORY_.newTuple(process(inputTuple, k_));
+      return TUPLE_FACTORY_.newTuple(process(inputTuple, this.k_));
     }
   }
 
@@ -315,12 +316,13 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     private Final(final int k) {
-      k_ = k;
+      this.k_ = k;
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override
     public DataByteArray exec(final Tuple inputTuple) throws IOException {
-      return process(inputTuple, k_);
+      return process(inputTuple, this.k_);
     }
   }
 

@@ -113,7 +113,7 @@ public class DataToSketchTest {
 
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
 
     assertTrue(sketch.isEmpty());
 
@@ -133,7 +133,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    sketch = tupleToSketch(resultTuple, seed_);
+    sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), 64.0, 0.0);
   }
 
@@ -150,7 +150,7 @@ public class DataToSketchTest {
     String[] ctorArgs = { "128" };
 
     EvalFunc<Tuple> dataUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(udfName, ctorArgs));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.udfName, ctorArgs));
 
     // EvalFunc<Tuple> resultUdf = (EvalFunc<Tuple>)PigContext.
     //   instantiateFuncFromSpec(new FuncSpec(resultUdfName));
@@ -219,7 +219,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), 8.0, 0.0);
   }
 
@@ -239,7 +239,7 @@ public class DataToSketchTest {
 
     String[] ctorArgs = { "128" };
     EvalFunc<Tuple> dataUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(udfName, ctorArgs));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.udfName, ctorArgs));
     dataUdf.exec(outerTuple);
   }
 
@@ -277,7 +277,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), 91.0, 0.0);
 
     // after cleanup, the value should always be 0
@@ -287,7 +287,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    sketch = tupleToSketch(resultTuple, seed_);
+    sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), 0.0, 0.0);
   }
 
@@ -320,12 +320,12 @@ public class DataToSketchTest {
 
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
     assertTrue(sketch.isEmpty());
 
     inputTuple = TupleFactory.getInstance().newTuple(0);
     resultTuple = func.exec(inputTuple);
-    sketch = tupleToSketch(resultTuple, seed_);
+    sketch = tupleToSketch(resultTuple, this.seed_);
     assertTrue(sketch.isEmpty());
 
 
@@ -356,7 +356,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    sketch = tupleToSketch(resultTuple, seed_);
+    sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), 100.0, 0.0);
   }
 
@@ -488,7 +488,7 @@ public class DataToSketchTest {
     Tuple inputTuple = TupleFactory.getInstance().newTuple(1); //null bag
     dts.accumulate(inputTuple);
     Tuple resultTuple = dts.getValue();
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
     assertTrue(sketch.isEmpty());
   }
 
@@ -498,7 +498,7 @@ public class DataToSketchTest {
 
     Tuple inputTuple = null;
     Tuple resultTuple = func.exec(inputTuple);
-    Sketch sketch = tupleToSketch(resultTuple, seed_);
+    Sketch sketch = tupleToSketch(resultTuple, this.seed_);
 
     assertTrue(sketch.isEmpty());
 
@@ -519,7 +519,7 @@ public class DataToSketchTest {
     assertEquals(resultTuple.size(), 1);
     DataByteArray bytes = (DataByteArray) resultTuple.get(0);
     assertTrue(bytes.size() > 0);
-    sketch = tupleToSketch(resultTuple, seed_);
+    sketch = tupleToSketch(resultTuple, this.seed_);
     assertEquals(sketch.getEstimate(), u, 0.0);
   }
 

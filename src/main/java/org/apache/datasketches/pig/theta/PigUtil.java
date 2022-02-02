@@ -84,6 +84,7 @@ class PigUtil {
    * @param tuple the given tuple.
    * @return a DataBag or null.
    */
+  @SuppressWarnings("unused")
   static final DataBag extractBag(final Tuple tuple) {
     DataBag bag = null;
     try {
@@ -106,6 +107,7 @@ class PigUtil {
    * @param index the 0-based index of the desired field
    * @return a non-null Object or null.
    */
+  @SuppressWarnings("unused")
   static final Object extractFieldAtIndex(final Tuple tuple, final int index) {
     Object fi = null;
     try {
@@ -126,6 +128,7 @@ class PigUtil {
    * @param index the 0-based index of the desired field
    * @return a Byte of Pig DataType or null.
    */
+  @SuppressWarnings("unused")
   static final Byte extractTypeAtIndex(final Tuple tuple, final int index) {
     Byte type = null;
     try {

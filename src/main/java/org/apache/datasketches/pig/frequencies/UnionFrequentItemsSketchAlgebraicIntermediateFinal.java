@@ -51,18 +51,18 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
   @SuppressWarnings("javadoc")
   public UnionFrequentItemsSketchAlgebraicIntermediateFinal(
       final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
-    sketchSize_ = sketchSize;
-    serDe_ = serDe;
+    this.sketchSize_ = sketchSize;
+    this.serDe_ = serDe;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("algebraic is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    final ItemsSketch<T> sketch = new ItemsSketch<>(sketchSize_);
+    final ItemsSketch<T> sketch = new ItemsSketch<>(this.sketchSize_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -74,13 +74,13 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
       if (item instanceof DataBag) {
         // this is from a prior call to the initial function, so there is a nested bag.
         for (final Tuple innerTuple: (DataBag) item) {
-          final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, serDe_);
+          final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, this.serDe_);
           sketch.merge(incomingSketch);
         }
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a call to the Intermediate function
         // Merge it with the current sketch.
-        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
+        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, this.serDe_);
         if (incomingSketch.isEmpty()) { continue; }
         sketch.merge(incomingSketch);
       } else {
@@ -89,6 +89,6 @@ public abstract class UnionFrequentItemsSketchAlgebraicIntermediateFinal<T> exte
             "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
-    return Util.serializeSketchToTuple(sketch, serDe_);
+    return Util.serializeSketchToTuple(sketch, this.serDe_);
   }
 }

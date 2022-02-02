@@ -72,7 +72,7 @@ public class UnionSketch extends EvalFunc<DataByteArray>
    */
   private UnionSketch(final int k) {
     super();
-    k_ = k;
+    this.k_ = k;
   }
 
   //@formatter:off
@@ -116,7 +116,7 @@ public class UnionSketch extends EvalFunc<DataByteArray>
   @Override // TOP LEVEL EXEC
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function.  It operates on the input and returns a result.
-    final KllFloatsSketch sketch = new KllFloatsSketch(k_);
+    final KllFloatsSketch sketch = new KllFloatsSketch(this.k_);
     if ((inputTuple != null) && (inputTuple.size() > 0)) {
       final DataBag bag = (DataBag) inputTuple.get(0);
       updateUnion(bag, sketch);
@@ -142,10 +142,10 @@ public class UnionSketch extends EvalFunc<DataByteArray>
     if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumSketch_ == null) {
-      accumSketch_ = new KllFloatsSketch(k_);
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = new KllFloatsSketch(this.k_);
     }
-    updateUnion(bag, accumSketch_);
+    updateUnion(bag, this.accumSketch_);
   }
 
   /**
@@ -156,11 +156,11 @@ public class UnionSketch extends EvalFunc<DataByteArray>
    */
   @Override
   public DataByteArray getValue() {
-    if (accumSketch_ != null) {
-      return new DataByteArray(accumSketch_.toByteArray());
+    if (this.accumSketch_ != null) {
+      return new DataByteArray(this.accumSketch_.toByteArray());
     }
     // return empty sketch
-    return new DataByteArray(new KllFloatsSketch(k_).toByteArray());
+    return new DataByteArray(new KllFloatsSketch(this.k_).toByteArray());
   }
 
   /**
@@ -170,7 +170,7 @@ public class UnionSketch extends EvalFunc<DataByteArray>
    */
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   //ALGEBRAIC INTERFACE
@@ -283,12 +283,13 @@ public class UnionSketch extends EvalFunc<DataByteArray>
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     private Intermediate(final int k) {
-      k_ = k;
+      this.k_ = k;
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override
     public Tuple exec(final Tuple inputTuple) throws IOException {
-      return TUPLE_FACTORY_.newTuple(process(inputTuple, k_));
+      return TUPLE_FACTORY_.newTuple(process(inputTuple, this.k_));
     }
   }
 
@@ -328,12 +329,13 @@ public class UnionSketch extends EvalFunc<DataByteArray>
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     private Final(final int k) {
-      k_ = k;
+      this.k_ = k;
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override
     public DataByteArray exec(final Tuple inputTuple) throws IOException {
-      return process(inputTuple, k_);
+      return process(inputTuple, this.k_);
     }
   }
 

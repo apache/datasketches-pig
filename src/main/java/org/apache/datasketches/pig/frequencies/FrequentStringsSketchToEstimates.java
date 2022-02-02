@@ -67,7 +67,7 @@ public class FrequentStringsSketchToEstimates extends EvalFunc<DataBag> {
     final DataByteArray dba = (DataByteArray) input.get(0);
     final ItemsSketch<String> sketch =
         ItemsSketch.getInstance(Memory.wrap(dba.get()), new ArrayOfStringsSerDe());
-    final ItemsSketch.Row<String>[] result = sketch.getFrequentItems(errorType);
+    final ItemsSketch.Row<String>[] result = sketch.getFrequentItems(this.errorType);
 
     final DataBag bag = BagFactory.getInstance().newDefaultBag();
     for (int i = 0; i < result.length; i++) {

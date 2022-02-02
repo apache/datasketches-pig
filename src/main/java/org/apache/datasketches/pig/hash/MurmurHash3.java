@@ -93,7 +93,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
     }
     final long h0 = hashOut[0];
     final long h1 = hashOut[1];
-    final int modResult = (divisor_ > 0L) ? modulo(h0, h1, divisor_) : -1;
+    final int modResult = (this.divisor_ > 0L) ? modulo(h0, h1, this.divisor_) : -1;
     out.set(0, Long.valueOf(h0));
     out.set(1, Long.valueOf(h1));
     out.set(2, Integer.valueOf(modResult));
@@ -110,14 +110,14 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
         obj = input.get(2);
         if (obj != null) {
           if (obj instanceof Integer) {
-            divisor_ = (Integer) obj;
+            this.divisor_ = (Integer) obj;
           }
           else {
             throw new IllegalArgumentException("Modulus divisor must be an Integer.");
           }
-          if (divisor_ <= 0) {
+          if (this.divisor_ <= 0) {
             throw new IllegalArgumentException("Modulus divisor must be greater than zero. "
-                + divisor_);
+                + this.divisor_);
           }
 
         } //divisor may be null. If so it will not be used.
@@ -192,6 +192,7 @@ public class MurmurHash3 extends EvalFunc<Tuple> {
    * The output consists of two longs, or 128 bits, plus the result of the modulo division if
    * specified.
    */
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {

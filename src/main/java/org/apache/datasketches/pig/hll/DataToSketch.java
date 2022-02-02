@@ -86,8 +86,8 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   public DataToSketch(final int lgK, final TgtHllType tgtHllType) {
     super();
-    lgK_ = lgK;
-    tgtHllType_ = tgtHllType;
+    this.lgK_ = lgK;
+    this.tgtHllType_ = tgtHllType;
   }
 
   /**
@@ -107,6 +107,11 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    *   <li>DataByteArray: BYTEARRAY</li>
    * </ul>
    *
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted and then typed as a DataType.BYTEARRAY.</p>
+   *
    * @param inputTuple A tuple containing a single bag, containing Datum Tuples.
    * @return serialized HllSketch
    * @see "org.apache.pig.EvalFunc.exec(org.apache.pig.data.Tuple)"
@@ -115,20 +120,21 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
 
   @Override
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Exec was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(new HllSketch(lgK_, tgtHllType_).toCompactByteArray());
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = 
+            new DataByteArray(new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    final Union union = new Union(lgK_);
+    final Union union = new Union(this.lgK_);
     final DataBag bag = (DataBag) inputTuple.get(0);
     updateUnion(bag, union);
-    return new DataByteArray(union.getResult(tgtHllType_).toCompactByteArray());
+    return new DataByteArray(union.getResult(this.tgtHllType_).toCompactByteArray());
   }
 
   /**
@@ -144,17 +150,17 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Accumulator was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumUnion_ == null) {
-      accumUnion_ = new Union(lgK_);
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ = new Union(this.lgK_);
     }
-    updateUnion(bag, accumUnion_);
+    updateUnion(bag, this.accumUnion_);
   }
 
   /**
@@ -165,13 +171,14 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public DataByteArray getValue() {
-    if (accumUnion_ == null) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(new HllSketch(lgK_, tgtHllType_).toCompactByteArray());
+    if (this.accumUnion_ == null) {
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = 
+          new DataByteArray(new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    return new DataByteArray(accumUnion_.getResult(tgtHllType_).toCompactByteArray());
+    return new DataByteArray(this.accumUnion_.getResult(this.tgtHllType_).toCompactByteArray());
   }
 
   /**
@@ -181,7 +188,7 @@ public class DataToSketch extends EvalFunc<DataByteArray> implements Accumulator
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   @Override

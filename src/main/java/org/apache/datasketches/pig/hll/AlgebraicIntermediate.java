@@ -58,15 +58,15 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
    * @param tgtHllType HLL type of the resulting sketch
    */
   public AlgebraicIntermediate(final int lgK, final TgtHllType tgtHllType) {
-    lgK_ = lgK;
-    tgtHllType_ = tgtHllType;
+    this.lgK_ = lgK;
+    this.tgtHllType_ = tgtHllType;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) {
       return getEmptySketchTuple();
@@ -75,7 +75,7 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
     if (outerBag == null) {
       return getEmptySketchTuple();
     }
-    final Union union = new Union(lgK_);
+    final Union union = new Union(this.lgK_);
     for (final Tuple dataTuple: outerBag) {
       final Object f0 = dataTuple.get(0); // inputTuple.bag0.dataTupleN.f0
       if (f0 == null) { continue; }
@@ -98,17 +98,17 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
             + f0.getClass().getName());
       }
     }
-    return tupleFactory_.newTuple(new DataByteArray(union.getResult(tgtHllType_).toCompactByteArray()));
+    return tupleFactory_.newTuple(new DataByteArray(union.getResult(this.tgtHllType_).toCompactByteArray()));
   }
 
   abstract void updateUnion(DataBag bag, Union union) throws ExecException;
 
   private Tuple getEmptySketchTuple() {
-    if (emptySketchTuple_ == null) {
-      emptySketchTuple_ = tupleFactory_.newTuple(new DataByteArray(
-          new HllSketch(lgK_, tgtHllType_).toCompactByteArray()));
+    if (this.emptySketchTuple_ == null) {
+      this.emptySketchTuple_ = tupleFactory_.newTuple(new DataByteArray(
+          new HllSketch(this.lgK_, this.tgtHllType_).toCompactByteArray()));
     }
-    return emptySketchTuple_;
+    return this.emptySketchTuple_;
   }
 
 }

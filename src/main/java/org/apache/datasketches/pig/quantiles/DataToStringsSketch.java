@@ -59,6 +59,7 @@ public class DataToStringsSketch extends DataToItemsSketch<String> {
     return DataToStringsSketchIntermediateFinal.class.getName();
   }
 
+  @SuppressWarnings("synthetic-access")
   public static class DataToStringsSketchIntermediateFinal
       extends DataToItemsSketchIntermediateFinal<String> {
 

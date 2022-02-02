@@ -77,8 +77,8 @@ public class SketchToString extends EvalFunc<String> {
    */
   public SketchToString(final boolean outputDetail, final long seed) {
     super();
-    detailOut = outputDetail;
-    seed_ = seed;
+    this.detailOut = outputDetail;
+    this.seed_ = seed;
   }
 
   @Override
@@ -86,8 +86,8 @@ public class SketchToString extends EvalFunc<String> {
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    final Sketch sketch = tupleToSketch(sketchTuple, seed_);
-    return sketch.toString(true, detailOut, 8, true);
+    final Sketch sketch = tupleToSketch(sketchTuple, this.seed_);
+    return sketch.toString(true, this.detailOut, 8, true);
   }
 
 }

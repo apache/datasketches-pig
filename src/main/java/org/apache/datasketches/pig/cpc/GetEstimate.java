@@ -57,7 +57,7 @@ public class GetEstimate extends EvalFunc<Double> {
    * @param seed parameter for the hash function
    */
   GetEstimate(final long seed) {
-    seed_ = seed;
+    this.seed_ = seed;
   }
 
   @Override
@@ -66,7 +66,7 @@ public class GetEstimate extends EvalFunc<Double> {
       return null;
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
-    final CpcSketch sketch = CpcSketch.heapify(dba.get(), seed_);
+    final CpcSketch sketch = CpcSketch.heapify(dba.get(), this.seed_);
     return sketch.getEstimate();
   }
 

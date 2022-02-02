@@ -56,12 +56,12 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
    * @param kStr String indicating the maximum number of desired samples to return.
    */
   public VarOptSampling(final String kStr) {
-    targetK_ = Integer.parseInt(kStr);
-    weightIdx_ = DEFAULT_WEIGHT_IDX;
+    this.targetK_ = Integer.parseInt(kStr);
+    this.weightIdx_ = DEFAULT_WEIGHT_IDX;
 
-    if (targetK_ < 1) {
+    if (this.targetK_ < 1) {
       throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-              + targetK_);
+              + this.targetK_);
     }
   }
 
@@ -71,22 +71,22 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
    * @param weightIdxStr String indicating column index (0-based) of weight values
    */
   public VarOptSampling(final String kStr, final String weightIdxStr) {
-    targetK_ = Integer.parseInt(kStr);
-    weightIdx_ = Integer.parseInt(weightIdxStr);
+    this.targetK_ = Integer.parseInt(kStr);
+    this.weightIdx_ = Integer.parseInt(weightIdxStr);
 
-    if (targetK_ < 1) {
+    if (this.targetK_ < 1) {
       throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-              + targetK_);
+              + this.targetK_);
     }
-    if (weightIdx_ < 0) {
+    if (this.weightIdx_ < 0) {
       throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
-              + weightIdx_);
+              + this.weightIdx_);
     }
   }
 
   VarOptSampling() {
-    targetK_ = DEFAULT_TARGET_K;
-    weightIdx_ = DEFAULT_WEIGHT_IDX;
+    this.targetK_ = DEFAULT_TARGET_K;
+    this.weightIdx_ = DEFAULT_WEIGHT_IDX;
   }
 
   @Override
@@ -97,28 +97,28 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
     final DataBag samples = (DataBag) inputTuple.get(0);
 
-    if (sketch_ == null) {
-      sketch_ = VarOptItemsSketch.newInstance(targetK_);
+    if (this.sketch_ == null) {
+      this.sketch_ = VarOptItemsSketch.newInstance(this.targetK_);
     }
 
     for (final Tuple t : samples) {
-      final double weight = (double) t.get(weightIdx_);
-      sketch_.update(t, weight);
+      final double weight = (double) t.get(this.weightIdx_);
+      this.sketch_.update(t, weight);
     }
   }
 
   @Override
   public DataBag getValue() {
-    if (sketch_ == null) {
+    if (this.sketch_ == null) {
       return null;
     }
 
-    return createDataBagFromSketch(sketch_);
+    return createDataBagFromSketch(this.sketch_);
   }
 
   @Override
   public void cleanup() {
-    sketch_ = null;
+    this.sketch_ = null;
   }
 
   @Override
@@ -136,8 +136,8 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
 
       final Schema record = input.getField(0).schema; // record has a tuple in field 0
       final Schema fields = record.getField(0).schema;
-      if ((fields.getField(weightIdx_).type != DataType.DOUBLE)
-              && (fields.getField(weightIdx_).type != DataType.FLOAT)) {
+      if ((fields.getField(this.weightIdx_).type != DataType.DOUBLE)
+              && (fields.getField(this.weightIdx_).type != DataType.FLOAT)) {
         throw new IllegalArgumentException("weightIndex item of VarOpt tuple must be a "
                 + "weight (double/float), found " + fields.getField(0).type
                 + ": " + fields.toString());
@@ -175,8 +175,8 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
     private final int weightIdx_;
 
     public Final() {
-      targetK_ = DEFAULT_TARGET_K;
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = DEFAULT_TARGET_K;
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
     }
 
     /**
@@ -184,12 +184,12 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
      * @param kStr String indicating the maximum number of desired samples to return.
      */
     public Final(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = DEFAULT_WEIGHT_IDX;
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = DEFAULT_WEIGHT_IDX;
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -199,16 +199,16 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
      * @param weightIdxStr String indicating column index (0-based) of weight values
      */
     public Final(final String kStr, final String weightIdxStr) {
-      targetK_ = Integer.parseInt(kStr);
-      weightIdx_ = Integer.parseInt(weightIdxStr);
+      this.targetK_ = Integer.parseInt(kStr);
+      this.weightIdx_ = Integer.parseInt(weightIdxStr);
 
-      if (targetK_ < 1) {
+      if (this.targetK_ < 1) {
         throw new IllegalArgumentException("VarOptSampling requires target sample size >= 1: "
-                + targetK_);
+                + this.targetK_);
       }
-      if (weightIdx_ < 0) {
+      if (this.weightIdx_ < 0) {
         throw new IllegalArgumentException("VarOptSampling requires weight index >= 0: "
-                + weightIdx_);
+                + this.weightIdx_);
       }
     }
 
@@ -218,7 +218,7 @@ public class VarOptSampling extends AccumulatorEvalFunc<DataBag> implements Alge
         return null;
       }
 
-      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, targetK_);
+      final VarOptItemsUnion<Tuple> union = unionSketches(inputTuple, this.targetK_);
       return createDataBagFromSketch(union.getResult());
     }
   }

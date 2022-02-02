@@ -96,21 +96,21 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
   public DataToSketchAlgebraicIntermediateFinal(final int sketchSize, final float samplingProbability,
       final SummaryFactory<S> summaryFactory, final SummarySetOperations<S> summarySetOps,
       final SummaryDeserializer<S> summaryDeserializer) {
-    sketchSize_ = sketchSize;
-    summarySetOps_ = summarySetOps;
-    summaryDeserializer_ = summaryDeserializer;
-    sketchBuilder_ = new UpdatableSketchBuilder<U, S>(summaryFactory)
+    this.sketchSize_ = sketchSize;
+    this.summarySetOps_ = summarySetOps;
+    this.summaryDeserializer_ = summaryDeserializer;
+    this.sketchBuilder_ = new UpdatableSketchBuilder<>(summaryFactory)
         .setNominalEntries(sketchSize).setSamplingProbability(samplingProbability);
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("algebraic is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
+    final Union<S> union = new Union<>(this.sketchSize_, this.summarySetOps_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {
@@ -122,14 +122,15 @@ public abstract class DataToSketchAlgebraicIntermediateFinal<U, S extends Updata
       if (item instanceof DataBag) {
         // this is a bag from the Initial function.
         // just insert each item of the tuple into the sketch
-        final UpdatableSketch<U, S> sketch = sketchBuilder_.build();
+        final UpdatableSketch<U, S> sketch = this.sketchBuilder_.build();
         DataToSketch.updateSketch((DataBag) item, sketch);
         union.union(sketch);
       } else if (item instanceof DataByteArray) {
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
-        final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, summaryDeserializer_);
+        final Sketch<S> incomingSketch = 
+            Util.deserializeSketchFromTuple(dataTuple, this.summaryDeserializer_);
         union.union(incomingSketch);
       } else {
         // we should never get here.

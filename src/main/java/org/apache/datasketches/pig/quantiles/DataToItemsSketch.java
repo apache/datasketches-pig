@@ -67,9 +67,9 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
   public DataToItemsSketch(final int k, final Comparator<T> comparator,
       final ArrayOfItemsSerDe<T> serDe) {
     super();
-    k_ = k;
-    comparator_ = comparator;
-    serDe_ = serDe;
+    this.k_ = k;
+    this.comparator_ = comparator;
+    this.serDe_ = serDe;
   }
 
   //@formatter:off
@@ -130,9 +130,9 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
     if ((inputTuple != null) && (inputTuple.size() > 0)) {
-      final ItemsUnion<T> union = k_ > 0
-          ? ItemsUnion.getInstance(k_, comparator_)
-          : ItemsUnion.getInstance(comparator_);
+      final ItemsUnion<T> union = this.k_ > 0
+          ? ItemsUnion.getInstance(this.k_, this.comparator_)
+          : ItemsUnion.getInstance(this.comparator_);
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
         final Object value = innerTuple.get(0);
@@ -142,14 +142,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
       }
       final ItemsSketch<T> resultSketch = union.getResultAndReset();
       if (resultSketch != null) {
-        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(this.serDe_)));
       }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0
-        ? ItemsSketch.getInstance(k_, comparator_)
-        : ItemsSketch.getInstance(comparator_);
-    return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
+    final ItemsSketch<T> sketch = this.k_ > 0
+        ? ItemsSketch.getInstance(this.k_, this.comparator_)
+        : ItemsSketch.getInstance(this.comparator_);
+    return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(this.serDe_)));
   }
 
   @Override
@@ -183,15 +183,15 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
     if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumUnion_ == null) {
-      accumUnion_ = k_ > 0
-        ? ItemsUnion.getInstance(k_, comparator_)
-        : ItemsUnion.getInstance(comparator_);
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ = this.k_ > 0
+        ? ItemsUnion.getInstance(this.k_, this.comparator_)
+        : ItemsUnion.getInstance(this.comparator_);
     }
     for (final Tuple innerTuple: bag) {
       final Object value = innerTuple.get(0);
       if (value != null) {
-        accumUnion_.update(extractValue(value));
+        this.accumUnion_.update(extractValue(value));
       }
     }
   }
@@ -204,17 +204,17 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ != null) {
-      final ItemsSketch<T> resultSketch = accumUnion_.getResultAndReset();
+    if (this.accumUnion_ != null) {
+      final ItemsSketch<T> resultSketch = this.accumUnion_.getResultAndReset();
       if (resultSketch != null) {
-        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+        return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(this.serDe_)));
       }
     }
     // return empty sketch
-    final ItemsSketch<T> sketch = k_ > 0
-        ? ItemsSketch.getInstance(k_, comparator_)
-        : ItemsSketch.getInstance(comparator_);
-    return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
+    final ItemsSketch<T> sketch = this.k_ > 0
+        ? ItemsSketch.getInstance(this.k_, this.comparator_)
+        : ItemsSketch.getInstance(this.comparator_);
+    return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(this.serDe_)));
   }
 
   /**
@@ -224,7 +224,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   /**
@@ -293,9 +293,9 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
     public DataToItemsSketchIntermediateFinal(
         final int k, final Comparator<T> comparator, final ArrayOfItemsSerDe<T> serDe) {
       super();
-      k_ = k;
-      comparator_ = comparator;
-      serDe_ = serDe;
+      this.k_ = k;
+      this.comparator_ = comparator;
+      this.serDe_ = serDe;
     }
 
     /**
@@ -308,12 +308,13 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
       return (T) object;
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       if ((inputTuple != null) && (inputTuple.size() > 0)) {
-        final ItemsUnion<T> union = k_ > 0
-            ? ItemsUnion.getInstance(k_, comparator_)
-            : ItemsUnion.getInstance(comparator_);
+        final ItemsUnion<T> union = this.k_ > 0
+            ? ItemsUnion.getInstance(this.k_, this.comparator_)
+            : ItemsUnion.getInstance(this.comparator_);
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
@@ -336,7 +337,7 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
             // due to system bagged outputs from multiple mapper Intermediate functions.
             // Each dataTuple.DBA:sketch will merged into the union.
             final DataByteArray dba = (DataByteArray) f0;
-            union.update(ItemsSketch.getInstance(Memory.wrap(dba.get()), comparator_, serDe_));
+            union.update(ItemsSketch.getInstance(Memory.wrap(dba.get()), this.comparator_, this.serDe_));
           } else {
             throw new IllegalArgumentException("dataTuple.Field0: Is not a DataByteArray: "
                 + f0.getClass().getName());
@@ -344,14 +345,14 @@ public abstract class DataToItemsSketch<T> extends EvalFunc<Tuple>
         }
         final ItemsSketch<T> resultSketch = union.getResultAndReset();
         if (resultSketch != null) {
-          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(serDe_)));
+          return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(this.serDe_)));
         }
       }
       // return empty sketch
-      final ItemsSketch<T> sketch = k_ > 0
-          ? ItemsSketch.getInstance(k_, comparator_)
-          : ItemsSketch.getInstance(comparator_);
-      return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(serDe_)));
+      final ItemsSketch<T> sketch = this.k_ > 0
+          ? ItemsSketch.getInstance(this.k_, this.comparator_)
+          : ItemsSketch.getInstance(this.comparator_);
+      return tupleFactory_.newTuple(new DataByteArray(sketch.toByteArray(this.serDe_)));
     }
   } // end IntermediateFinal
 

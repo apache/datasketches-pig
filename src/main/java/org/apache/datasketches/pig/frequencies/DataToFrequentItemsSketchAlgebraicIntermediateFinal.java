@@ -51,18 +51,18 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
   @SuppressWarnings("javadoc")
   public DataToFrequentItemsSketchAlgebraicIntermediateFinal(
       final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
-    sketchSize_ = sketchSize;
-    serDe_ = serDe;
+    this.sketchSize_ = sketchSize;
+    this.serDe_ = serDe;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    final ItemsSketch<T> sketch = new ItemsSketch<>(sketchSize_);
+    final ItemsSketch<T> sketch = new ItemsSketch<>(this.sketchSize_);
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     for (Tuple dataTuple: bag) {
@@ -75,7 +75,7 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
         // This is a sketch from a prior call to the
         // Intermediate function. merge it with the
         // current sketch.
-        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, serDe_);
+        final ItemsSketch<T> incomingSketch = Util.deserializeSketchFromTuple(dataTuple, this.serDe_);
         sketch.merge(incomingSketch);
       } else {
         // we should never get here.
@@ -83,7 +83,7 @@ public abstract class DataToFrequentItemsSketchAlgebraicIntermediateFinal<T> ext
             "InputTuple.Field0: Bag contains unrecognized types: " + item.getClass().getName());
       }
     }
-    return Util.serializeSketchToTuple(sketch, serDe_);
+    return Util.serializeSketchToTuple(sketch, this.serDe_);
   }
 
 }

@@ -72,7 +72,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * </ul>
    */
   public DataToSketch() {
-    this(DEFAULT_NOMINAL_ENTRIES, (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(DEFAULT_NOMINAL_ENTRIES, (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -86,7 +86,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * @param nomEntriesStr <a href="{@docRoot}/resources/dictionary.html#nomEntries">See Nominal Entries</a>
    */
   public DataToSketch(final String nomEntriesStr) {
-    this(Integer.parseInt(nomEntriesStr), (float)(1.0), DEFAULT_UPDATE_SEED);
+    this(Integer.parseInt(nomEntriesStr), (float)1.0, DEFAULT_UPDATE_SEED);
   }
 
   /**
@@ -122,14 +122,14 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   public DataToSketch(final int nomEntries, final float p, final long seed) {
     super();
-    nomEntries_ = nomEntries;
-    p_ = p;
-    seed_ = seed;
-    emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+    this.nomEntries_ = nomEntries;
+    this.p_ = p;
+    this.seed_ = seed;
+    this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     //Catch these errors during construction, don't wait for the exec to be called.
     checkIfPowerOf2(nomEntries, "nomEntries");
     checkProbability(p, "p");
-    if (nomEntries < (1 << Util.MIN_LG_NOM_LONGS)) {
+    if (nomEntries < 1 << Util.MIN_LG_NOM_LONGS) {
       throw new IllegalArgumentException("NomEntries too small: " + nomEntries
           + ", required: " + (1 << Util.MIN_LG_NOM_LONGS));
     }
@@ -181,6 +181,11 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    *   </li>
    * </ul>
    *
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
+   *
    * <b>Sketch Tuple</b>
    * <ul>
    *   <li>Tuple: TUPLE (Contains exactly 1 field)
@@ -201,10 +206,10 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
   public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    final Union union = newUnion(nomEntries_, p_, seed_);
+    final Union union = newUnion(this.nomEntries_, this.p_, this.seed_);
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
+      return this.emptyCompactOrderedSketchTuple_; //Configured with parent
     }
 
     updateUnion(bag, union); //updates union with all elements of the bag
@@ -212,6 +217,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {
@@ -243,13 +249,13 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
-    if (accumUnion_ == null) {
-      accumUnion_ = DataToSketch.newUnion(nomEntries_, p_, seed_);
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ = DataToSketch.newUnion(this.nomEntries_, this.p_, this.seed_);
     }
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) { return; }
 
-    updateUnion(bag, accumUnion_);
+    updateUnion(bag, this.accumUnion_);
   }
 
   /**
@@ -260,10 +266,10 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
+    if (this.accumUnion_ == null) {
+      return this.emptyCompactOrderedSketchTuple_; //Configured with parent
     }
-    final CompactSketch compOrdSketch = accumUnion_.getResult(true, null);
+    final CompactSketch compOrdSketch = this.accumUnion_.getResult(true, null);
     return compactOrderedSketchToTuple(compOrdSketch);
   }
 
@@ -274,7 +280,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   //ALGEBRAIC INTERFACE
@@ -313,6 +319,10 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
    * Updates a union with the data from the given bag.
    *
    * @param bag A bag of tuples to insert.
+   * <p><b>Note</b> Strings as values are normally typed as DataType.CHARARRAY, which will be
+   * encoded as UTF-8 prior to being submitted to the sketch. If the user requires a different
+   * encoding for cross-platform compatibility, it is recommended that these values be encoded prior
+   * to being submitted in a DataBag and then typed as a DataType.BYTEARRAY.</p>
    * @param union the union to update
    */
   private static void updateUnion(final DataBag bag, final Union union) {
@@ -507,18 +517,19 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(final int nomEntries, final float p, final long seed) {
-      myNomEntries_ = nomEntries;
-      myP_ = p;
-      mySeed_ = seed;
-      myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+      this.myNomEntries_ = nomEntries;
+      this.myP_ = p;
+      this.mySeed_ = seed;
+      this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
-      final Union union = newUnion(myNomEntries_, myP_, mySeed_);
+      final Union union = newUnion(this.myNomEntries_, this.myP_, this.mySeed_);
       final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) { //must have non-empty outer bag at field 0.
-        return myEmptyCompactOrderedSketchTuple_; //abort & return empty sketch
+        return this.myEmptyCompactOrderedSketchTuple_; //abort & return empty sketch
       }
       //Bag is not empty.
 
@@ -543,7 +554,7 @@ public class DataToSketch extends EvalFunc<Tuple> implements Accumulator<Tuple>,
           //If field 0 of a dataTuple is a DataByteArray we assume it is a sketch
           // due to system bagged outputs from multiple mapper Intermediate functions.
           // Each dataTuple.DBA:sketch will merged into the union.
-          final DataByteArray dba = ((DataByteArray) f0);
+          final DataByteArray dba = (DataByteArray) f0;
           union.union(Memory.wrap(dba.get()));
 
         }

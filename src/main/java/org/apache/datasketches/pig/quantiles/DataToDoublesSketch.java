@@ -74,9 +74,9 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    */
   public DataToDoublesSketch(final int k) {
     super();
-    unionBuilder_ = DoublesUnion.builder();
+    this.unionBuilder_ = DoublesUnion.builder();
     if (k > 0) {
-      unionBuilder_.setMaxK(k);
+      this.unionBuilder_.setMaxK(k);
     }
   }
 
@@ -138,7 +138,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
   public Tuple exec(final Tuple inputTuple) throws IOException {
     //The exec is a stateless function. It operates on the input and returns a result.
     if ((inputTuple != null) && (inputTuple.size() > 0)) {
-      final DoublesUnion union = unionBuilder_.build();
+      final DoublesUnion union = this.unionBuilder_.build();
       final DataBag bag = (DataBag) inputTuple.get(0);
       for (final Tuple innerTuple: bag) {
         final Object value = innerTuple.get(0);
@@ -152,7 +152,8 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
+    return tupleFactory_.newTuple(
+        new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   @Override
@@ -188,13 +189,13 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
     if ((inputTuple == null) || (inputTuple.size() == 0)) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumUnion_ == null) {
-      accumUnion_ = unionBuilder_.build();
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ = this.unionBuilder_.build();
     }
     for (final Tuple innerTuple: bag) {
       final Object value = innerTuple.get(0);
         if (value != null) {
-          accumUnion_.update((Double) value);
+          this.accumUnion_.update((Double) value);
       }
     }
   }
@@ -207,14 +208,15 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    */
   @Override
   public Tuple getValue() {
-    if (accumUnion_ != null) {
-      final DoublesSketch resultSketch = accumUnion_.getResultAndReset();
+    if (this.accumUnion_ != null) {
+      final DoublesSketch resultSketch = this.accumUnion_.getResultAndReset();
       if (resultSketch != null) {
         return tupleFactory_.newTuple(new DataByteArray(resultSketch.toByteArray(true)));
       }
     }
     // return empty sketch
-    return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
+    return tupleFactory_.newTuple(
+      new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
   }
 
   /**
@@ -224,7 +226,7 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   // ALGEBRAIC INTERFACE
@@ -314,16 +316,17 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
      * @param k parameter that determines the accuracy and size of the sketch.
      */
     public IntermediateFinal(final int k) {
-      unionBuilder_ = DoublesUnion.builder();
+      this.unionBuilder_ = DoublesUnion.builder();
       if (k > 0) {
-        unionBuilder_.setMaxK(k);
+        this.unionBuilder_.setMaxK(k);
       }
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override // IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
       if ((inputTuple != null) && (inputTuple.size() > 0)) {
-        final DoublesUnion union = unionBuilder_.build();
+        final DoublesUnion union = this.unionBuilder_.build();
         final DataBag outerBag = (DataBag) inputTuple.get(0);
         for (final Tuple dataTuple: outerBag) {
           final Object f0 = dataTuple.get(0);
@@ -358,7 +361,8 @@ public class DataToDoublesSketch extends EvalFunc<Tuple> implements Accumulator<
         }
       }
       // return empty sketch
-      return tupleFactory_.newTuple(new DataByteArray(unionBuilder_.build().getResult().toByteArray(true)));
+      return tupleFactory_.newTuple(
+        new DataByteArray(this.unionBuilder_.build().getResult().toByteArray(true)));
     }
   } // end IntermediateFinal
 

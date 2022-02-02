@@ -82,8 +82,8 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   public Intersect(final long seed) {
     super();
-    seed_ = seed;
-    emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+    this.seed_ = seed;
+    this.emptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
   }
 
   //@formatter:off
@@ -132,17 +132,18 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
   public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
     //The exec is a stateless function.  It operates on the input and returns a result.
     // It can only call static functions.
-    final Intersection intersection = SetOperation.builder().setSeed(seed_).buildIntersection();
+    final Intersection intersection = SetOperation.builder().setSeed(this.seed_).buildIntersection();
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
-      return emptyCompactOrderedSketchTuple_; //Configured with parent
+      return this.emptyCompactOrderedSketchTuple_; //Configured with parent
     }
 
-    updateIntersection(bag, intersection, seed_);
+    updateIntersection(bag, intersection, this.seed_);
     final CompactSketch compactSketch = intersection.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {
@@ -174,15 +175,15 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException { //throws is in API
-    if (accumIntersection_ == null) {
-      accumIntersection_ = SetOperation.builder().setSeed(seed_).buildIntersection();
+    if (this.accumIntersection_ == null) {
+      this.accumIntersection_ = SetOperation.builder().setSeed(this.seed_).buildIntersection();
     }
     final DataBag bag = extractBag(inputTuple);
     if (bag == null) {
       return;
     }
 
-    updateIntersection(bag, accumIntersection_, seed_);
+    updateIntersection(bag, this.accumIntersection_, this.seed_);
   }
 
   /**
@@ -193,12 +194,12 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   @Override
   public Tuple getValue() {
-    if ((accumIntersection_ == null) || !accumIntersection_.hasResult()) {
+    if (this.accumIntersection_ == null || !this.accumIntersection_.hasResult()) {
       throw new IllegalStateException(""
           + "The accumulate(Tuple) method must be called at least once with "
           + "a valid inputTuple.bag.SketchTuple prior to calling getValue().");
     }
-    final CompactSketch compactSketch = accumIntersection_.getResult(true, null);
+    final CompactSketch compactSketch = this.accumIntersection_.getResult(true, null);
     return compactOrderedSketchToTuple(compactSketch);
   }
 
@@ -209,7 +210,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
    */
   @Override
   public void cleanup() {
-    accumIntersection_ = null;
+    this.accumIntersection_ = null;
   }
 
   //ALGEBRAIC INTERFACE
@@ -340,17 +341,18 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
      * @param seed <a href="{@docRoot}/resources/dictionary.html#seed">See Update Hash Seed</a>.
      */
     public IntermediateFinal(final long seed) {
-      mySeed_ = seed;
-      myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
+      this.mySeed_ = seed;
+      this.myEmptyCompactOrderedSketchTuple_ = emptySketchTuple(seed);
     }
 
+    @SuppressWarnings("synthetic-access")
     @Override //IntermediateFinal exec
     public Tuple exec(final Tuple inputTuple) throws IOException { //throws is in API
 
-      final Intersection intersection = SetOperation.builder().setSeed(mySeed_).buildIntersection();
+      final Intersection intersection = SetOperation.builder().setSeed(this.mySeed_).buildIntersection();
       final DataBag outerBag = extractBag(inputTuple); //InputTuple.bag0
       if (outerBag == null) {  //must have non-empty outer bag at field 0.
-        return myEmptyCompactOrderedSketchTuple_;
+        return this.myEmptyCompactOrderedSketchTuple_;
       }
       //Bag is not empty.
 
@@ -370,7 +372,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           // will be passed into the union.
           //It is due to system bagged outputs from multiple mapper Initial functions.
           //The Intermediate stage was bypassed.
-          updateIntersection(innerBag, intersection, mySeed_); //process all tuples of innerBag
+          updateIntersection(innerBag, intersection, this.mySeed_); //process all tuples of innerBag
 
         }
         else if (f0 instanceof DataByteArray) { //inputTuple.bag0.dataTupleN.f0:DBA
@@ -379,7 +381,7 @@ public class Intersect extends EvalFunc<Tuple> implements Accumulator<Tuple>, Al
           // Each dataTuple.DBA:sketch will merged into the union.
           final DataByteArray dba = (DataByteArray) f0;
           final Memory srcMem = Memory.wrap(dba.get());
-          final Sketch sketch = Sketch.wrap(srcMem, mySeed_);
+          final Sketch sketch = Sketch.wrap(srcMem, this.mySeed_);
           intersection.intersect(sketch);
         }
         else { // we should never get here.

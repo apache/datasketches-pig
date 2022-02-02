@@ -55,20 +55,20 @@ abstract class UnionArrayOfDoublesSketchAlgebraicIntermediateFinal extends EvalF
 
   UnionArrayOfDoublesSketchAlgebraicIntermediateFinal(final int sketchSize, final int numValues) {
     super();
-    sketchSize_ = sketchSize;
-    numValues_ = numValues;
+    this.sketchSize_ = sketchSize;
+    this.numValues_ = numValues;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("algebraic is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     final ArrayOfDoublesUnion union =
-        new ArrayOfDoublesSetOperationBuilder().setNominalEntries(sketchSize_)
-          .setNumberOfValues(numValues_).buildUnion();
+        new ArrayOfDoublesSetOperationBuilder().setNominalEntries(this.sketchSize_)
+          .setNumberOfValues(this.numValues_).buildUnion();
 
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) {

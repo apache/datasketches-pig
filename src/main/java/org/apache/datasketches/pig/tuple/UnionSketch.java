@@ -69,62 +69,62 @@ public abstract class UnionSketch<S extends Summary> extends EvalFunc<Tuple> imp
   public UnionSketch(final int sketchSize, final SummarySetOperations<S> summarySetOps,
       final SummaryDeserializer<S> summaryDeserializer) {
     super();
-    sketchSize_ = sketchSize;
-    summarySetOps_ = summarySetOps;
-    summaryDeserializer_ = summaryDeserializer;
+    this.sketchSize_ = sketchSize;
+    this.summarySetOps_ = summarySetOps;
+    this.summaryDeserializer_ = summaryDeserializer;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() == 0)) {
+    if (inputTuple == null || inputTuple.size() == 0) {
       return null;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    final Union<S> union = new Union<S>(sketchSize_, summarySetOps_);
-    updateUnion(bag, union, summaryDeserializer_);
+    final Union<S> union = new Union<>(this.sketchSize_, this.summarySetOps_);
+    updateUnion(bag, union, this.summaryDeserializer_);
     return Util.tupleFactory.newTuple(new DataByteArray(union.getResult().toByteArray()));
   }
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("accumulator is used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if ((inputTuple == null) || (inputTuple.size() != 1)) {
+    if (inputTuple == null || inputTuple.size() != 1) {
       return;
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null || bag.size() == 0) { return; }
-    if (union_ == null) {
-      union_ = new Union<S>(sketchSize_, summarySetOps_);
+    if (this.union_ == null) {
+      this.union_ = new Union<>(this.sketchSize_, this.summarySetOps_);
     }
-    updateUnion(bag, union_, summaryDeserializer_);
+    updateUnion(bag, this.union_, this.summaryDeserializer_);
   }
 
   @Override
   public Tuple getValue() {
-    if (union_ == null) { //return an empty sketch
+    if (this.union_ == null) { //return an empty sketch
       return Util.tupleFactory.newTuple(new DataByteArray(Sketches.createEmptySketch().toByteArray()));
     }
-    return Util.tupleFactory.newTuple(new DataByteArray(union_.getResult().toByteArray()));
+    return Util.tupleFactory.newTuple(new DataByteArray(this.union_.getResult().toByteArray()));
   }
 
   @Override
   public void cleanup() {
-    if (union_ != null) { union_.reset(); }
+    if (this.union_ != null) { this.union_.reset(); }
   }
 
   private static <S extends Summary> void updateUnion(final DataBag bag, final Union<S> union,
       final SummaryDeserializer<S> summaryDeserializer) throws ExecException {
     for (final Tuple innerTuple: bag) {
-      if ((innerTuple.size() != 1) || (innerTuple.get(0) == null)) {
+      if (innerTuple.size() != 1 || innerTuple.get(0) == null) {
         continue;
       }
       final Sketch<S> incomingSketch = Util.deserializeSketchFromTuple(innerTuple, summaryDeserializer);

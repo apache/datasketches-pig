@@ -39,7 +39,7 @@ public class ArrayOfDoublesSketchToMeans extends EvalFunc<Tuple> {
 
   @Override
   public Tuple exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 

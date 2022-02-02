@@ -76,6 +76,7 @@ public class DataToVarOptSketchTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void checkExecution() {
     final int k = 10;
@@ -115,6 +116,7 @@ public class DataToVarOptSketchTest {
     }
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void degenerateExecInput() {
     final DataToVarOptSketch udf = new DataToVarOptSketch();
@@ -156,6 +158,7 @@ public class DataToVarOptSketchTest {
     assertEquals(output.getField(0).type, DataType.BYTEARRAY);
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void badOutputSchemaTest() throws IOException {
     final Schema recordSchema = new Schema();

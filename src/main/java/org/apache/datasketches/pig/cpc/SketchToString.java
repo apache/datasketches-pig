@@ -70,8 +70,8 @@ public class SketchToString extends EvalFunc<String> {
    * @param seed parameter for the hash function
    */
   private SketchToString(final boolean isDetailed, final long seed) {
-    isDetailed_ = isDetailed;
-    seed_ = seed;
+    this.isDetailed_ = isDetailed;
+    this.seed_ = seed;
   }
 
   @Override
@@ -80,8 +80,8 @@ public class SketchToString extends EvalFunc<String> {
       return null;
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
-    final CpcSketch sketch = CpcSketch.heapify(dba.get(), seed_);
-    return sketch.toString(isDetailed_);
+    final CpcSketch sketch = CpcSketch.heapify(dba.get(), this.seed_);
+    return sketch.toString(this.isDetailed_);
   }
 
 }

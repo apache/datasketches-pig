@@ -48,40 +48,40 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
    */
   public DataToFrequentItemsSketch(final int sketchSize, final ArrayOfItemsSerDe<T> serDe) {
     super();
-    sketchSize_ = sketchSize;
-    serDe_ = serDe;
+    this.sketchSize_ = sketchSize;
+    this.serDe_ = serDe;
   }
 
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("accumulate was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    if (accumSketch_ == null) {
-      accumSketch_ = new ItemsSketch<T>(sketchSize_);
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = new ItemsSketch<>(this.sketchSize_);
     }
     if (inputTuple.size() != 1) {
       throw new IllegalArgumentException("Input tuple must have 1 bag");
     }
     final DataBag bag = (DataBag) inputTuple.get(0);
-    updateSketch(bag, accumSketch_);
+    updateSketch(bag, this.accumSketch_);
   }
 
   @Override
   public void cleanup() {
-    accumSketch_ = null;
+    this.accumSketch_ = null;
   }
 
   @Override
   public Tuple getValue() {
-    if (accumSketch_ == null) {
-      accumSketch_ = new ItemsSketch<T>(sketchSize_);
+    if (this.accumSketch_ == null) {
+      this.accumSketch_ = new ItemsSketch<>(this.sketchSize_);
     }
     final Tuple outputTuple;
     try {
-      outputTuple = Util.serializeSketchToTuple(accumSketch_, serDe_);
+      outputTuple = Util.serializeSketchToTuple(this.accumSketch_, this.serDe_);
     } catch (final ExecException ex) {
       throw new RuntimeException("Pig Error: " + ex.getMessage(), ex);
     }
@@ -90,10 +90,10 @@ public abstract class DataToFrequentItemsSketch<T> extends EvalFunc<Tuple> imple
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       // this is to see in the log which way was used by Pig
       Logger.getLogger(getClass()).info("exec was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if ((inputTuple == null) || (inputTuple.size() == 0)) {
       return null;

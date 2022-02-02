@@ -55,7 +55,7 @@ public class Estimate extends EvalFunc<Double> {
    */
   public Estimate(final long seed) {
     super();
-    seed_ = seed;
+    this.seed_ = seed;
   }
 
   @Override
@@ -63,7 +63,7 @@ public class Estimate extends EvalFunc<Double> {
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    final Sketch sketch =  tupleToSketch(sketchTuple, seed_);
+    final Sketch sketch =  tupleToSketch(sketchTuple, this.seed_);
     return sketch.getEstimate();
   }
 }

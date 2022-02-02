@@ -61,15 +61,15 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
    * @param kStr String indicating the maximum number of desired entries in the reservoir.
    */
   public ReservoirSampling(final String kStr) {
-    targetK_ = Integer.parseInt(kStr);
+    this.targetK_ = Integer.parseInt(kStr);
 
-    if (targetK_ < 2) {
+    if (this.targetK_ < 2) {
       throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 2: "
-              + targetK_);
+              + this.targetK_);
     }
   }
 
-  ReservoirSampling() { targetK_ = DEFAULT_TARGET_K; }
+  ReservoirSampling() { this.targetK_ = DEFAULT_TARGET_K; }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
@@ -80,8 +80,8 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     final DataBag samples = (DataBag) inputTuple.get(0);
 
     // if entire input data fits in reservoir, shortcut result
-    if (samples.size() <= targetK_) {
-      return createResultTuple(samples.size(), targetK_, samples);
+    if (samples.size() <= this.targetK_) {
+      return createResultTuple(samples.size(), this.targetK_, samples);
     }
     return super.exec(inputTuple);
   }
@@ -94,30 +94,30 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
     final DataBag samples = (DataBag) inputTuple.get(0);
 
-    if (reservoir_ == null) {
-      reservoir_ = ReservoirItemsSketch.newInstance(targetK_);
+    if (this.reservoir_ == null) {
+      this.reservoir_ = ReservoirItemsSketch.newInstance(this.targetK_);
     }
 
     for (Tuple t : samples) {
-      reservoir_.update(t);
+      this.reservoir_.update(t);
     }
   }
 
   @Override
   public Tuple getValue() {
-    if (reservoir_ == null) {
+    if (this.reservoir_ == null) {
       return null;
     }
 
-    final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(reservoir_);
+    final List<Tuple> data = SamplingPigUtil.getRawSamplesAsList(this.reservoir_);
     final DataBag sampleBag = BagFactory.getInstance().newDefaultBag(data);
 
-    return createResultTuple(reservoir_.getN(), reservoir_.getK(), sampleBag);
+    return createResultTuple(this.reservoir_.getN(), this.reservoir_.getK(), sampleBag);
   }
 
   @Override
   public void cleanup() {
-    reservoir_ = null;
+    this.reservoir_ = null;
   }
 
   @Override
@@ -182,7 +182,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     private final int targetK_;
 
     public Initial() {
-      targetK_ = DEFAULT_TARGET_K;
+      this.targetK_ = DEFAULT_TARGET_K;
     }
 
     /**
@@ -190,11 +190,11 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
      * @param kStr String indicating the maximum number of desired entries in the reservoir.
      * */
     public Initial(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
+      this.targetK_ = Integer.parseInt(kStr);
 
-      if (targetK_ < 2) {
+      if (this.targetK_ < 2) {
         throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 2: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -208,11 +208,11 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
 
       final ReservoirItemsSketch<Tuple> reservoir;
       final DataBag outputBag;
-      int k = targetK_;
-      if (records.size() <= targetK_) {
+      int k = this.targetK_;
+      if (records.size() <= this.targetK_) {
         outputBag = records;
       } else {
-        reservoir = ReservoirItemsSketch.newInstance(targetK_);
+        reservoir = ReservoirItemsSketch.newInstance(this.targetK_);
         for (Tuple t : records) {
           reservoir.update(t);
         }
@@ -235,7 +235,7 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
     private final int targetK_;
 
     public IntermediateFinal() {
-      targetK_ = DEFAULT_TARGET_K;
+      this.targetK_ = DEFAULT_TARGET_K;
     }
 
     /**
@@ -243,11 +243,11 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
      * @param kStr String indicating the maximum number of desired entries in the reservoir.
      * */
     public IntermediateFinal(final String kStr) {
-      targetK_ = Integer.parseInt(kStr);
+      this.targetK_ = Integer.parseInt(kStr);
 
-      if (targetK_ < 2) {
+      if (this.targetK_ < 2) {
         throw new IllegalArgumentException("ReservoirSampling requires target reservoir size >= 2: "
-                + targetK_);
+                + this.targetK_);
       }
     }
 
@@ -257,14 +257,14 @@ public class ReservoirSampling extends AccumulatorEvalFunc<Tuple> implements Alg
         return null;
       }
 
-      final ReservoirItemsUnion<Tuple> union = ReservoirItemsUnion.newInstance(targetK_);
+      final ReservoirItemsUnion<Tuple> union = ReservoirItemsUnion.newInstance(this.targetK_);
 
       final DataBag outerBag = (DataBag) inputTuple.get(0);
       for (Tuple reservoir : outerBag) {
         final long n = (long) reservoir.get(0);
         final int k  = (int) reservoir.get(1);
 
-        if ((n <= k) && (k <= targetK_)) {
+        if ((n <= k) && (k <= this.targetK_)) {
           for (Tuple t : (DataBag) reservoir.get(2)) {
             union.update(t);
           }

@@ -45,7 +45,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
    * Constructor with default parameter k for quantiles sketch
    */
   public ArrayOfDoublesSketchToQuantilesSketch() {
-    k = 0;
+    this.k = 0;
   }
 
   /**
@@ -59,7 +59,7 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
 
   @Override
   public DataByteArray exec(final Tuple input) throws IOException {
-    if ((input == null) || (input.size() == 0)) {
+    if (input == null || input.size() == 0) {
       return null;
     }
 
@@ -69,15 +69,15 @@ public class ArrayOfDoublesSketchToQuantilesSketch extends EvalFunc<DataByteArra
     int column = 1;
     if (input.size() > 1) {
       column = (int) input.get(1);
-      if ((column < 1) || (column > sketch.getNumValues())) {
+      if (column < 1 || column > sketch.getNumValues()) {
         throw new IllegalArgumentException("Column number out of range. The given sketch has "
           + sketch.getNumValues() + " columns");
       }
     }
 
     final DoublesSketchBuilder builder = DoublesSketch.builder();
-    if (k > 0) {
-      builder.setK(k);
+    if (this.k > 0) {
+      builder.setK(this.k);
     }
     final UpdateDoublesSketch qs = builder.build();
     final ArrayOfDoublesSketchIterator it = sketch.iterator();

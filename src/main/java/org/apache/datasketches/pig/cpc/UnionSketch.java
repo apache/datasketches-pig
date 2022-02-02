@@ -84,8 +84,8 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   public UnionSketch(final int lgK, final long seed) {
     super();
-    lgK_ = lgK;
-    seed_ = seed;
+    this.lgK_ = lgK;
+    this.seed_ = seed;
   }
 
   /**
@@ -103,19 +103,19 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   @Override
   public DataByteArray exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Exec was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(new CpcSketch(lgK_, seed_).toByteArray());
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = new DataByteArray(new CpcSketch(this.lgK_, this.seed_).toByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    final CpcUnion union = new CpcUnion(lgK_, seed_);
+    final CpcUnion union = new CpcUnion(this.lgK_, this.seed_);
     final DataBag bag = (DataBag) inputTuple.get(0);
-    updateUnion(bag, union, seed_);
+    updateUnion(bag, union, this.seed_);
     return new DataByteArray(union.getResult().toByteArray());
   }
 
@@ -132,17 +132,17 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   @Override
   public void accumulate(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Accumulator was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
     if (inputTuple == null || inputTuple.size() == 0) { return; }
     final DataBag bag = (DataBag) inputTuple.get(0);
     if (bag == null) { return; }
-    if (accumUnion_ == null) {
-      accumUnion_ = new CpcUnion(lgK_, seed_);
+    if (this.accumUnion_ == null) {
+      this.accumUnion_ = new CpcUnion(this.lgK_, this.seed_);
     }
-    updateUnion(bag, accumUnion_, seed_);
+    updateUnion(bag, this.accumUnion_, this.seed_);
   }
 
   /**
@@ -153,14 +153,14 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   @Override
   public DataByteArray getValue() {
-    if (accumUnion_ == null) {
-      if (emptySketch_ == null) {
-        emptySketch_ = new DataByteArray(
-            new CpcSketch(lgK_, seed_).toByteArray());
+    if (this.accumUnion_ == null) {
+      if (this.emptySketch_ == null) {
+        this.emptySketch_ = new DataByteArray(
+            new CpcSketch(this.lgK_, this.seed_).toByteArray());
       }
-      return emptySketch_;
+      return this.emptySketch_;
     }
-    return new DataByteArray(accumUnion_.getResult().toByteArray());
+    return new DataByteArray(this.accumUnion_.getResult().toByteArray());
   }
 
   /**
@@ -170,7 +170,7 @@ public class UnionSketch extends EvalFunc<DataByteArray> implements Accumulator<
    */
   @Override
   public void cleanup() {
-    accumUnion_ = null;
+    this.accumUnion_ = null;
   }
 
   @Override

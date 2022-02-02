@@ -62,8 +62,8 @@ public class SketchToString extends EvalFunc<String> {
    */
   private SketchToString(final boolean hllDetail, final boolean auxDetail) {
     super();
-    hllDetail_ = hllDetail;
-    auxDetail_ = auxDetail;
+    this.hllDetail_ = hllDetail;
+    this.auxDetail_ = auxDetail;
   }
 
   @Override
@@ -73,7 +73,7 @@ public class SketchToString extends EvalFunc<String> {
     }
     final DataByteArray dba = (DataByteArray) sketchTuple.get(0);
     final HllSketch sketch = HllSketch.wrap(Memory.wrap(dba.get()));
-    return sketch.toString(true, hllDetail_, auxDetail_);
+    return sketch.toString(true, this.hllDetail_, this.auxDetail_);
   }
 
 }

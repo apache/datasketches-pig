@@ -59,6 +59,7 @@ public class UnionStringsSketch extends UnionItemsSketch<String> {
     return UnionStringsSketchIntermediateFinal.class.getName();
   }
 
+  @SuppressWarnings("synthetic-access")
   public static class UnionStringsSketchIntermediateFinal extends UnionItemsSketchIntermediateFinal<String> {
 
     public UnionStringsSketchIntermediateFinal() {

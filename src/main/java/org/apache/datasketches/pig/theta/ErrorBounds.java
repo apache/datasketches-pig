@@ -76,7 +76,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
    */
   public ErrorBounds(final long seed) {
     super();
-    seed_ = seed;
+    this.seed_ = seed;
   }
 
   @Override
@@ -84,7 +84,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
     if ((sketchTuple == null) || (sketchTuple.size() == 0)) {
       return null;
     }
-    final Sketch sketch = tupleToSketch(sketchTuple, seed_);
+    final Sketch sketch = tupleToSketch(sketchTuple, this.seed_);
     final Tuple outputTuple = tupleFactory.newTuple(3);
     outputTuple.set(0, Double.valueOf(sketch.getEstimate()));
     outputTuple.set(1, Double.valueOf(sketch.getUpperBound(2)));
@@ -95,6 +95,7 @@ public class ErrorBounds extends EvalFunc<Tuple> {
   /**
    * The output is a Sketch Result Tuple Schema.
    */
+  @SuppressWarnings("unused")
   @Override
   public Schema outputSchema(final Schema input) {
     if (input != null) {

@@ -47,7 +47,7 @@ public class MurmurHash3Test {
   @Test
   public void checkExceptions1() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
     //Empty input tuple
     in = mTupleFactory.newTuple(0);
@@ -58,7 +58,7 @@ public class MurmurHash3Test {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkExceptions2() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
     //seed must be INTEGER or LONG
     in = mTupleFactory.newTuple(2);
@@ -71,7 +71,7 @@ public class MurmurHash3Test {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkExceptions3() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
     //improper hash object = Tuple
     in = mTupleFactory.newTuple(1);
@@ -83,7 +83,7 @@ public class MurmurHash3Test {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkExceptions4() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
     //divisor must be INTEGER
     in = mTupleFactory.newTuple(3);
@@ -97,7 +97,7 @@ public class MurmurHash3Test {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void checkExceptions5() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
     //divisor must be INTEGER > 0
     in = mTupleFactory.newTuple(3);
@@ -111,7 +111,7 @@ public class MurmurHash3Test {
   @Test
   public void check1ValidArg() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
 
     //test Integer, Long, Float, Double, DataByteArray, String
@@ -175,7 +175,7 @@ public class MurmurHash3Test {
   @Test
   public void check2ValidArg() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
 
     //test String, seed
@@ -200,7 +200,7 @@ public class MurmurHash3Test {
   @Test
   public void check3ValidArg() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
 
     //test String, seed
@@ -228,7 +228,7 @@ public class MurmurHash3Test {
   @Test
   public void check3ValidArgs() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
     Tuple in, out;
 
     //test multiple integers, seed
@@ -261,7 +261,7 @@ public class MurmurHash3Test {
   @Test
   public void outputSchemaTestMurmurHash3Udf() throws IOException {
     EvalFunc<Tuple> hashUdf =
-        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(hashUdfName));
+        (EvalFunc<Tuple>) PigContext.instantiateFuncFromSpec(new FuncSpec(this.hashUdfName));
 
     Schema inputSchema = null;
 

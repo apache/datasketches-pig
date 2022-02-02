@@ -53,17 +53,17 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
    * @param seed the given seed
    */
   public AlgebraicIntermediate(final int lgK, final long seed) {
-    lgK_ = lgK;
-    seed_ = seed;
+    this.lgK_ = lgK;
+    this.seed_ = seed;
   }
 
   @Override
   public Tuple exec(final Tuple inputTuple) throws IOException {
-    if (isFirstCall_) {
+    if (this.isFirstCall_) {
       Logger.getLogger(getClass()).info("Algebraic was used");
-      isFirstCall_ = false;
+      this.isFirstCall_ = false;
     }
-    final DataByteArray dba = AlgebraicFinal.process(inputTuple, lgK_, seed_, isInputRaw());
+    final DataByteArray dba = AlgebraicFinal.process(inputTuple, this.lgK_, this.seed_, isInputRaw());
     if (dba == null) {
       return getEmptySketchTuple();
     }
@@ -73,11 +73,11 @@ abstract class AlgebraicIntermediate extends EvalFunc<Tuple> {
   abstract boolean isInputRaw();
 
   private Tuple getEmptySketchTuple() {
-    if (emptySketchTuple_ == null) {
-      emptySketchTuple_ = TUPLE_FACTORY.newTuple(new DataByteArray(
-          new CpcSketch(lgK_, seed_).toByteArray()));
+    if (this.emptySketchTuple_ == null) {
+      this.emptySketchTuple_ = TUPLE_FACTORY.newTuple(new DataByteArray(
+          new CpcSketch(this.lgK_, this.seed_).toByteArray()));
     }
-    return emptySketchTuple_;
+    return this.emptySketchTuple_;
   }
 
 }
