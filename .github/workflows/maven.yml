@@ -28,7 +28,7 @@ jobs:
               restore-keys: build-${{ runner.os }}-maven-
 
         - name: Install JDK
-          uses: actions/setup-java@v
+          uses: actions/setup-java@v4
           with:
               java-version: '8'
               architecture: x64
